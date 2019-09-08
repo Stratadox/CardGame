@@ -14,13 +14,13 @@ class CardsInHand
     {
         // @todo this be cheating, make more tests
         $this->default = [
-            new Card(),
-            new Card(),
-            new Card(),
-            new Card(),
-            new Card(),
-            new Card(),
-            new Card(),
+            new UnitCard('test 1', 2),
+            new UnitCard('test 2', 4),
+            new UnitCard('test 3', 3),
+            new UnitCard('test 4', 1),
+            new UnitCard('test 5', 2),
+            new UnitCard('test 6', 5),
+            new UnitCard('test 7', 2),
         ];
     }
 

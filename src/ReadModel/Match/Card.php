@@ -2,7 +2,9 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-final class Card
+interface Card
 {
-
+    public function name(): string;
+    public function price(): int;
+    public function isTheSameAs(Card $theOtherCard): bool;
 }

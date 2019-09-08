@@ -5,6 +5,7 @@ namespace Stratadox\CardGame\Test\Match;
 use PHPUnit\Framework\Constraint\IsEqual;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\ReadModel\Match\UnitCard;
 use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\VisitorId;
 
@@ -44,6 +45,25 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
 
         $this->assertCount(7, $this->cardsInTheHand->of($playerOne));
         $this->assertCount(7, $this->cardsInTheHand->of($playerTwo));
+
+        // we're cheating here, because we haven't truly shuffled their decks
+        foreach ($this->cardsInTheHand->of($playerOne) as $i => $theCardInHand) {
+            $this->assertTrue(
+                $this->testCard[$i]->isTheSameAs($theCardInHand)
+            );
+            $this->assertFalse(
+                (new UnitCard('foo', 0))->isTheSameAs($theCardInHand)
+            );
+        }
+
+        foreach ($this->cardsInTheHand->of($playerTwo) as $i => $theCardInHand) {
+            $this->assertTrue(
+                $this->testCard[$i]->isTheSameAs($theCardInHand)
+            );
+            $this->assertFalse(
+                (new UnitCard('foo', 0))->isTheSameAs($theCardInHand)
+            );
+        }
     }
 
     /** @test */

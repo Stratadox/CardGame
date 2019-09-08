@@ -32,6 +32,7 @@ use Stratadox\CardGame\Proposal\Event\MatchWasProposed;
 use Stratadox\CardGame\Proposal\Event\ProposalWasAccepted;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
+use Stratadox\CardGame\ReadModel\Match\UnitCard;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
@@ -85,6 +86,9 @@ abstract class CardGameTest extends TestCase
     /** @var CardsInHand */
     protected $cardsInTheHand;
 
+    /** @var UnitCard[] */
+    protected $testCard = [];
+
     /** @var OngoingMatches */
     protected $ongoingMatches;
 
@@ -106,6 +110,15 @@ abstract class CardGameTest extends TestCase
         $this->cardsInTheHand = new CardsInHand();
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
+        $this->testCard = [
+            new UnitCard('test 1', 2),
+            new UnitCard('test 2', 4),
+            new UnitCard('test 3', 3),
+            new UnitCard('test 4', 1),
+            new UnitCard('test 5', 2),
+            new UnitCard('test 6', 5),
+            new UnitCard('test 7', 2),
+        ];
 
         $eventBag = new EventCollector();
         $this->input = AfterHandling::invoke(
