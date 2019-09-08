@@ -1,0 +1,11 @@
+<?php declare(strict_types=1);
+
+namespace Stratadox\CardGame\Account;
+
+use Stratadox\CardGame\DomainEvent;
+use Stratadox\CardGame\AccountId;
+
+interface AccountEvent extends DomainEvent
+{
+    public function aggregateId(): AccountId;
+}
