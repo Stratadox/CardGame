@@ -2,9 +2,12 @@
 
 namespace Stratadox\CardGame\Test\Match;
 
+use function end as newest_of_the;
 use PHPUnit\Framework\Constraint\IsEqual;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
+use Stratadox\CardGame\Proposal\Command\ProposeMatch;
 use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;
 use Stratadox\CardGame\ReadModel\Match\UnitCard;
 use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\VisitorId;
@@ -36,6 +39,14 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     }
 
     /** @test */
+    function no_matches_for_non_existing_proposals()
+    {
+        $this->expectException(NoSuchMatch::class);
+
+        $this->ongoingMatches->forProposal(ProposalId::from('non-existing-id'));
+    }
+
+    /** @test */
     function drawing_the_initial_hands_when_the_match_starts()
     {
         $this->handle(StartTheMatch::forProposal($this->proposal));
@@ -64,6 +75,21 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
                 (new UnitCard('foo', 0))->isTheSameAs($theCardInHand)
             );
         }
+    }
+
+    /** @test */
+    function not_starting_matches_for_proposals_that_are_still_pending()
+    {
+        $accountOne = $this->accountOverviews->forVisitor(VisitorId::from('id-1'))->id();
+        $accountTwo = $this->accountOverviews->forVisitor(VisitorId::from('id-2'))->id();
+        $this->handle(ProposeMatch::between($accountOne, $accountTwo));
+        $proposals = $this->matchProposals->for($accountTwo);
+        $proposal = newest_of_the($proposals);
+        $this->handle(StartTheMatch::forProposal($proposal->id()));
+
+        $this->expectException(NoSuchMatch::class);
+
+        $this->ongoingMatches->forProposal($this->proposal);
     }
 
     /** @test */

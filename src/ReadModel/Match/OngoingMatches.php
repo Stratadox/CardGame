@@ -2,18 +2,24 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-use Stratadox\CardGame\MatchId;
-use Stratadox\CardGame\PlayerId;
 use Stratadox\CardGame\ProposalId;
 
 class OngoingMatches
 {
-    public function forProposal(ProposalId $proposalId): OngoingMatch
+    /** @var OngoingMatch[] */
+    private $matches;
+
+    public function addFromProposal(ProposalId $proposal, OngoingMatch $match): void
     {
-        // @todo this be cheating; make more tests
-        return new OngoingMatch(MatchId::from('foo'), PlayerId::from('bar'), ...[
-            PlayerId::from('bar'),
-            PlayerId::from('baz')
-        ]);
+        $this->matches[$proposal->id()] = $match;
+    }
+
+    /** @throws NoSuchMatch */
+    public function forProposal(ProposalId $proposal): OngoingMatch
+    {
+        if (!isset($this->matches[$proposal->id()])) {
+            throw NoSuchMatch::forProposal($proposal);
+        }
+        return $this->matches[$proposal->id()];
     }
 }

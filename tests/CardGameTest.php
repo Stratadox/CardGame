@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\EventHandler\AccountOverviewCreator;
+use Stratadox\CardGame\EventHandler\MatchPublisher;
 use Stratadox\CardGame\EventHandler\PlayerListAppender;
 use Stratadox\CardGame\EventHandler\ProposalAcceptanceNotifier;
 use Stratadox\CardGame\EventHandler\ProposalSender;
@@ -16,13 +17,20 @@ use Stratadox\CardGame\EventHandler\StatisticsUpdater;
 use Stratadox\CardGame\Infrastructure\DomainEvents\CommandToEventGlue;
 use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
 use Stratadox\CardGame\Infrastructure\DomainEvents\EventCollector;
+use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultMatchIdGenerator;
+use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultPlayerIdGenerator;
+use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
+use Stratadox\CardGame\Infrastructure\Test\InMemoryMatches;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryProposedMatches;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryRedirectSources;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultAccountIdGenerator;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultProposalIdGenerator;
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
+use Stratadox\CardGame\Infrastructure\Test\WhoStartsDecider;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
+use Stratadox\CardGame\Match\Event\MatchHasBegun;
+use Stratadox\CardGame\Match\Event\StartedSettingUpMatchForProposal;
 use Stratadox\CardGame\Match\Handler\CardPlayingProcess;
 use Stratadox\CardGame\Match\Handler\MatchStartingProcess;
 use Stratadox\CardGame\Account\Event\VisitorOpenedAnAccount;
@@ -132,6 +140,7 @@ abstract class CardGameTest extends TestCase
 
     private function eventDispatcher(): Dispatcher
     {
+        $matchPublisher = new MatchPublisher($this->ongoingMatches);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
             VisitedPage::class => new StatisticsUpdater($this->statistics),
@@ -143,6 +152,8 @@ abstract class CardGameTest extends TestCase
             ProposalWasAccepted::class => new ProposalAcceptanceNotifier(
                 $this->acceptedProposals
             ),
+            StartedSettingUpMatchForProposal::class => $matchPublisher,
+            MatchHasBegun::class => $matchPublisher,
         ]);
     }
 
@@ -158,6 +169,8 @@ abstract class CardGameTest extends TestCase
         $visitors = new InMemoryVisitorRepository();
         $playerBase = new InMemoryPlayerBase();
         $proposals = new InMemoryProposedMatches();
+        $decks = new InMemoryDecks();
+        $matches = new InMemoryMatches();
         $uuidFactory = new UuidFactory();
         return CommandBus::handling([
             Visit::class => new VisitationProcess(
@@ -184,7 +197,15 @@ abstract class CardGameTest extends TestCase
                 $proposals,
                 $eventBag
             ),
-            StartTheMatch::class => new MatchStartingProcess(),
+            StartTheMatch::class => new MatchStartingProcess(
+                new DefaultMatchIdGenerator($uuidFactory),
+                new DefaultPlayerIdGenerator($uuidFactory),
+                $proposals,
+                $decks,
+                $matches,
+                new WhoStartsDecider(),
+                $eventBag
+            ),
             PlayTheCard::class => new CardPlayingProcess(),
         ]);
     }

@@ -6,6 +6,9 @@ use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
 use Stratadox\CardGame\AccountId;
+use Stratadox\CardGame\Match\MatchSetup;
+use Stratadox\CardGame\MatchId;
+use Stratadox\CardGame\PlayerId;
 use Stratadox\CardGame\Proposal\Event\MatchWasProposed;
 use Stratadox\CardGame\Proposal\Event\ProposalWasAccepted;
 use Stratadox\CardGame\ProposalId;
@@ -17,6 +20,8 @@ final class MatchProposal implements DomainEventRecorder
     private $id;
     private $validUntil;
     private $acceptedAt;
+    private $proposedBy;
+    private $proposedTo;
 
     public function __construct(
         ProposalId $proposalId,
@@ -26,6 +31,8 @@ final class MatchProposal implements DomainEventRecorder
     ) {
         $this->id = $proposalId;
         $this->validUntil = $validUntil;
+        $this->proposedTo = $proposedTo;
+        $this->proposedBy = $proposedBy;
         $this->events[] = new MatchWasProposed(
             $proposalId,
             $proposedBy,
@@ -47,5 +54,32 @@ final class MatchProposal implements DomainEventRecorder
         }
         $this->acceptedAt = $now;
         $this->events[] = new ProposalWasAccepted($this->id, $now);
+    }
+
+    public function proposedBy(): AccountId
+    {
+        return $this->proposedBy;
+    }
+
+    public function proposedTo(): AccountId
+    {
+        return $this->proposedTo;
+    }
+
+    /** @throws ProposalHasNotBeenAccepted */
+    public function begin(
+        MatchId $matchId,
+        PlayerId $playerOne,
+        PlayerId $playerTwo
+    ): MatchSetup {
+        if (!$this->acceptedAt) {
+            throw ProposalHasNotBeenAccepted::cannotStartMatch($this->id);
+        }
+        return MatchSetup::fromProposal(
+            $this->id,
+            $matchId,
+            $playerOne,
+            $playerTwo
+        );
     }
 }

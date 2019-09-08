@@ -17,4 +17,9 @@ final class StartTheMatch
     {
         return new self($proposal);
     }
+
+    public function proposal(): ProposalId
+    {
+        return $this->proposal;
+    }
 }
