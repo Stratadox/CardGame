@@ -50,4 +50,6 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->assertCount(2, $this->battlefield->cardsInPlay());
         $this->assertCount(5, $this->cardsInTheHand->of($this->currentPlayer));
     }
+
+    // @todo no cards on the board when playing a spell
 }

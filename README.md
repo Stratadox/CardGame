@@ -11,6 +11,9 @@ Cards can be added to - or removed from - the existing deck.
 New decks can be formed with any of the cards owned by the player.
 The cards can be in any number of decks at the same time.
 
+The number of copies per card that are allowed in a deck is limited by the 
+rarity of the card.
+
 ## Card game
 Each match starts with the players drawing their initial hands from their decks.
 
@@ -34,6 +37,9 @@ safely home to their families.
 *Upgrades* can be applied to units. They remain with the unit until either 
 the unit dies or the upgrade ends, breaks or gets stolen.
 
+*Mana pools* are the primary source of mana-income for the players. They remain 
+on the battlefield until the match ends, unless they get destroyed somehow.
+
 ## Objective
 The match ends when either one of the players has zero lives or less.
 Players typically start with 20 lives.
@@ -47,6 +53,9 @@ mana pools.
 
 If there are any attacking units from the opponents last turn, the player gets 
 to decide which of those to block.
+Attackers can be defended against by multiple defenders at a time. 
+Each defender can only defend against one attacker.
+
 Some spells can be played during this phase.
 If the player has such spells, they can play them now.
 
