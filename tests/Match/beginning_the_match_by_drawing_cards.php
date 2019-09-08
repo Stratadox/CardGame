@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Test\Match;
 
+use function assert;
 use function end as newest_of_the;
 use PHPUnit\Framework\Constraint\IsEqual;
 use Stratadox\CardGame\CardId;
@@ -10,6 +11,7 @@ use Stratadox\CardGame\Proposal\Command\ProposeMatch;
 use Stratadox\CardGame\ProposalId;
 use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;
 use Stratadox\CardGame\ReadModel\Match\Card;
+use Stratadox\CardGame\ReadModel\Proposal\MatchProposal;
 use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\VisitorId;
 
@@ -83,6 +85,7 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
         $this->handle(ProposeMatch::between($accountOne, $accountTwo));
         $proposals = $this->matchProposals->for($accountTwo);
         $proposal = newest_of_the($proposals);
+        assert($proposal instanceof MatchProposal);
         $this->handle(StartTheMatch::forProposal($proposal->id()));
 
         $this->expectException(NoSuchMatch::class);

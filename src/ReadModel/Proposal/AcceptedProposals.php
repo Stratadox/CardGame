@@ -14,7 +14,7 @@ class AcceptedProposals
     }
 
     /** @return AcceptedProposal[] */
-    public function since(DateTimeInterface $begin): iterable
+    public function since(DateTimeInterface $begin): array
     {
         return $this->proposals;
     }

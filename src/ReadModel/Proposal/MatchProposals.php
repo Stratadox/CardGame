@@ -29,7 +29,7 @@ class MatchProposals
     }
 
     /** @return MatchProposal[] */
-    public function for(AccountId $player, DateTimeInterface $currently = null): iterable
+    public function for(AccountId $player, DateTimeInterface $currently = null): array
     {
         $currently = $currently ?: $this->clock->now();
         $proposals = [];

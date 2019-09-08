@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Test;
+namespace Stratadox\CardGame\Test\Account;
 
 use Stratadox\CardGame\ReadModel\Account\NoAccountForVisitor;
 use Stratadox\CardGame\Account\Command\OpenAnAccount;
+use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\Visiting\Command\Visit;
 use Stratadox\CardGame\VisitorId;
 

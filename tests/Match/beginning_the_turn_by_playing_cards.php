@@ -2,7 +2,9 @@
 
 namespace Stratadox\CardGame\Test\Match;
 
+use function assert;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
+use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 
 /**
@@ -17,6 +19,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
+        assert($this->currentMatch instanceof OngoingMatch);
         foreach ($this->currentMatch->players() as $thePlayer) {
             if ($this->currentMatch->itIsTheTurnOf($thePlayer)) {
                 $this->currentPlayer = $thePlayer;

@@ -31,6 +31,6 @@ final class OngoingMatch
 
     public function itIsTheTurnOf(PlayerId $player): bool
     {
-        return $this->turn && $this->turn->is($player);
+        return $this->turn->is($player);
     }
 }

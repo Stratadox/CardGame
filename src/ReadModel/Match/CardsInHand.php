@@ -28,7 +28,7 @@ class CardsInHand
     }
 
     /** @return Card[] */
-    public function of(PlayerId $player): iterable
+    public function of(PlayerId $player): array
     {
         return $this->cards[$player->id()] ?? [];
     }

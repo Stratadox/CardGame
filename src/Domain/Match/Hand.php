@@ -32,7 +32,7 @@ final class Hand
         return $card;
     }
 
-    /** @return CardId */
+    /** @return CardId[] */
     public function cards(): array
     {
         return array_map(function (Card $card): CardId {

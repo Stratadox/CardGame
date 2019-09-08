@@ -3,6 +3,7 @@
 namespace Stratadox\CardGame\Match;
 
 use function array_pop;
+use function assert;
 
 final class Deck
 {
@@ -18,6 +19,8 @@ final class Deck
     public function draw(): Card
     {
         // @todo throw if no more cards
-        return array_pop($this->cards);
+        $card = array_pop($this->cards);
+        assert($card instanceof Card);
+        return $card;
     }
 }

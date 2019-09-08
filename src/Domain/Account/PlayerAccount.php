@@ -20,7 +20,7 @@ final class PlayerAccount implements DomainEventRecorder
     private function __construct(AccountId $id, AccountEvent $creationEvent)
     {
         $this->id = $id;
-        $this->events = [$creationEvent];
+        $this->events[] = $creationEvent;
     }
 
     public static function fromVisitor(VisitorId $visitor, AccountId $id): self
