@@ -6,6 +6,11 @@ class Battlefield
 {
     private $cards = [];
 
+    public function add(Card $card): void
+    {
+        $this->cards[] = $card;
+    }
+
     /** @return Card[] */
     public function cardsInPlay(): iterable
     {

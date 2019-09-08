@@ -3,8 +3,9 @@
 namespace Stratadox\CardGame\Match;
 
 use Stratadox\CardGame\AccountId;
+use Stratadox\CardGame\PlayerId;
 
 interface Decks
 {
-    public function for(AccountId $player): Deck;
+    public function for(AccountId $account, PlayerId $player): Deck;
 }

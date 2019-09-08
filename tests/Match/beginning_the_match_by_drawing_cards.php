@@ -4,11 +4,12 @@ namespace Stratadox\CardGame\Test\Match;
 
 use function end as newest_of_the;
 use PHPUnit\Framework\Constraint\IsEqual;
+use Stratadox\CardGame\CardId;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\Proposal\Command\ProposeMatch;
 use Stratadox\CardGame\ProposalId;
 use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;
-use Stratadox\CardGame\ReadModel\Match\UnitCard;
+use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\VisitorId;
 
@@ -19,6 +20,9 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
 {
     /** @var ProposalId */
     private $proposal;
+
+    /** @var Card */
+    private $bogusCard;
 
     protected function setUp(): void
     {
@@ -36,6 +40,8 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
         $this->prepareMatchBetween($accountOne, $accountTwo);
 
         $this->proposal = $this->acceptedProposals->since($this->clock->now())[0]->id();
+
+        $this->bogusCard = new Card(CardId::from('bogus'), 'bogus', 0);
     }
 
     /** @test */
@@ -59,21 +65,13 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
 
         // we're cheating here, because we haven't truly shuffled their decks
         foreach ($this->cardsInTheHand->of($playerOne) as $i => $theCardInHand) {
-            $this->assertTrue(
-                $this->testCard[$i]->isTheSameAs($theCardInHand)
-            );
-            $this->assertFalse(
-                (new UnitCard('foo', 0))->isTheSameAs($theCardInHand)
-            );
+            $this->assertEquals($this->testCard[$i], $theCardInHand);
+            $this->assertNotEquals($this->bogusCard, $theCardInHand);
         }
 
         foreach ($this->cardsInTheHand->of($playerTwo) as $i => $theCardInHand) {
-            $this->assertTrue(
-                $this->testCard[$i]->isTheSameAs($theCardInHand)
-            );
-            $this->assertFalse(
-                (new UnitCard('foo', 0))->isTheSameAs($theCardInHand)
-            );
+            $this->assertEquals($this->testCard[$i], $theCardInHand);
+            $this->assertNotEquals($this->bogusCard, $theCardInHand);
         }
     }
 

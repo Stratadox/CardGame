@@ -62,8 +62,8 @@ final class MatchStartingProcess implements Handler
             return;
         }
 
-        $setup->addDeckFor($playerOne, $this->deckToUse->for($proposal->proposedBy()));
-        $setup->addDeckFor($playerTwo, $this->deckToUse->for($proposal->proposedTo()));
+        $setup->addDeckFor($playerOne, $this->deckToUse->for($proposal->proposedBy(), $playerOne));
+        $setup->addDeckFor($playerTwo, $this->deckToUse->for($proposal->proposedTo(), $playerTwo));
 
         $match = $setup->beginMatch($this->whoStarts->chooseBetween(
             $playerOne,

@@ -31,4 +31,23 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         $this->assertEmpty($this->battlefield->cardsInPlay());
     }
+
+    /** @test */
+    function playing_the_first_card()
+    {
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+
+        $this->assertCount(1, $this->battlefield->cardsInPlay());
+        $this->assertCount(6, $this->cardsInTheHand->of($this->currentPlayer));
+    }
+
+    /** @test */
+    function playing_two_cards()
+    {
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+
+        $this->assertCount(2, $this->battlefield->cardsInPlay());
+        $this->assertCount(5, $this->cardsInTheHand->of($this->currentPlayer));
+    }
 }

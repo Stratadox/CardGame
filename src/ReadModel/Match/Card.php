@@ -2,9 +2,38 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-interface Card
+use Stratadox\CardGame\CardId;
+
+final class Card
 {
-    public function name(): string;
-    public function price(): int;
-    public function isTheSameAs(Card $theOtherCard): bool;
+    private $id;
+    private $name;
+    private $price;
+
+    public function __construct(CardId $id, string $name, int $price)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->price = $price;
+    }
+
+    public function id(): CardId
+    {
+        return $this->id;
+    }
+
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    public function price(): int
+    {
+        return $this->price;
+    }
+
+    public function isTheSameAs(Card $theOtherCard): bool
+    {
+        return $this->name() === $theOtherCard->name();
+    }
 }

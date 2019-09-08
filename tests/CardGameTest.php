@@ -7,8 +7,11 @@ use PHPUnit\Framework\Constraint\LogicalOr;
 use PHPUnit\Framework\Constraint\LogicalXor;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
+use Stratadox\CardGame\CardId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\EventHandler\AccountOverviewCreator;
+use Stratadox\CardGame\EventHandler\BattlefieldUpdater;
+use Stratadox\CardGame\EventHandler\HandAdjuster;
 use Stratadox\CardGame\EventHandler\MatchPublisher;
 use Stratadox\CardGame\EventHandler\PlayerListAppender;
 use Stratadox\CardGame\EventHandler\ProposalAcceptanceNotifier;
@@ -29,7 +32,9 @@ use Stratadox\CardGame\Infrastructure\Test\TestClock;
 use Stratadox\CardGame\Infrastructure\Test\WhoStartsDecider;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
+use Stratadox\CardGame\Match\Event\CardWasPlayed;
 use Stratadox\CardGame\Match\Event\MatchHasBegun;
+use Stratadox\CardGame\Match\Event\PlayerDrewOpeningHand;
 use Stratadox\CardGame\Match\Event\StartedSettingUpMatchForProposal;
 use Stratadox\CardGame\Match\Handler\CardPlayingProcess;
 use Stratadox\CardGame\Match\Handler\MatchStartingProcess;
@@ -39,8 +44,9 @@ use Stratadox\CardGame\Account\Command\OpenAnAccount;
 use Stratadox\CardGame\Proposal\Event\MatchWasProposed;
 use Stratadox\CardGame\Proposal\Event\ProposalWasAccepted;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
+use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
-use Stratadox\CardGame\ReadModel\Match\UnitCard;
+use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
@@ -94,7 +100,7 @@ abstract class CardGameTest extends TestCase
     /** @var CardsInHand */
     protected $cardsInTheHand;
 
-    /** @var UnitCard[] */
+    /** @var Card[] */
     protected $testCard = [];
 
     /** @var OngoingMatches */
@@ -119,13 +125,16 @@ abstract class CardGameTest extends TestCase
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
         $this->testCard = [
-            new UnitCard('test 1', 2),
-            new UnitCard('test 2', 4),
-            new UnitCard('test 3', 3),
-            new UnitCard('test 4', 1),
-            new UnitCard('test 5', 2),
-            new UnitCard('test 6', 5),
-            new UnitCard('test 7', 2),
+            new Card(CardId::from('card-id-1'), 'test 1', 2),
+            new Card(CardId::from('card-id-2'), 'test 2', 4),
+            new Card(CardId::from('card-id-3'), 'test 3', 3),
+            new Card(CardId::from('card-id-4'), 'test 4', 1),
+            new Card(CardId::from('card-id-5'), 'test 5', 2),
+            new Card(CardId::from('card-id-6'), 'test 6', 5),
+            new Card(CardId::from('card-id-7'), 'test 7', 2),
+            new Card(CardId::from('card-id-8'), 'test 8', 2),
+            new Card(CardId::from('card-id-9'), 'test 9', 2),
+            new Card(CardId::from('card-id-10'), 'test 10', 2),
         ];
 
         $eventBag = new EventCollector();
@@ -141,6 +150,8 @@ abstract class CardGameTest extends TestCase
     private function eventDispatcher(): Dispatcher
     {
         $matchPublisher = new MatchPublisher($this->ongoingMatches);
+        $allCards = new AllCards(...$this->testCard);
+        $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
             VisitedPage::class => new StatisticsUpdater($this->statistics),
@@ -154,6 +165,11 @@ abstract class CardGameTest extends TestCase
             ),
             StartedSettingUpMatchForProposal::class => $matchPublisher,
             MatchHasBegun::class => $matchPublisher,
+            CardWasPlayed::class => [
+                new BattlefieldUpdater($this->battlefield, $allCards),
+                $handAdjuster,
+            ],
+            PlayerDrewOpeningHand::class => $handAdjuster,
         ]);
     }
 
@@ -206,7 +222,10 @@ abstract class CardGameTest extends TestCase
                 new WhoStartsDecider(),
                 $eventBag
             ),
-            PlayTheCard::class => new CardPlayingProcess(),
+            PlayTheCard::class => new CardPlayingProcess(
+                $matches,
+                $eventBag
+            ),
         ]);
     }
 
