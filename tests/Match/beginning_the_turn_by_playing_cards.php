@@ -47,6 +47,9 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     /** @test */
     function playing_two_cards()
     {
+        // we can play "the first card" twice, because after playing the first
+        // first card, another card will be the first.
+
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
 
@@ -54,5 +57,14 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->assertCount(5, $this->cardsInTheHand->of($this->currentPlayer));
     }
 
-    // @todo no cards on the board when playing a spell
+    /** @test */
+    function no_cards_on_the_board_when_playing_a_spell()
+    {
+        // the third card in the sample deck is a spell
+
+        $this->handle(PlayTheCard::number(2, $this->currentPlayer));
+
+        $this->assertCount(0, $this->battlefield->cardsInPlay());
+        $this->assertCount(6, $this->cardsInTheHand->of($this->currentPlayer));
+    }
 }

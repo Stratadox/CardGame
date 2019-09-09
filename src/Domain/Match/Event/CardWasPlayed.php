@@ -3,6 +3,7 @@
 namespace Stratadox\CardGame\Match\Event;
 
 use Stratadox\CardGame\CardId;
+use Stratadox\CardGame\Match\CardType;
 use Stratadox\CardGame\Match\MatchEvent;
 use Stratadox\CardGame\MatchId;
 use Stratadox\CardGame\PlayerId;
@@ -12,12 +13,18 @@ final class CardWasPlayed implements MatchEvent
     private $match;
     private $player;
     private $card;
+    private $type;
 
-    public function __construct(MatchId $match, PlayerId $player, CardId $card)
-    {
+    public function __construct(
+        MatchId $match,
+        PlayerId $player,
+        CardId $card,
+        CardType $type
+    ) {
         $this->match = $match;
         $this->player = $player;
         $this->card = $card;
+        $this->type = (string) $type;
     }
 
     public function aggregateId(): MatchId
@@ -33,6 +40,11 @@ final class CardWasPlayed implements MatchEvent
     public function card(): CardId
     {
         return $this->card;
+    }
+
+    public function type(): string
+    {
+        return $this->type;
     }
 
     public function payload(): array

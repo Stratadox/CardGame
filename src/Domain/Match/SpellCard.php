@@ -6,15 +6,13 @@ use Stratadox\CardGame\CardId;
 use Stratadox\CardGame\Match\CardType;
 use Stratadox\CardGame\PlayerId;
 
-final class UnitCard implements Card
+final class SpellCard implements Card
 {
     private $id;
-    private $owner;
 
     public function __construct(CardId $id, PlayerId $owner)
     {
         $this->id = $id;
-        $this->owner = $owner;
     }
 
     public function id(): CardId
@@ -24,11 +22,10 @@ final class UnitCard implements Card
 
     public function putIntoActionOn(Battlefield $battlefield): void
     {
-        $battlefield->addUnitFor($this->owner, $this);
     }
 
     public function type(): CardType
     {
-        return CardType::unit();
+        return CardType::spell();
     }
 }

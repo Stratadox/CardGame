@@ -8,4 +8,5 @@ interface Card
 {
     public function id(): CardId;
     public function putIntoActionOn(Battlefield $battlefield): void;
+    public function type(): CardType;
 }

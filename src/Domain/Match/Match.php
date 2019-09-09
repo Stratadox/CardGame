@@ -81,6 +81,11 @@ final class Match implements DomainEventRecorder
         $card = $this->turn->play($cardNumber);
         $card->putIntoActionOn($this->battlefield);
 
-        $this->events[] = new CardWasPlayed($this->id, $player, $card->id());
+        $this->events[] = new CardWasPlayed(
+            $this->id,
+            $player,
+            $card->id(),
+            $card->type()
+        );
     }
 }
