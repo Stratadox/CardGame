@@ -2,7 +2,7 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-use Stratadox\CardGame\CardId;
+use Stratadox\CardGame\Match\CardId;
 
 final class Card
 {

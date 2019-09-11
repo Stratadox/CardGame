@@ -2,7 +2,7 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Proposal\ProposalId;
 
 class OngoingMatches
 {

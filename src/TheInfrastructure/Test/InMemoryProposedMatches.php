@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\Infrastructure\Test;
 
 use Stratadox\CardGame\Proposal\MatchProposal;
 use Stratadox\CardGame\Proposal\ProposedMatches;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Proposal\ProposalId;
 
 final class InMemoryProposedMatches implements ProposedMatches
 {

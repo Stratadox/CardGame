@@ -3,14 +3,14 @@
 namespace Stratadox\CardGame\Infrastructure\Test;
 
 use function array_reverse;
-use Stratadox\CardGame\AccountId;
-use Stratadox\CardGame\CardId;
+use Stratadox\CardGame\Account\AccountId;
+use Stratadox\CardGame\Match\CardId;
 use Stratadox\CardGame\Match\Deck;
 use Stratadox\CardGame\Match\Decks;
 use Stratadox\CardGame\Match\Mana;
 use Stratadox\CardGame\Match\SpellCard;
 use Stratadox\CardGame\Match\UnitCard;
-use Stratadox\CardGame\PlayerId;
+use Stratadox\CardGame\Match\PlayerId;
 
 final class InMemoryDecks implements Decks
 {

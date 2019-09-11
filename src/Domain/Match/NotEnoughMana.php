@@ -4,7 +4,6 @@ namespace Stratadox\CardGame\Match;
 
 use RuntimeException;
 use function sprintf;
-use Stratadox\CardGame\CardId;
 
 final class NotEnoughMana extends RuntimeException implements CannotPlayThisCard
 {

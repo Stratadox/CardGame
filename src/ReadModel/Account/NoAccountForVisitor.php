@@ -3,7 +3,7 @@
 namespace Stratadox\CardGame\ReadModel\Account;
 
 use RuntimeException;
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Visiting\VisitorId;
 use function sprintf;
 
 final class NoAccountForVisitor extends RuntimeException

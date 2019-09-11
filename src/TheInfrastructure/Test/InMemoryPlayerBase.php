@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\Infrastructure\Test;
 
 use Stratadox\CardGame\Account\PlayerAccount;
 use Stratadox\CardGame\Account\PlayerBase;
-use Stratadox\CardGame\AccountId;
+use Stratadox\CardGame\Account\AccountId;
 use Stratadox\CardGame\ReadModel\Account\NoAccountForVisitor;
 
 /**

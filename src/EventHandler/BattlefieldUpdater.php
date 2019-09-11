@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\EventHandler;
 
 use function assert;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\Event\CardWasPlayed;
+use Stratadox\CardGame\Match\CardWasPlayed;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 

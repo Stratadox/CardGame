@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\EventHandler;
 
 use function assert;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Account\Event\VisitorOpenedAnAccount;
+use Stratadox\CardGame\Account\VisitorOpenedAnAccount;
 use Stratadox\CardGame\ReadModel\PlayerList;
 
 final class PlayerListAppender implements EventHandler

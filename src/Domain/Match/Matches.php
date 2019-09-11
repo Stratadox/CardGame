@@ -2,8 +2,6 @@
 
 namespace Stratadox\CardGame\Match;
 
-use Stratadox\CardGame\PlayerId;
-
 interface Matches
 {
     public function add(Match $match): void;

@@ -2,9 +2,6 @@
 
 namespace Stratadox\CardGame\Match;
 
-use Stratadox\CardGame\CardId;
-use Stratadox\CardGame\PlayerId;
-
 final class UnitCard implements Card
 {
     private $id;

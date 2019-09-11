@@ -3,7 +3,6 @@
 namespace Stratadox\CardGame\Account;
 
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\AccountId;
 
 interface AccountEvent extends DomainEvent
 {

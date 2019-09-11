@@ -2,10 +2,10 @@
 
 namespace Stratadox\CardGame\Infrastructure\IdentityManagement;
 
-use Stratadox\CardGame\Proposal\Handler\IdentityGenerator;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Proposal\ProposalIdGenerator;
+use Stratadox\CardGame\Proposal\ProposalId;
 
-final class DefaultProposalIdGenerator extends IdGenerator implements IdentityGenerator
+final class DefaultProposalIdGenerator extends IdGenerator implements ProposalIdGenerator
 {
     public function generate(): ProposalId
     {

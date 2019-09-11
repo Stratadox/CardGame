@@ -2,8 +2,6 @@
 
 namespace Stratadox\CardGame\Match;
 
-use Stratadox\CardGame\CardId;
-
 interface Card
 {
     public function id(): CardId;

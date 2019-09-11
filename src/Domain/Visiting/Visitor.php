@@ -3,12 +3,10 @@
 namespace Stratadox\CardGame\Visiting;
 
 use DateTimeInterface;
+use Stratadox\CardGame\Account\AccountId;
+use Stratadox\CardGame\Account\PlayerAccount;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
-use Stratadox\CardGame\Account\PlayerAccount;
-use Stratadox\CardGame\AccountId;
-use Stratadox\CardGame\Visiting\Event\VisitedPage;
-use Stratadox\CardGame\VisitorId;
 
 final class Visitor implements DomainEventRecorder
 {

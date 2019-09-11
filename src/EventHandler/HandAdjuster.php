@@ -4,10 +4,10 @@ namespace Stratadox\CardGame\EventHandler;
 
 use function array_map;
 use function assert;
-use Stratadox\CardGame\CardId;
+use Stratadox\CardGame\Match\CardId;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\Event\CardWasPlayed;
-use Stratadox\CardGame\Match\Event\PlayerDrewOpeningHand;
+use Stratadox\CardGame\Match\CardWasPlayed;
+use Stratadox\CardGame\Match\PlayerDrewOpeningHand;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;

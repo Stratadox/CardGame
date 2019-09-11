@@ -2,8 +2,7 @@
 
 namespace Stratadox\CardGame\Match;
 
-use Stratadox\CardGame\AccountId;
-use Stratadox\CardGame\PlayerId;
+use Stratadox\CardGame\Account\AccountId;
 
 interface Decks
 {

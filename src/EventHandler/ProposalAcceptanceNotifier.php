@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\EventHandler;
 
 use function assert;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Proposal\Event\ProposalWasAccepted;
+use Stratadox\CardGame\Proposal\ProposalWasAccepted;
 use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposal;
 use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 

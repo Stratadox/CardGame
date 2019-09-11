@@ -4,7 +4,6 @@ namespace Stratadox\CardGame\Match;
 
 use function array_map;
 use function array_values;
-use Stratadox\CardGame\CardId;
 
 final class Hand
 {

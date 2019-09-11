@@ -3,7 +3,6 @@
 namespace Stratadox\CardGame\Visiting;
 
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\VisitorId;
 
 interface VisitorEvent extends DomainEvent
 {

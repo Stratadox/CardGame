@@ -5,7 +5,7 @@ namespace Stratadox\CardGame\Infrastructure\Test;
 use function array_rand;
 use function assert;
 use Stratadox\CardGame\Match\DecidesWhoStarts;
-use Stratadox\CardGame\PlayerId;
+use Stratadox\CardGame\Match\PlayerId;
 
 final class WhoStartsDecider implements DecidesWhoStarts
 {

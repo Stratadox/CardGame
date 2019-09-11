@@ -2,8 +2,6 @@
 
 namespace Stratadox\CardGame\Visiting;
 
-use Stratadox\CardGame\VisitorId;
-
 interface AllVisitors
 {
     public function add(Visitor $visitor): void ;

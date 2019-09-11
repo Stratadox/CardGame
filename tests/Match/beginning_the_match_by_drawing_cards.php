@@ -5,15 +5,15 @@ namespace Stratadox\CardGame\Test\Match;
 use function assert;
 use function end as newest_of_the;
 use PHPUnit\Framework\Constraint\IsEqual;
-use Stratadox\CardGame\CardId;
-use Stratadox\CardGame\Match\Command\StartTheMatch;
-use Stratadox\CardGame\Proposal\Command\ProposeMatch;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Match\CardId;
+use Stratadox\CardGame\Match\StartTheMatch;
+use Stratadox\CardGame\Proposal\ProposeMatch;
+use Stratadox\CardGame\Proposal\ProposalId;
 use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;
 use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Proposal\MatchProposal;
 use Stratadox\CardGame\Test\CardGameTest;
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Visiting\VisitorId;
 
 /**
  * @testdox beginning the match by drawing cards

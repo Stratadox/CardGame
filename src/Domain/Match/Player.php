@@ -2,11 +2,9 @@
 
 namespace Stratadox\CardGame\Match;
 
-use Stratadox\CardGame\CardId;
-use Stratadox\CardGame\PlayerId;
-
 final class Player
 {
+    // @todo minimise
     private $id;
     private $deck;
     private $hand;

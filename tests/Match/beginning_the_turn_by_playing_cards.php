@@ -3,7 +3,7 @@
 namespace Stratadox\CardGame\Test\Match;
 
 use function assert;
-use Stratadox\CardGame\Match\Command\PlayTheCard;
+use Stratadox\CardGame\Match\PlayTheCard;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 

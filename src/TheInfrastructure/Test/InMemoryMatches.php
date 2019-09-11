@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\Infrastructure\Test;
 
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
-use Stratadox\CardGame\PlayerId;
+use Stratadox\CardGame\Match\PlayerId;
 
 final class InMemoryMatches implements Matches
 {

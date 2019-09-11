@@ -4,7 +4,6 @@ namespace Stratadox\CardGame\Proposal;
 
 use RuntimeException;
 use function sprintf;
-use Stratadox\CardGame\ProposalId;
 
 final class ProposalHasNotBeenAccepted extends RuntimeException
 {

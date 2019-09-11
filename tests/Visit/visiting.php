@@ -3,8 +3,8 @@
 namespace Stratadox\CardGame\Test\Visit;
 
 use Stratadox\CardGame\Test\CardGameTest;
-use Stratadox\CardGame\Visiting\Command\Visit;
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Visiting\Visit;
+use Stratadox\CardGame\Visiting\VisitorId;
 
 /**
  * @testdox visiting the information pages

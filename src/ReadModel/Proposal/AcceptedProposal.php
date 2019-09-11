@@ -3,7 +3,7 @@
 namespace Stratadox\CardGame\ReadModel\Proposal;
 
 use DateTimeInterface;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Proposal\ProposalId;
 
 final class AcceptedProposal
 {

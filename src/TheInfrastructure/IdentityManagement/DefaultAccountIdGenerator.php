@@ -2,8 +2,8 @@
 
 namespace Stratadox\CardGame\Infrastructure\IdentityManagement;
 
-use Stratadox\CardGame\Account\Handler\AccountIdGenerator;
-use Stratadox\CardGame\AccountId;
+use Stratadox\CardGame\Account\AccountIdGenerator;
+use Stratadox\CardGame\Account\AccountId;
 
 final class DefaultAccountIdGenerator extends IdGenerator implements AccountIdGenerator
 {

@@ -2,10 +2,6 @@
 
 namespace Stratadox\CardGame\Proposal;
 
-use DateTimeInterface as Moment;
-use Stratadox\CardGame\AccountId;
-use Stratadox\CardGame\ProposalId;
-
 interface ProposedMatches
 {
     public function add(MatchProposal $proposal): void;

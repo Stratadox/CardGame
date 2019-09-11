@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\Infrastructure\Test;
 
 use Stratadox\CardGame\Visiting\AllVisitors;
 use Stratadox\CardGame\Visiting\Visitor;
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Visiting\VisitorId;
 
 final class InMemoryVisitorRepository implements AllVisitors
 {

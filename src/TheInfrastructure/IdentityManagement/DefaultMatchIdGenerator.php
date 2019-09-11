@@ -2,8 +2,8 @@
 
 namespace Stratadox\CardGame\Infrastructure\IdentityManagement;
 
-use Stratadox\CardGame\Match\Handler\MatchIdGenerator;
-use Stratadox\CardGame\MatchId;
+use Stratadox\CardGame\Match\MatchIdGenerator;
+use Stratadox\CardGame\Match\MatchId;
 
 final class DefaultMatchIdGenerator extends IdGenerator implements MatchIdGenerator
 {

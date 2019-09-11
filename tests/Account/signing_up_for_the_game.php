@@ -3,10 +3,10 @@
 namespace Stratadox\CardGame\Test\Account;
 
 use Stratadox\CardGame\ReadModel\Account\NoAccountForVisitor;
-use Stratadox\CardGame\Account\Command\OpenAnAccount;
+use Stratadox\CardGame\Account\OpenAnAccount;
 use Stratadox\CardGame\Test\CardGameTest;
-use Stratadox\CardGame\Visiting\Command\Visit;
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Visiting\Visit;
+use Stratadox\CardGame\Visiting\VisitorId;
 
 /**
  * @testdox signing up for the game

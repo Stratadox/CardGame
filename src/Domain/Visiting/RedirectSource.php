@@ -4,8 +4,6 @@ namespace Stratadox\CardGame\Visiting;
 
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
-use Stratadox\CardGame\Visiting\Event\BroughtVisitor;
-use Stratadox\CardGame\VisitorId;
 
 final class RedirectSource implements DomainEventRecorder
 {

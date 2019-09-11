@@ -5,8 +5,8 @@ namespace Stratadox\CardGame\EventHandler;
 use function assert;
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\ReadModel\PageVisitsStatisticsReport;
-use Stratadox\CardGame\Visiting\Event\BroughtVisitor;
-use Stratadox\CardGame\Visiting\Event\VisitedPage;
+use Stratadox\CardGame\Visiting\BroughtVisitor;
+use Stratadox\CardGame\Visiting\VisitedPage;
 
 final class StatisticsUpdater implements EventHandler
 {

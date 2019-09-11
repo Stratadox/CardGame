@@ -4,11 +4,11 @@ namespace Stratadox\CardGame\Test\Match;
 
 use DateInterval;
 use function sprintf;
-use Stratadox\CardGame\Proposal\Command\AcceptTheProposal;
-use Stratadox\CardGame\Proposal\Command\ProposeMatch;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Proposal\AcceptTheProposal;
+use Stratadox\CardGame\Proposal\ProposeMatch;
+use Stratadox\CardGame\Proposal\ProposalId;
 use Stratadox\CardGame\Test\CardGameTest;
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Visiting\VisitorId;
 
 /**
  * @testdox accepting and making match proposals

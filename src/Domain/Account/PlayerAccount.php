@@ -5,11 +5,9 @@ namespace Stratadox\CardGame\Account;
 use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
-use Stratadox\CardGame\Account\Event\VisitorOpenedAnAccount;
-use Stratadox\CardGame\AccountId;
 use Stratadox\CardGame\Proposal\MatchProposal;
-use Stratadox\CardGame\ProposalId;
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Proposal\ProposalId;
+use Stratadox\CardGame\Visiting\VisitorId;
 
 final class PlayerAccount implements DomainEventRecorder
 {

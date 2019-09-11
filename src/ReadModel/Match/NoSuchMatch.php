@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\ReadModel\Match;
 
 use RuntimeException;
 use function sprintf;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Proposal\ProposalId;
 
 final class NoSuchMatch extends RuntimeException
 {

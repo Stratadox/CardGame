@@ -5,13 +5,10 @@ namespace Stratadox\CardGame\Proposal;
 use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
-use Stratadox\CardGame\AccountId;
+use Stratadox\CardGame\Account\AccountId;
 use Stratadox\CardGame\Match\MatchSetup;
-use Stratadox\CardGame\MatchId;
-use Stratadox\CardGame\PlayerId;
-use Stratadox\CardGame\Proposal\Event\MatchWasProposed;
-use Stratadox\CardGame\Proposal\Event\ProposalWasAccepted;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Match\MatchId;
+use Stratadox\CardGame\Match\PlayerId;
 
 final class MatchProposal implements DomainEventRecorder
 {

@@ -2,14 +2,9 @@
 
 namespace Stratadox\CardGame\Match;
 
-use function assert;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
-use Stratadox\CardGame\Match\Event\CardWasPlayed;
-use Stratadox\CardGame\Match\Event\MatchHasBegun;
-use Stratadox\CardGame\Match\Event\PlayerDrewOpeningHand;
-use Stratadox\CardGame\MatchId;
-use Stratadox\CardGame\PlayerId;
+use function assert;
 
 /**
  * Aggregate root

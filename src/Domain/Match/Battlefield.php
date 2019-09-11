@@ -2,8 +2,6 @@
 
 namespace Stratadox\CardGame\Match;
 
-use Stratadox\CardGame\PlayerId;
-
 final class Battlefield
 {
     /** @var UnitCard[][] */

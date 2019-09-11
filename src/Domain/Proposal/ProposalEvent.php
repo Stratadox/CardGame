@@ -3,7 +3,6 @@
 namespace Stratadox\CardGame\Proposal;
 
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\ProposalId;
 
 interface ProposalEvent extends DomainEvent
 {

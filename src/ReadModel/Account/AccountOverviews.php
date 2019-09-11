@@ -2,7 +2,7 @@
 
 namespace Stratadox\CardGame\ReadModel\Account;
 
-use Stratadox\CardGame\VisitorId;
+use Stratadox\CardGame\Visiting\VisitorId;
 
 class AccountOverviews
 {

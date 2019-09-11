@@ -2,15 +2,13 @@
 
 namespace Stratadox\CardGame\Match;
 
-use function array_map;
 use Stratadox\CardGame\DomainEventRecording;
-use Stratadox\CardGame\Match\Event\StartedSettingUpMatchForProposal;
-use Stratadox\CardGame\MatchId;
-use Stratadox\CardGame\PlayerId;
-use Stratadox\CardGame\ProposalId;
+use Stratadox\CardGame\Proposal\ProposalId;
+use function array_map;
 
 final class MatchSetup
 {
+    // @todo get rid of this
     use DomainEventRecording;
 
     private $id;
