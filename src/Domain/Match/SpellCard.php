@@ -3,16 +3,17 @@
 namespace Stratadox\CardGame\Match;
 
 use Stratadox\CardGame\CardId;
-use Stratadox\CardGame\Match\CardType;
 use Stratadox\CardGame\PlayerId;
 
 final class SpellCard implements Card
 {
     private $id;
+    private $cost;
 
-    public function __construct(CardId $id, PlayerId $owner)
+    public function __construct(CardId $id, PlayerId $owner, Mana $cost)
     {
         $this->id = $id;
+        $this->cost = $cost;
     }
 
     public function id(): CardId
@@ -27,5 +28,10 @@ final class SpellCard implements Card
     public function type(): CardType
     {
         return CardType::spell();
+    }
+
+    public function cost(): Mana
+    {
+        return $this->cost;
     }
 }

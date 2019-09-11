@@ -58,6 +58,22 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     }
 
     /** @test */
+    function not_playing_cards_after_mana_ran_out()
+    {
+        // if we had enough mana, we'd be playing 3 cards now... but our test
+        // setup only gives us enough basic income to play the first two cards
+        // of our hand, or to only play the third card, but not three cards.
+
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+
+        $this->assertCount(2, $this->battlefield->cardsInPlay());
+        $this->assertCount(5, $this->cardsInTheHand->of($this->currentPlayer));
+        // @todo assert error stream output
+    }
+
+    /** @test */
     function no_cards_on_the_board_when_playing_a_spell()
     {
         // the third card in the sample deck is a spell
@@ -67,4 +83,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->assertCount(0, $this->battlefield->cardsInPlay());
         $this->assertCount(6, $this->cardsInTheHand->of($this->currentPlayer));
     }
+
+    // @todo cannot play cards after ending the card playing phase
+    // @todo cannot play cards after the card playing phase expired
 }

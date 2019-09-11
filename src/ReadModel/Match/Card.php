@@ -8,13 +8,13 @@ final class Card
 {
     private $id;
     private $name;
-    private $price;
+    private $cost;
 
-    public function __construct(CardId $id, string $name, int $price)
+    public function __construct(CardId $id, string $name, int $cost)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->price = $price;
+        $this->cost = $cost;
     }
 
     public function id(): CardId
@@ -27,9 +27,9 @@ final class Card
         return $this->name;
     }
 
-    public function price(): int
+    public function cost(): int
     {
-        return $this->price;
+        return $this->cost;
     }
 
     public function isTheSameAs(Card $theOtherCard): bool

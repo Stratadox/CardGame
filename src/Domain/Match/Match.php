@@ -19,7 +19,7 @@ final class Match implements DomainEventRecorder
     use DomainEventRecording;
 
     private $id;
-    private $turn;
+    private $currentPlayer;
     private $battlefield;
     /** @var Player[] */
     private $players = [];
@@ -37,7 +37,7 @@ final class Match implements DomainEventRecorder
         foreach ($players as $player) {
             $this->players[(string) $player->id()] = $player;
             if ($whoBegins->is($player->id())) {
-                $this->turn = $player;
+                $this->currentPlayer = $player;
             }
             $this->events[] = new PlayerDrewOpeningHand(
                 $id,
@@ -45,7 +45,7 @@ final class Match implements DomainEventRecorder
                 ...$player->cardsInHand()
             );
         }
-        assert($this->turn !== null);
+        assert($this->currentPlayer !== null);
         $this->events[] = new MatchHasBegun($id, $whoBegins);
     }
 
@@ -73,19 +73,22 @@ final class Match implements DomainEventRecorder
         return false;
     }
 
+    /** @throws CannotPlayThisCard */
     public function playCard(int $cardNumber, PlayerId $player): void
     {
-        if (!$player->is($this->turn->id())) {
-            return;
+        if (!$player->is($this->currentPlayer->id())) {
+            throw NotYourTurn::cannotPlayCardsYet();
         }
-        $card = $this->turn->play($cardNumber);
-        $card->putIntoActionOn($this->battlefield);
 
-        $this->events[] = new CardWasPlayed(
-            $this->id,
-            $player,
-            $card->id(),
-            $card->type()
-        );
+        $this->currentPlayer->playOn($this->battlefield, $cardNumber);
+
+        foreach ($this->currentPlayer->takePlayedCards() as $newlyPlayedCard) {
+            $this->events[] = new CardWasPlayed(
+                $this->id,
+                $player,
+                $newlyPlayedCard->id(),
+                $newlyPlayedCard->type()
+            );
+        }
     }
 }

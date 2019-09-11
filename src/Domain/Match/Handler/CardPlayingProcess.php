@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\Match\CannotPlayThisCard;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\CommandHandling\Handler;
@@ -25,7 +26,11 @@ final class CardPlayingProcess implements Handler
 
         $match = $this->matches->playedBy($command->player());
 
-        $match->playCard($command->offset(), $command->player());
+        try {
+            $match->playCard($command->offset(), $command->player());
+        } catch (CannotPlayThisCard $forSomeReason) {
+            // @todo tell 'em
+        }
 
         $this->eventBag->takeFrom($match);
     }

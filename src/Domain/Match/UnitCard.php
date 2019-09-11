@@ -3,18 +3,19 @@
 namespace Stratadox\CardGame\Match;
 
 use Stratadox\CardGame\CardId;
-use Stratadox\CardGame\Match\CardType;
 use Stratadox\CardGame\PlayerId;
 
 final class UnitCard implements Card
 {
     private $id;
     private $owner;
+    private $cost;
 
-    public function __construct(CardId $id, PlayerId $owner)
+    public function __construct(CardId $id, PlayerId $owner, Mana $cost)
     {
         $this->id = $id;
         $this->owner = $owner;
+        $this->cost = $cost;
     }
 
     public function id(): CardId
@@ -30,5 +31,10 @@ final class UnitCard implements Card
     public function type(): CardType
     {
         return CardType::unit();
+    }
+
+    public function cost(): Mana
+    {
+        return $this->cost;
     }
 }

@@ -24,12 +24,17 @@ final class Hand
         return new self(...$drawnCards);
     }
 
-    public function play(int $cardNumber): Card
+    public function take(int $cardNumber): Card
     {
         $card = $this->cards[$cardNumber];
         unset($this->cards[$cardNumber]);
         $this->cards = array_values($this->cards);
         return $card;
+    }
+
+    public function costOf(int $cardNumber): Mana
+    {
+        return $this->cards[$cardNumber]->cost();
     }
 
     /** @return CardId[] */
