@@ -51,6 +51,9 @@ Turns begin by collecting the mana from the mana pools.
 Players get a basic income of mana each turn, which is complemented by their 
 mana pools.
 
+The player draws a card from their deck, unless their hand is already full.
+If this was the last card in their deck, they lose the match.
+
 If there are any attacking units from the opponents last turn, the player gets 
 to decide which of those to block.
 Attackers can be defended against by multiple defenders at a time. 
