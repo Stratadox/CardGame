@@ -6,9 +6,10 @@ use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
 use Stratadox\CardGame\Account\AccountId;
-use Stratadox\CardGame\Match\MatchSetup;
-use Stratadox\CardGame\Match\MatchId;
-use Stratadox\CardGame\Match\PlayerId;
+use Stratadox\CardGame\Match\Match\Match;
+use Stratadox\CardGame\Match\Match\MatchId;
+use Stratadox\CardGame\Match\Player\PlayerId;
+use Stratadox\CardGame\Match\Match\StartedSettingUpMatchForProposal;
 
 final class MatchProposal implements DomainEventRecorder
 {
@@ -64,19 +65,15 @@ final class MatchProposal implements DomainEventRecorder
     }
 
     /** @throws ProposalHasNotBeenAccepted */
-    public function begin(
-        MatchId $matchId,
-        PlayerId $playerOne,
-        PlayerId $playerTwo
-    ): MatchSetup {
+    public function prepare(MatchId $theMatch, PlayerId ...$players): Match
+    {
         if (!$this->acceptedAt) {
             throw ProposalHasNotBeenAccepted::cannotStartMatch($this->id);
         }
-        return MatchSetup::fromProposal(
-            $this->id,
-            $matchId,
-            $playerOne,
-            $playerTwo
+        return Match::prepare(
+            $theMatch,
+            [new StartedSettingUpMatchForProposal($theMatch, $this->id, ...$players)],
+            ...$players
         );
     }
 }

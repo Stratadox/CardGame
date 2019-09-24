@@ -4,7 +4,7 @@ namespace Stratadox\CardGame;
 
 trait DomainEventRecording
 {
-    private $events = [];
+    protected $events = [];
 
     public function domainEvents(): iterable
     {

@@ -4,8 +4,8 @@ namespace Stratadox\CardGame\ReadModel\Match;
 
 use function array_merge as combine_cards;
 use function array_values;
-use Stratadox\CardGame\Match\CardId;
-use Stratadox\CardGame\Match\PlayerId;
+use Stratadox\CardGame\Deck\CardId;
+use Stratadox\CardGame\Match\Player\PlayerId;
 
 class CardsInHand
 {

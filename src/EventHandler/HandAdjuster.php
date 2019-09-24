@@ -2,39 +2,36 @@
 
 namespace Stratadox\CardGame\EventHandler;
 
-use function array_map;
 use function assert;
-use Stratadox\CardGame\Match\CardId;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\CardWasPlayed;
-use Stratadox\CardGame\Match\PlayerDrewOpeningHand;
+use Stratadox\CardGame\Match\Card\CardWasDrawn;
+use Stratadox\CardGame\Match\Card\SpellVanishedToTheVoid;
+use Stratadox\CardGame\Match\Card\UnitMovedIntoPlay;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
-use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 
 final class HandAdjuster implements EventHandler
 {
     private $cardsInHand;
-    private $allCards;
+    private $cards;
 
     public function __construct(CardsInHand $cardsInHand, AllCards $allCards)
     {
         $this->cardsInHand = $cardsInHand;
-        $this->allCards = $allCards;
+        $this->cards = $allCards;
     }
 
     public function handle(DomainEvent $event): void
     {
-        if($event instanceof CardWasPlayed) {
-            $this->cardsInHand->played($event->card(), $event->player());
-        } else {
-            assert($event instanceof PlayerDrewOpeningHand);
-            $this->cardsInHand->draw($event->player(), ...array_map(
-                function (CardId $id) : Card {
-                    return $this->allCards->withId($id);
-                },
-                $event->cards()
-            ));
+        if($event instanceof UnitMovedIntoPlay) {
+            $this->cardsInHand->played($event->template(), $event->player());
+        } else if ($event instanceof SpellVanishedToTheVoid) {
+            $this->cardsInHand->played($event->template(), $event->player());
+        } else if ($event instanceof CardWasDrawn) {
+            $this->cardsInHand->draw(
+                $event->player(),
+                $this->cards->withId($event->template())
+            );
         }
     }
 }

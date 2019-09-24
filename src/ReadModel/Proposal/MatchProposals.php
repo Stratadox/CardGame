@@ -23,9 +23,14 @@ class MatchProposals
         $this->proposals[(string) $proposal->id()] = $proposal;
     }
 
-    public function remove(ProposalId $id): void
+    public function remove(ProposalId $proposal): void
     {
-        unset($this->proposals[(string) $id]);
+        unset($this->proposals[$proposal->id()]);
+    }
+
+    public function withId(ProposalId $proposal): MatchProposal
+    {
+        return $this->proposals[$proposal->id()];
     }
 
     /** @return MatchProposal[] */

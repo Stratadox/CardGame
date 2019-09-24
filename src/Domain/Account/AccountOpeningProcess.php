@@ -32,11 +32,16 @@ final class AccountOpeningProcess implements Handler
 
         $visitor = $this->visitor->withId($command->visitorId());
         if ($visitor === null) {
+            // @todo emit something?
             return;
         }
 
-        $player = $visitor->openAccount($this->newIdentity->generate());
-        $this->playerBase->add($player);
-        $this->eventBag->takeFrom($player);
+        $this->register($visitor->openAccount($this->newIdentity->generate()));
+    }
+
+    private function register(PlayerAccount $theAccount): void
+    {
+        $this->playerBase->add($theAccount);
+        $this->eventBag->takeFrom($theAccount);
     }
 }

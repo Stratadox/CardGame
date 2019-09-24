@@ -7,7 +7,18 @@ use PHPUnit\Framework\Constraint\LogicalOr;
 use PHPUnit\Framework\Constraint\LogicalXor;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
-use Stratadox\CardGame\Match\CardId;
+use Stratadox\CardGame\EventHandler\CardPlayingSaga;
+use Stratadox\CardGame\EventHandler\MatchStartingSaga;
+use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultMatchDeckIdGenerator;
+use Stratadox\CardGame\Infrastructure\Test\CommandQueueingCommandBus;
+use Stratadox\CardGame\Infrastructure\Test\InMemoryCards;
+use Stratadox\CardGame\Infrastructure\Test\InMemoryDeckTemplates;
+use Stratadox\CardGame\Infrastructure\Test\InMemoryPlayers;
+use Stratadox\CardGame\Infrastructure\Test\NotShufflingDeckShuffler;
+use Stratadox\CardGame\Infrastructure\Test\OneAtATimeBus;
+use Stratadox\CardGame\Infrastructure\Test\WhoStartsDecider;
+use Stratadox\CardGame\Match\Card\CardDrawingProcess;
+use Stratadox\CardGame\Match\Card\CardId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\EventHandler\AccountOverviewCreator;
 use Stratadox\CardGame\EventHandler\BattlefieldUpdater;
@@ -22,22 +33,37 @@ use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
 use Stratadox\CardGame\Infrastructure\DomainEvents\EventCollector;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultMatchIdGenerator;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultPlayerIdGenerator;
-use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryMatches;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryProposedMatches;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryRedirectSources;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultAccountIdGenerator;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultProposalIdGenerator;
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
-use Stratadox\CardGame\Infrastructure\Test\WhoStartsDecider;
-use Stratadox\CardGame\Match\PlayTheCard;
-use Stratadox\CardGame\Match\StartTheMatch;
-use Stratadox\CardGame\Match\CardWasPlayed;
-use Stratadox\CardGame\Match\MatchHasBegun;
-use Stratadox\CardGame\Match\PlayerDrewOpeningHand;
-use Stratadox\CardGame\Match\StartedSettingUpMatchForProposal;
-use Stratadox\CardGame\Match\CardPlayingProcess;
-use Stratadox\CardGame\Match\MatchStartingProcess;
+use Stratadox\CardGame\Match\Card\CardPlayingProcess;
+use Stratadox\CardGame\Match\Card\CardWasDrawn;
+use Stratadox\CardGame\Match\Card\PutIntoPlay;
+use Stratadox\CardGame\Match\Card\SpellVanishedToTheVoid;
+use Stratadox\CardGame\Match\Deck\AddedAllCardsToTheMatch;
+use Stratadox\CardGame\Match\Deck\AddedTheCardToTheMatch;
+use Stratadox\CardGame\Match\Deck\CardPreparationProcess;
+use Stratadox\CardGame\Match\Deck\DeckHasBeenShuffled;
+use Stratadox\CardGame\Match\Deck\DeckShufflingProcess;
+use Stratadox\CardGame\Match\Deck\Decks;
+use Stratadox\CardGame\Match\Card\DrawCard;
+use Stratadox\CardGame\Match\Match\KickOffProcess;
+use Stratadox\CardGame\Match\Match\OkayLetsGo;
+use Stratadox\CardGame\Match\Player\MatchJoiningProcess;
+use Stratadox\CardGame\Match\Player\PaidForCard;
+use Stratadox\CardGame\Match\Player\PlayTheCard;
+use Stratadox\CardGame\Match\Deck\ShuffleDeck;
+use Stratadox\CardGame\Match\Deck\PrepareCard;
+use Stratadox\CardGame\Match\Player\StartPlaying;
+use Stratadox\CardGame\Match\Match\StartTheMatch;
+use Stratadox\CardGame\Match\Card\UnitMovedIntoPlay;
+use Stratadox\CardGame\Match\Match\MatchHasBegun;
+use Stratadox\CardGame\Match\Match\StartedSettingUpMatchForProposal;
+use Stratadox\CardGame\Match\Player\CardBuyingProcess;
+use Stratadox\CardGame\Match\Match\MatchPreparationProcess;
 use Stratadox\CardGame\Account\VisitorOpenedAnAccount;
 use Stratadox\CardGame\Account\AccountOpeningProcess;
 use Stratadox\CardGame\Account\OpenAnAccount;
@@ -75,6 +101,9 @@ abstract class CardGameTest extends TestCase
 {
     /** @var Handler */
     private $input;
+
+    /** @var CommandQueueingCommandBus */
+    private $subsequentCommands;
 
     /** @var Handler[] */
     private $overruledHandlers = [];
@@ -125,10 +154,10 @@ abstract class CardGameTest extends TestCase
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
         $this->testCard = [
-            new Card(CardId::from('card-id-1'), 'test 1', 2),
-            new Card(CardId::from('card-id-2'), 'test 2', 4),
-            new Card(CardId::from('card-id-3'), 'test 3', 3),
-            new Card(CardId::from('card-id-4'), 'test 4', 1),
+            new Card(CardId::from('card-id-1'), 'test 1', 1),
+            new Card(CardId::from('card-id-2'), 'test 2', 3),
+            new Card(CardId::from('card-id-3'), 'test 3', 4),
+            new Card(CardId::from('card-id-4'), 'test 4', 6),
             new Card(CardId::from('card-id-5'), 'test 5', 2),
             new Card(CardId::from('card-id-6'), 'test 6', 5),
             new Card(CardId::from('card-id-7'), 'test 7', 2),
@@ -137,7 +166,9 @@ abstract class CardGameTest extends TestCase
             new Card(CardId::from('card-id-10'), 'test 10', 2),
         ];
 
+        // @todo: extract TestConfiguration
         $eventBag = new EventCollector();
+        $this->subsequentCommands = new CommandQueueingCommandBus();
         $this->input = AfterHandling::invoke(
             new CommandToEventGlue(
                 $eventBag,
@@ -152,6 +183,11 @@ abstract class CardGameTest extends TestCase
         $matchPublisher = new MatchPublisher($this->ongoingMatches);
         $allCards = new AllCards(...$this->testCard);
         $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
+        $matchStartingSaga = new MatchStartingSaga(
+            $this->matchProposals,
+            $this->subsequentCommands
+        );
+        $cardPlayingSaga = new CardPlayingSaga($this->subsequentCommands);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
             VisitedPage::class => new StatisticsUpdater($this->statistics),
@@ -163,13 +199,21 @@ abstract class CardGameTest extends TestCase
             ProposalWasAccepted::class => new ProposalAcceptanceNotifier(
                 $this->acceptedProposals
             ),
-            StartedSettingUpMatchForProposal::class => $matchPublisher,
+            StartedSettingUpMatchForProposal::class => [
+                $matchPublisher,
+                $matchStartingSaga,
+            ],
+            DeckHasBeenShuffled::class => $matchStartingSaga,
+            AddedTheCardToTheMatch::class => $matchStartingSaga,
+            AddedAllCardsToTheMatch::class => $matchStartingSaga,
+            CardWasDrawn::class => [$handAdjuster, $matchStartingSaga],
             MatchHasBegun::class => $matchPublisher,
-            CardWasPlayed::class => [
+            UnitMovedIntoPlay::class => [
                 new BattlefieldUpdater($this->battlefield, $allCards),
                 $handAdjuster,
             ],
-            PlayerDrewOpeningHand::class => $handAdjuster,
+            SpellVanishedToTheVoid::class => $handAdjuster,
+            PaidForCard::class => $cardPlayingSaga,
         ]);
     }
 
@@ -185,10 +229,13 @@ abstract class CardGameTest extends TestCase
         $visitors = new InMemoryVisitorRepository();
         $playerBase = new InMemoryPlayerBase();
         $proposals = new InMemoryProposedMatches();
-        $decks = new InMemoryDecks();
         $matches = new InMemoryMatches();
+        $cards = new InMemoryCards();
+        $players = new InMemoryPlayers();
+        $deckTemplates = new InMemoryDeckTemplates();
+        $decks = new Decks();
         $uuidFactory = new UuidFactory();
-        return CommandBus::handling([
+        return new OneAtATimeBus(CommandBus::handling([
             Visit::class => new VisitationProcess(
                 $visitors,
                 new InMemoryRedirectSources(),
@@ -213,25 +260,59 @@ abstract class CardGameTest extends TestCase
                 $proposals,
                 $eventBag
             ),
-            StartTheMatch::class => new MatchStartingProcess(
+            StartTheMatch::class => new MatchPreparationProcess(
+                $proposals,
                 new DefaultMatchIdGenerator($uuidFactory),
                 new DefaultPlayerIdGenerator($uuidFactory),
-                $proposals,
+                $matches,
+                $eventBag
+            ),
+            StartPlaying::class => new MatchJoiningProcess(
+                $players,
+                $deckTemplates,
                 $decks,
+                new DefaultMatchDeckIdGenerator($uuidFactory)
+            ),
+            ShuffleDeck::class => new DeckShufflingProcess(
+                $decks,
+                new NotShufflingDeckShuffler($eventBag)
+            ),
+            PrepareCard::class => new CardPreparationProcess(
+                $decks,
+                $cards,
+                $eventBag
+            ),
+            DrawCard::class => new CardDrawingProcess(
+                $cards,
+                $players,
+                $eventBag
+            ),
+            OkayLetsGo::class => new KickOffProcess(
                 $matches,
                 new WhoStartsDecider(),
                 $eventBag
             ),
-            PlayTheCard::class => new CardPlayingProcess(
-                $matches,
+            PlayTheCard::class => new CardBuyingProcess(
+                $players,
+                $cards,
                 $eventBag
             ),
-        ]);
+            PutIntoPlay::class => new CardPlayingProcess(
+                $cards,
+                $eventBag
+            ),
+        ]));
     }
 
     protected function handle(object $command): void
     {
         $this->input->handle($command);
+
+        $nextCommands = $this->subsequentCommands->all();
+        $this->subsequentCommands->clear();
+        foreach ($nextCommands as $nextCommand) {
+            $this->handle($nextCommand);
+        }
     }
 
     protected function signUpForTheGame(VisitorId $visitorId): void

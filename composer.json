@@ -20,7 +20,7 @@
   },
   "require": {
     "php": ">=7.2",
-    "stratadox/command-handling": "^0.1.0",
+    "stratadox/command-handling": "^0.2.0",
     "ramsey/uuid": "^3.8",
     "stratadox/immutable-collection": "^1.1",
     "stratadox/clock": "^0.1.0"
