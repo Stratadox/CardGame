@@ -51,7 +51,7 @@ final class MatchProposal implements DomainEventRecorder
             return;
         }
         $this->isAccepted = true;
-        $this->events[] = new ProposalWasAccepted($this->id, $now);
+        $this->events[] = new ProposalWasAccepted($this->id);
     }
 
     public function proposedBy(): AccountId

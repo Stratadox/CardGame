@@ -26,9 +26,4 @@ final class MatchHasBegun implements MatchEvent
     {
         return $this->whoBegins;
     }
-
-    public function payload(): array
-    {
-        return [];
-    }
 }

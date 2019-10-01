@@ -42,7 +42,6 @@ final class Visitor implements DomainEventRecorder
         $this->events[] = new VisitedPage(
             $this->id,
             $page,
-            $when,
             $source,
             $isFirstVisit
         );

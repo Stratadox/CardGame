@@ -72,11 +72,6 @@ final class Match implements DomainEventRecorder
         return $this->id;
     }
 
-    public function isBeingPlayedBy(PlayerId $thePlayer): bool
-    {
-        return $this->players->includes($thePlayer);
-    }
-
     public function playTheCard(
         int $cardNumber,
         PlayerId $thePlayer,

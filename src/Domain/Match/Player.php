@@ -43,11 +43,6 @@ final class Player implements DomainEventRecorder
         return $this->cards->inHand()[$number];
     }
 
-    public function cardsInHand(): int
-    {
-        return count($this->cards->inHand());
-    }
-
     public function cardsInPlay(): int
     {
         return count($this->cards->inPlay());

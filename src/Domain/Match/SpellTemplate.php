@@ -30,11 +30,6 @@ final class SpellTemplate implements CardTemplate
         return Location::inVoid();
     }
 
-    public function cardIdentifier(): CardId
-    {
-        return $this->card;
-    }
-
     public function cost(): Mana
     {
         return $this->cost;

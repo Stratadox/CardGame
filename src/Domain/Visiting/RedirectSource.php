@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Visiting;
 
+use function assert;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
 
@@ -22,22 +23,16 @@ final class RedirectSource implements DomainEventRecorder
         return $this->id;
     }
 
-    public function bring(VisitorId $visitorId): void
+    public function bring(VisitorId $visitor): void
     {
-        if (isset($this->redirectedVisitors[(string) $visitorId])) {
-            return;
-        }
-        $visitor = new Visitor($visitorId);
+        assert(!isset($this->redirectedVisitors[$visitor->id()]));
 
-        $this->redirectedVisitors[(string) $visitorId] = $visitor;
-        $this->events[] = new BroughtVisitor($this->id, $visitorId);
+        $this->redirectedVisitors[$visitor->id()] = $visitor;
+        $this->events[] = new BroughtVisitor($this->id);
     }
 
     public function visitorWithId(VisitorId $visitorId): Visitor
     {
-        if (isset($this->redirectedVisitors[(string) $visitorId])) {
-            return $this->redirectedVisitors[(string) $visitorId];
-        }
-        // @todo throw
+        return new Visitor($visitorId);
     }
 }

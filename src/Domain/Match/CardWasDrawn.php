@@ -31,9 +31,4 @@ final class CardWasDrawn implements MatchEvent
     {
         return $this->card;
     }
-
-    public function payload(): array
-    {
-        return [];
-    }
 }

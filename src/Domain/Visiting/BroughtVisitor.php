@@ -5,21 +5,14 @@ namespace Stratadox\CardGame\Visiting;
 final class BroughtVisitor implements RedirectSourceEvent
 {
     private $source;
-    private $visitor;
 
-    public function __construct(string $source, VisitorId $visitor)
+    public function __construct(string $source)
     {
         $this->source = $source;
-        $this->visitor = $visitor;
     }
 
     public function aggregateId(): string
     {
         return $this->source;
-    }
-
-    public function payload(): array
-    {
-        return ['visitor' => (string) $this->visitor];
     }
 }

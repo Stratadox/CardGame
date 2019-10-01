@@ -30,11 +30,6 @@ final class UnitTemplate implements CardTemplate
         return Location::inPlay($position);
     }
 
-    public function cardIdentifier(): CardId
-    {
-        return $this->card;
-    }
-
     public function cost(): Mana
     {
         return $this->cost;

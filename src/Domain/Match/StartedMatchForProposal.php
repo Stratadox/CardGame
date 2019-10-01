@@ -35,12 +35,4 @@ final class StartedMatchForProposal implements MatchEvent
     {
         return $this->players;
     }
-
-    public function payload(): array
-    {
-        return [
-            'proposal' => $this->proposalId,
-            'players' => $this->players,
-        ];
-    }
 }

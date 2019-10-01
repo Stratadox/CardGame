@@ -31,11 +31,4 @@ final class VisitorOpenedAnAccount implements AccountEvent
     {
         return $this->visitorId;
     }
-
-    public function payload(): array
-    {
-        return [
-            'visitor' => $this->forVisitor(),
-        ];
-    }
 }

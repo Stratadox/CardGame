@@ -43,13 +43,4 @@ final class MatchWasProposed implements ProposalEvent
     {
         return $this->validUntil;
     }
-
-    public function payload(): array
-    {
-        return [
-            'proposedBy' => $this->proposedBy(),
-            'proposedTo' => $this->proposedTo(),
-            'validUntil' => $this->validUntil(),
-        ];
-    }
 }

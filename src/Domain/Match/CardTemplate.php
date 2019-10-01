@@ -2,8 +2,6 @@
 
 namespace Stratadox\CardGame\Match;
 
-use Stratadox\CardGame\Deck\CardId;
-
 interface CardTemplate
 {
     /** @return MatchEvent[] */
@@ -11,6 +9,5 @@ interface CardTemplate
     /** @return MatchEvent[] */
     public function drawingEvents(MatchId $match, PlayerId $player): array;
     public function playingMove(int $position): Location;
-    public function cardIdentifier(): CardId;
     public function cost(): Mana;
 }

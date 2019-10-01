@@ -22,16 +22,6 @@ final class Players extends ImmutableCollection
         return $this[array_rand($this->items())]->id();
     }
 
-    public function includes(PlayerId $thePlayer): bool
-    {
-        foreach ($this as $thisOne) {
-            if ($thePlayer->is($thisOne->id())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public function withId(PlayerId $thePlayer): Player
     {
         foreach ($this as $thisOne) {

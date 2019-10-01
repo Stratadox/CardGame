@@ -34,9 +34,4 @@ final class UnitMovedIntoPlay implements MatchEvent
     {
         return $this->player;
     }
-
-    public function payload(): array
-    {
-        return [/*@todo*/];
-    }
 }

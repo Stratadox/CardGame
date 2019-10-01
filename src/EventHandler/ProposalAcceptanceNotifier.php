@@ -22,7 +22,7 @@ final class ProposalAcceptanceNotifier implements EventHandler
         assert($event instanceof ProposalWasAccepted);
 
         $this->acceptedProposals->add(
-            new AcceptedProposal($event->aggregateId(), $event->when())
+            new AcceptedProposal($event->aggregateId())
         );
     }
 }

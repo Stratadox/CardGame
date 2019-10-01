@@ -5,5 +5,4 @@ namespace Stratadox\CardGame;
 interface DomainEvent
 {
     public function aggregateId();
-    public function payload(): array;
 }
