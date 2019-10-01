@@ -12,7 +12,7 @@ class AllCards
     public function __construct(Card ...$cards)
     {
         foreach ($cards as $card) {
-            $this->cards[(string) $card->id()] = $card;
+            $this->cards[$card->id()] = $card;
         }
     }
 

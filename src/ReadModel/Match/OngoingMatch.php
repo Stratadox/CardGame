@@ -2,8 +2,8 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-use Stratadox\CardGame\Match\Match\MatchId;
-use Stratadox\CardGame\Match\Player\PlayerId;
+use Stratadox\CardGame\Match\MatchId;
+use Stratadox\CardGame\Match\PlayerId;
 
 final class OngoingMatch
 {

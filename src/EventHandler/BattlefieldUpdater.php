@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\EventHandler;
 
 use function assert;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\Card\UnitMovedIntoPlay;
+use Stratadox\CardGame\Match\UnitMovedIntoPlay;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 
@@ -23,6 +23,6 @@ final class BattlefieldUpdater implements EventHandler
     {
         assert($event instanceof UnitMovedIntoPlay);
 
-        $this->battlefield->add($this->cards->withId($event->template()));
+        $this->battlefield->add($this->cards->withId($event->card()));
     }
 }

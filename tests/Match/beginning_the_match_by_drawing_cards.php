@@ -5,8 +5,7 @@ namespace Stratadox\CardGame\Test\Match;
 use function assert;
 use function end as newest_of_the;
 use PHPUnit\Framework\Constraint\IsEqual;
-use Stratadox\CardGame\Match\Card\CardId;
-use Stratadox\CardGame\Match\Match\StartTheMatch;
+use Stratadox\CardGame\Match\StartTheMatch;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Proposal\ProposalId;
 use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;
@@ -43,7 +42,7 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
 
         $this->proposal = $this->acceptedProposals->since($this->clock->now())[0]->id();
 
-        $this->bogusCard = new Card(CardId::from('bogus'), 'bogus', 0);
+        $this->bogusCard = new Card('bogus', 'bogus', 0);
     }
 
     /** @test */

@@ -2,22 +2,31 @@
 
 namespace Stratadox\CardGame\Proposal;
 
+use Stratadox\CardGame\Account\AccountId;
+
 final class AcceptTheProposal
 {
     private $proposalId;
+    private $acceptingPlayer;
 
-    private function __construct(ProposalId $id)
+    private function __construct(ProposalId $id, AccountId $acceptingPlayer)
     {
         $this->proposalId = $id;
+        $this->acceptingPlayer = $acceptingPlayer;
     }
 
-    public static function withId(ProposalId $id): self
+    public static function withId(ProposalId $id, AccountId $acceptingPlayer): self
     {
-        return new self($id);
+        return new self($id, $acceptingPlayer);
     }
 
-    public function proposalId(): ProposalId
+    public function proposal(): ProposalId
     {
         return $this->proposalId;
+    }
+
+    public function acceptingPlayer(): AccountId
+    {
+        return $this->acceptingPlayer;
     }
 }

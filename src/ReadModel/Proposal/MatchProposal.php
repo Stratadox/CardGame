@@ -30,21 +30,6 @@ final class MatchProposal
         return $this->id;
     }
 
-    public function from(): AccountId
-    {
-        return $this->from;
-    }
-
-    public function to(): AccountId
-    {
-        return $this->to;
-    }
-
-    public function validUntil(): DateTimeInterface
-    {
-        return $this->validUntil;
-    }
-
     public function canBeAcceptedBy(AccountId $player, DateTimeInterface $when): bool
     {
         return $this->to->is($player) && $when <= $this->validUntil;

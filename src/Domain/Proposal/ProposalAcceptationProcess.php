@@ -13,8 +13,11 @@ final class ProposalAcceptationProcess implements Handler
     private $proposals;
     private $eventBag;
 
-    public function __construct(Clock $clock, ProposedMatches $proposals, EventBag $eventBag)
-    {
+    public function __construct(
+        Clock $clock,
+        ProposedMatches $proposals,
+        EventBag $eventBag
+    ) {
         $this->clock = $clock;
         $this->proposals = $proposals;
         $this->eventBag = $eventBag;
@@ -24,8 +27,8 @@ final class ProposalAcceptationProcess implements Handler
     {
         assert($command instanceof AcceptTheProposal);
 
-        $proposal = $this->proposals->withId($command->proposalId());
-        if (!$proposal) {
+        $proposal = $this->proposals->withId($command->proposal());
+        if (!$proposal || !$command->acceptingPlayer()->is($proposal->proposedTo())) {
             // @todo new TriedToAcceptProposalWithInvalidId($command->proposalId())
             return;
         }

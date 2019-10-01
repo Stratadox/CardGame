@@ -18,15 +18,8 @@ final class BroughtVisitor implements RedirectSourceEvent
         return $this->source;
     }
 
-    public function visitor(): VisitorId
-    {
-        return $this->visitor;
-    }
-
     public function payload(): array
     {
-        return [
-            'visitor' => (string) $this->visitor,
-        ];
+        return ['visitor' => (string) $this->visitor];
     }
 }

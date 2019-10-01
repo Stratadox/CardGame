@@ -2,10 +2,10 @@
 
 namespace Stratadox\CardGame\Infrastructure\Test;
 
-use Stratadox\CardGame\Match\Match\Match;
-use Stratadox\CardGame\Match\Match\Matches;
-use Stratadox\CardGame\Match\Match\MatchId;
-use Stratadox\CardGame\Match\Player\PlayerId;
+use Stratadox\CardGame\Match\Match;
+use Stratadox\CardGame\Match\Matches;
+use Stratadox\CardGame\Match\MatchId;
+use Stratadox\CardGame\Match\PlayerId;
 
 final class InMemoryMatches implements Matches
 {
@@ -17,8 +17,12 @@ final class InMemoryMatches implements Matches
         $this->matches[(string) $match->id()] = $match;
     }
 
-    public function withId(MatchId $match): Match
+    public function forPlayer(PlayerId $thePlayer): Match
     {
-        return $this->matches[$match->id()];
+        foreach ($this->matches as $theMatch) {
+            if ($theMatch->isBeingPlayedBy($thePlayer)) {
+                return $theMatch;
+            }
+        }
     }
 }

@@ -6,10 +6,10 @@ use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
 use Stratadox\CardGame\Account\AccountId;
-use Stratadox\CardGame\Match\Match\Match;
-use Stratadox\CardGame\Match\Match\MatchId;
-use Stratadox\CardGame\Match\Player\PlayerId;
-use Stratadox\CardGame\Match\Match\StartedSettingUpMatchForProposal;
+use Stratadox\CardGame\Match\Decks;
+use Stratadox\CardGame\Match\Match;
+use Stratadox\CardGame\Match\MatchId;
+use Stratadox\CardGame\Match\PlayerId;
 
 final class MatchProposal implements DomainEventRecorder
 {
@@ -17,7 +17,7 @@ final class MatchProposal implements DomainEventRecorder
 
     private $id;
     private $validUntil;
-    private $acceptedAt;
+    private $isAccepted;
     private $proposedBy;
     private $proposedTo;
 
@@ -47,10 +47,10 @@ final class MatchProposal implements DomainEventRecorder
     public function accept(DateTimeInterface $now): void
     {
         if ($now > $this->validUntil) {
-            // @todo events[] = new TriedToAcceptExpiredProposal($this->id, $now)
+            // @todo events += new TriedAcceptingExpiredProposal($this->id, $now)
             return;
         }
-        $this->acceptedAt = $now;
+        $this->isAccepted = true;
         $this->events[] = new ProposalWasAccepted($this->id, $now);
     }
 
@@ -65,15 +65,11 @@ final class MatchProposal implements DomainEventRecorder
     }
 
     /** @throws ProposalHasNotBeenAccepted */
-    public function prepare(MatchId $theMatch, PlayerId ...$players): Match
+    public function start(MatchId $theMatch, Decks $decks, PlayerId ...$players): Match
     {
-        if (!$this->acceptedAt) {
+        if (!$this->isAccepted) {
             throw ProposalHasNotBeenAccepted::cannotStartMatch($this->id);
         }
-        return Match::prepare(
-            $theMatch,
-            [new StartedSettingUpMatchForProposal($theMatch, $this->id, ...$players)],
-            ...$players
-        );
+        return Match::fromProposal($theMatch, $this->id, $decks, ...$players);
     }
 }

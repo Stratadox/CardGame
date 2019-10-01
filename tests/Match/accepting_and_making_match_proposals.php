@@ -2,11 +2,9 @@
 
 namespace Stratadox\CardGame\Test\Match;
 
-use DateInterval;
-use function sprintf;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
-use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Proposal\ProposalId;
+use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\Visiting\VisitorId;
 
@@ -77,7 +75,8 @@ class accepting_and_making_match_proposals extends CardGameTest
         $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
 
         $this->handle(AcceptTheProposal::withId(
-            $this->matchProposals->for($this->accountTwo)[0]->id()
+            $this->matchProposals->for($this->accountTwo)[0]->id(),
+            $this->accountTwo
         ));
 
         $this->assertNotEmpty(
@@ -88,7 +87,10 @@ class accepting_and_making_match_proposals extends CardGameTest
     /** @test */
     function cannot_accept_non_existing_proposals()
     {
-        $this->handle(AcceptTheProposal::withId(ProposalId::from('non-existing')));
+        $this->handle(AcceptTheProposal::withId(
+            ProposalId::from('non-existing'),
+            $this->accountTwo
+        ));
 
         $this->assertEmpty(
             $this->acceptedProposals->since($this->allBegan)
@@ -102,7 +104,7 @@ class accepting_and_making_match_proposals extends CardGameTest
         $proposalId = $this->matchProposals->for($this->accountTwo)[0]->id();
 
         $this->clock->fastForward($this->aLittleTooLong);
-        $this->handle(AcceptTheProposal::withId($proposalId));
+        $this->handle(AcceptTheProposal::withId($proposalId, $this->accountTwo));
 
         $this->assertEmpty(
             $this->acceptedProposals->since($this->allBegan)
@@ -117,18 +119,23 @@ class accepting_and_making_match_proposals extends CardGameTest
 
 
         $this->clock->fastForward($this->almostTooLong);
-        $this->handle(AcceptTheProposal::withId($proposalId));
+        $this->handle(AcceptTheProposal::withId($proposalId, $this->accountTwo));
 
         $this->assertNotEmpty(
             $this->acceptedProposals->since($this->allBegan)
         );
     }
 
-    private function interval(int $seconds): DateInterval
+    /** @test */
+    function cannot_accept_proposals_for_others()
     {
-        return new DateInterval(sprintf(
-            'PT%dS',
-            $seconds
-        ));
+        $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
+        $proposalId = $this->matchProposals->for($this->accountTwo)[0]->id();
+
+        $this->handle(AcceptTheProposal::withId($proposalId, $this->accountOne));
+
+        $this->assertEmpty(
+            $this->acceptedProposals->since($this->allBegan)
+        );
     }
 }

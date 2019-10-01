@@ -2,11 +2,10 @@
 
 namespace Stratadox\CardGame\EventHandler;
 
-use function assert;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\Card\CardWasDrawn;
-use Stratadox\CardGame\Match\Card\SpellVanishedToTheVoid;
-use Stratadox\CardGame\Match\Card\UnitMovedIntoPlay;
+use Stratadox\CardGame\Match\CardWasDrawn;
+use Stratadox\CardGame\Match\SpellVanishedToTheVoid;
+use Stratadox\CardGame\Match\UnitMovedIntoPlay;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 
@@ -24,13 +23,13 @@ final class HandAdjuster implements EventHandler
     public function handle(DomainEvent $event): void
     {
         if($event instanceof UnitMovedIntoPlay) {
-            $this->cardsInHand->played($event->template(), $event->player());
+            $this->cardsInHand->played((string) $event->card(), $event->player());
         } else if ($event instanceof SpellVanishedToTheVoid) {
-            $this->cardsInHand->played($event->template(), $event->player());
+            $this->cardsInHand->played((string) $event->card(), $event->player());
         } else if ($event instanceof CardWasDrawn) {
             $this->cardsInHand->draw(
                 $event->player(),
-                $this->cards->withId($event->template())
+                $this->cards->withId($event->card())
             );
         }
     }
