@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\Match;
 
 use function array_filter;
 use function array_reduce;
+use Closure;
 use function count;
 use Stratadox\ImmutableCollection\ImmutableCollection;
 
@@ -21,32 +22,23 @@ final class Cards extends ImmutableCollection
 
     public function inHand(): Cards
     {
-        return new self(...array_filter(
-            $this->items(),
-            function (Card $card): bool {
-                return $card->isInHand();
-            }
-        ));
+        return $this->filterBy(function (Card $card): bool {
+            return $card->isInHand();
+        });
     }
 
     public function inPlay(): Cards
     {
-        return new self(...array_filter(
-            $this->items(),
-            function (Card $card): bool {
-                return $card->isInPlay();
-            }
-        ));
+        return $this->filterBy(function (Card $card): bool {
+            return $card->isInPlay();
+        });
     }
 
     public function inDeck(): Cards
     {
-        return new self(...array_filter(
-            $this->items(),
-            function (Card $card): bool {
-                return $card->isInDeck();
-            }
-        ));
+        return $this->filterBy(function (Card $card): bool {
+            return $card->isInDeck();
+        });
     }
 
     public function drawFromTopOfDeck(MatchId $match, PlayerId $player): void
@@ -65,5 +57,10 @@ final class Cards extends ImmutableCollection
                 return $topmost;
             }
         );
+    }
+
+    private function filterBy(Closure $function): Cards
+    {
+        return new self(...array_filter($this->items(), $function));
     }
 }

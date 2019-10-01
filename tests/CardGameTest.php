@@ -33,6 +33,8 @@ use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultProposalIdGenera
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
 use Stratadox\CardGame\Match\CardPlayingProcess;
 use Stratadox\CardGame\Match\CardWasDrawn;
+use Stratadox\CardGame\Match\EndCardPlaying;
+use Stratadox\CardGame\Match\EndPlayPhaseProcess;
 use Stratadox\CardGame\Match\SpellVanishedToTheVoid;
 use Stratadox\CardGame\Match\PlayTheCard;
 use Stratadox\CardGame\Match\StartTheMatch;
@@ -225,6 +227,7 @@ abstract class CardGameTest extends TestCase
                 new DefaultPlayerIdGenerator($uuidFactory),
                 $matches,
                 $decks,
+                $this->clock,
                 $eventBag
             ),
 //            DrawCard::class => new CardDrawingProcess(
@@ -232,6 +235,11 @@ abstract class CardGameTest extends TestCase
 //                $eventBag
 //            ),
             PlayTheCard::class => new CardPlayingProcess(
+                $matches,
+                $this->clock,
+                $eventBag
+            ),
+            EndCardPlaying::class => new EndPlayPhaseProcess(
                 $matches,
                 $eventBag
             ),

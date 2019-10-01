@@ -4,16 +4,19 @@ namespace Stratadox\CardGame\Match;
 
 use function assert;
 use Stratadox\CardGame\EventBag;
+use Stratadox\Clock\Clock;
 use Stratadox\CommandHandling\Handler;
 
 final class CardPlayingProcess implements Handler
 {
     private $matches;
+    private $clock;
     private $eventBag;
 
-    public function __construct(Matches $matches, EventBag $eventBag)
+    public function __construct(Matches $matches, Clock $clock, EventBag $eventBag)
     {
         $this->matches = $matches;
+        $this->clock = $clock;
         $this->eventBag = $eventBag;
     }
 
@@ -30,7 +33,7 @@ final class CardPlayingProcess implements Handler
 
     private function play(Match $theMatch, PlayerId $player, int $cardNumber): void
     {
-        $theMatch->playTheCard($cardNumber, $player);
+        $theMatch->playTheCard($cardNumber, $player, $this->clock->now());
 
         $this->eventBag->takeFrom($theMatch);
     }

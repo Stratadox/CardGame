@@ -3,7 +3,7 @@
 namespace Stratadox\CardGame\Test\Match;
 
 use function assert;
-//use Stratadox\CardGame\Match\EndCardPlaying;
+use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\PlayerId;
 use Stratadox\CardGame\Match\PlayTheCard;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
@@ -98,25 +98,25 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         // @todo assert error stream output
     }
 
-//    /** @test */
-//    function not_playing_cards_after_ending_the_card_playing_phase()
-//    {
-//        $this->handle(EndCardPlaying::phase($this->currentPlayer));
-//
-//        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
-//
-//        $this->assertCount(0, $this->battlefield->cardsInPlay());
-//        $this->assertCount(7, $this->cardsInTheHand->of($this->currentPlayer));
-//    }
-//
-//    /** @test */
-//    function not_playing_cards_after_the_card_playing_phase_expired()
-//    {
-//        $this->clock->fastForward($this->justOverTheCardPlayingTimeLimit);
-//
-//        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
-//
-//        $this->assertCount(0, $this->battlefield->cardsInPlay());
-//        $this->assertCount(7, $this->cardsInTheHand->of($this->currentPlayer));
-//    }
+    /** @test */
+    function not_playing_cards_after_ending_the_card_playing_phase()
+    {
+        $this->handle(EndCardPlaying::phase($this->currentPlayer));
+
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+
+        $this->assertCount(0, $this->battlefield->cardsInPlay());
+        $this->assertCount(7, $this->cardsInTheHand->of($this->currentPlayer));
+    }
+
+    /** @test */
+    function not_playing_cards_after_the_card_playing_phase_expired()
+    {
+        $this->clock->fastForward($this->justOverTheCardPlayingTimeLimit);
+
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+
+        $this->assertCount(0, $this->battlefield->cardsInPlay());
+        $this->assertCount(7, $this->cardsInTheHand->of($this->currentPlayer));
+    }
 }

@@ -5,6 +5,7 @@ namespace Stratadox\CardGame\Match;
 use function array_keys;
 use function array_map;
 use function array_merge;
+use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
 use Stratadox\CardGame\Proposal\ProposalId;
@@ -33,12 +34,14 @@ final class Match implements DomainEventRecorder
         MatchId $id,
         ProposalId $proposal,
         Decks $decks,
+        DateTimeInterface $startTime,
         PlayerId ...$players
     ): self {
         return Match::begin(
             $id,
             new StartedMatchForProposal($id, $proposal, ...$players),
-            new Players(...self::players($decks, ...$players))
+            new Players(...self::players($decks, ...$players)),
+            $startTime
         );
     }
 
@@ -52,12 +55,13 @@ final class Match implements DomainEventRecorder
     private static function begin(
         MatchId $id,
         MatchEvent $creationEvent,
-        Players $players
+        Players $players,
+        DateTimeInterface $startTime
     ): Match {
         $whoBegins = $players->pickRandomId();
         return new Match(
             $id,
-            new Turn($whoBegins),
+            new Turn($whoBegins, $startTime),
             $players,
             [$creationEvent, new MatchHasBegun($id, $whoBegins)]
         );
@@ -73,9 +77,12 @@ final class Match implements DomainEventRecorder
         return $this->players->includes($thePlayer);
     }
 
-    public function playTheCard(int $cardNumber, PlayerId $thePlayer): void
-    {
-        $this->putIntoPlay($this->players->withId($thePlayer), $cardNumber);
+    public function playTheCard(
+        int $cardNumber,
+        PlayerId $thePlayer,
+        DateTimeInterface $when
+    ): void {
+        $this->putIntoPlay($this->players->withId($thePlayer), $cardNumber, $when);
     }
 
     public function drawOpeningHands(): void
@@ -88,9 +95,17 @@ final class Match implements DomainEventRecorder
         }
     }
 
-    private function putIntoPlay(Player $thePlayer, int $cardNumber): void
+    public function endCardPlayingPhaseFor(PlayerId $thePlayer): void
     {
-        if ($this->turn->prohibitsPlaying($thePlayer->cardInHand($cardNumber))) {
+        $this->turn = $this->turn->endCardPlayingPhaseFor($thePlayer);
+    }
+
+    private function putIntoPlay(
+        Player $thePlayer,
+        int $cardNumber,
+        DateTimeInterface $when
+    ): void {
+        if ($this->turn->prohibitsPlaying($thePlayer->cardInHand($cardNumber), $when)) {
             // events += new CannotPlay($theCard)?
             return;
         }

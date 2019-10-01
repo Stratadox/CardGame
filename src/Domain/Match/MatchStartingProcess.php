@@ -5,6 +5,7 @@ namespace Stratadox\CardGame\Match;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Proposal\ProposalHasNotBeenAccepted;
 use Stratadox\CardGame\Proposal\ProposedMatches;
+use Stratadox\Clock\Clock;
 use Stratadox\CommandHandling\Handler;
 use function assert;
 
@@ -15,6 +16,7 @@ final class MatchStartingProcess implements Handler
     private $newPlayerId;
     private $matches;
     private $decks;
+    private $clock;
     private $eventBag;
 
     public function __construct(
@@ -23,6 +25,7 @@ final class MatchStartingProcess implements Handler
         PlayerIdGenerator $newPlayerId,
         Matches $matches,
         DeckForAccount $deckForAccount,
+        Clock $clock,
         EventBag $eventBag
     ) {
         $this->proposals = $proposals;
@@ -30,6 +33,7 @@ final class MatchStartingProcess implements Handler
         $this->newPlayerId = $newPlayerId;
         $this->matches = $matches;
         $this->decks = $deckForAccount;
+        $this->clock = $clock;
         $this->eventBag = $eventBag;
     }
 
@@ -47,6 +51,7 @@ final class MatchStartingProcess implements Handler
                     $this->decks->deckFor($proposal->proposedBy()),
                     $this->decks->deckFor($proposal->proposedBy())
                 ),
+                $this->clock->now(),
                 $this->newPlayerId->generate(),
                 $this->newPlayerId->generate()
             );
