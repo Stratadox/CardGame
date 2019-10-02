@@ -56,7 +56,9 @@ final class MatchStartingProcess implements Handler
                 $this->newPlayerId->generate()
             );
         } catch (ProposalHasNotBeenAccepted $cannotStartYet) {
-            // @todo error handling?
+            $this->eventBag->add(
+                new TriedStartingMatchForPendingProposal($proposal->id())
+            );
             return;
         }
 

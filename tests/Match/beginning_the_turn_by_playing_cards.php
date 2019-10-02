@@ -119,9 +119,14 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
             'Cannot play cards right now.',
             $this->illegalMove->latestFor($this->otherPlayer)
         );
-        $this->assertCount(
-            2,
-            $this->illegalMove->since(0, $this->otherPlayer)
+        $this->assertCount(2, $this->illegalMove->since(0, $this->otherPlayer));
+        $this->assertEquals(
+            'Cannot play cards right now.',
+            $this->illegalMove->since(0, $this->otherPlayer)[0]
+        );
+        $this->assertEquals(
+            'Cannot play cards right now.',
+            $this->illegalMove->since(0, $this->otherPlayer)[1]
         );
     }
 

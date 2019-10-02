@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
 use function sprintf;
 use Stratadox\CardGame\EventHandler\IllegalMoveNotifier;
+use Stratadox\CardGame\EventHandler\ProposalProblemNotifier;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
 use Stratadox\CardGame\Infrastructure\Test\OneAtATimeBus;
 use Stratadox\CardGame\EventBag;
@@ -49,6 +50,7 @@ use Stratadox\CardGame\Account\VisitorOpenedAnAccount;
 use Stratadox\CardGame\Account\AccountOpeningProcess;
 use Stratadox\CardGame\Account\OpenAnAccount;
 use Stratadox\CardGame\Match\TriedPlayingCardOutOfTurn;
+use Stratadox\CardGame\Match\TriedStartingMatchForPendingProposal;
 use Stratadox\CardGame\Match\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\UnitMovedToAttack;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
@@ -72,6 +74,7 @@ use Stratadox\CardGame\Account\AccountId;
 use Stratadox\CardGame\ReadModel\PageVisitsStatisticsReport;
 use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 use Stratadox\CardGame\ReadModel\Proposal\MatchProposals;
+use Stratadox\CardGame\ReadModel\ProposalProblemStream;
 use Stratadox\CardGame\Visiting\BroughtVisitor;
 use Stratadox\CardGame\Visiting\VisitedPage;
 use Stratadox\CardGame\Visiting\VisitationProcess;
@@ -126,6 +129,9 @@ abstract class CardGameTest extends TestCase
     /** @var IllegalMoveStream */
     protected $illegalMove;
 
+    /** @var ProposalProblemStream */
+    protected $proposalProblems;
+
     protected function setUp(): void
     {
         $this->clock = TestClock::make();
@@ -139,6 +145,7 @@ abstract class CardGameTest extends TestCase
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
         $this->illegalMove = new IllegalMoveStream();
+        $this->proposalProblems = new ProposalProblemStream();
         $this->testCard = [
             new Card('card-id-1'),
             new Card('card-id-2'),
@@ -170,6 +177,7 @@ abstract class CardGameTest extends TestCase
         $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
         $battlefieldUpdater = new BattlefieldUpdater($this->battlefield, $allCards);
         $illegalMoveNotifier = new IllegalMoveNotifier($this->illegalMove);
+        $proposalProblemNotifier = new ProposalProblemNotifier($this->proposalProblems);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
             VisitedPage::class => new StatisticsUpdater($this->statistics),
@@ -184,6 +192,7 @@ abstract class CardGameTest extends TestCase
             StartedMatchForProposal::class => [
                 $matchPublisher,
             ],
+            TriedStartingMatchForPendingProposal::class => $proposalProblemNotifier,
             CardWasDrawn::class => $handAdjuster,
             MatchHasBegun::class => $matchPublisher,
             SpellVanishedToTheVoid::class => $handAdjuster,
@@ -305,24 +314,6 @@ abstract class CardGameTest extends TestCase
         $this->handle(StartTheMatch::forProposal($proposal->id()));
 
         $this->match = $this->ongoingMatches->forProposal($proposal->id());
-    }
-
-    protected function assertEither(
-        $value,
-        Constraint ...$constraints
-    ): void {
-        $this->assertThat($value, LogicalOr::fromConstraints(...$constraints));
-    }
-
-    protected function assertEitherButNotBoth(
-        $value,
-        Constraint $constraint1,
-        Constraint $constraint2
-    ): void {
-        $this->assertThat($value, LogicalXor::fromConstraints(
-            $constraint1,
-            $constraint2
-        ));
     }
 
     protected function interval(int $seconds): DateInterval

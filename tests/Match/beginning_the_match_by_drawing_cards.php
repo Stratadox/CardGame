@@ -4,7 +4,6 @@ namespace Stratadox\CardGame\Test\Match;
 
 use function assert;
 use function end as newest_of_the;
-use PHPUnit\Framework\Constraint\IsEqual;
 use Stratadox\CardGame\Match\StartTheMatch;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Proposal\ProposalId;
@@ -87,8 +86,12 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
         assert($proposal instanceof MatchProposal);
         $this->handle(StartTheMatch::forProposal($proposal->id()));
 
-        $this->expectException(NoSuchMatch::class);
+        $this->assertEquals(
+            'The proposal is still pending!',
+            $this->proposalProblems->latestFor($proposal->id())
+        );
 
+        $this->expectException(NoSuchMatch::class);
         $this->ongoingMatches->forProposal($this->proposal);
     }
 
@@ -100,10 +103,9 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
         $match = $this->ongoingMatches->forProposal($this->proposal);
         [$playerOne, $playerTwo] = $match->players();
 
-        $this->assertEitherButNotBoth(
-            true,
-            new IsEqual($match->itIsTheTurnOf($playerOne)),
-            new IsEqual($match->itIsTheTurnOf($playerTwo))
+        $this->assertTrue(
+            $match->itIsTheTurnOf($playerOne) xor
+            $match->itIsTheTurnOf($playerTwo)
         );
     }
 }
