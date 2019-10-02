@@ -9,6 +9,7 @@ use PHPUnit\Framework\Constraint\LogicalXor;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
 use function sprintf;
+use Stratadox\CardGame\EventHandler\IllegalMoveNotifier;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
 use Stratadox\CardGame\Infrastructure\Test\OneAtATimeBus;
 use Stratadox\CardGame\EventBag;
@@ -37,6 +38,7 @@ use Stratadox\CardGame\Match\CardPlayingProcess;
 use Stratadox\CardGame\Match\CardWasDrawn;
 use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\EndPlayPhaseProcess;
+use Stratadox\CardGame\Match\PlayerDidNotHaveTheMana;
 use Stratadox\CardGame\Match\SpellVanishedToTheVoid;
 use Stratadox\CardGame\Match\PlayTheCard;
 use Stratadox\CardGame\Match\StartTheMatch;
@@ -46,6 +48,7 @@ use Stratadox\CardGame\Match\MatchStartingProcess;
 use Stratadox\CardGame\Account\VisitorOpenedAnAccount;
 use Stratadox\CardGame\Account\AccountOpeningProcess;
 use Stratadox\CardGame\Account\OpenAnAccount;
+use Stratadox\CardGame\Match\TriedPlayingCardOutOfTurn;
 use Stratadox\CardGame\Match\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\UnitMovedToAttack;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
@@ -55,6 +58,7 @@ use Stratadox\CardGame\Proposal\ProposalAcceptationProcess;
 use Stratadox\CardGame\Proposal\ProposalWasAccepted;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
+use Stratadox\CardGame\ReadModel\IllegalMoveStream;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 use Stratadox\CardGame\ReadModel\Match\Card;
@@ -119,6 +123,9 @@ abstract class CardGameTest extends TestCase
     /** @var Battlefield */
     protected $battlefield;
 
+    /** @var IllegalMoveStream */
+    protected $illegalMove;
+
     protected function setUp(): void
     {
         $this->clock = TestClock::make();
@@ -131,6 +138,7 @@ abstract class CardGameTest extends TestCase
         $this->cardsInTheHand = new CardsInHand();
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
+        $this->illegalMove = new IllegalMoveStream();
         $this->testCard = [
             new Card('card-id-1'),
             new Card('card-id-2'),
@@ -161,6 +169,7 @@ abstract class CardGameTest extends TestCase
         $allCards = new AllCards(...$this->testCard);
         $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
         $battlefieldUpdater = new BattlefieldUpdater($this->battlefield, $allCards);
+        $illegalMoveNotifier = new IllegalMoveNotifier($this->illegalMove);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
             VisitedPage::class => new StatisticsUpdater($this->statistics),
@@ -183,6 +192,8 @@ abstract class CardGameTest extends TestCase
                 $handAdjuster,
             ],
             UnitMovedToAttack::class => $battlefieldUpdater,
+            PlayerDidNotHaveTheMana::class => $illegalMoveNotifier,
+            TriedPlayingCardOutOfTurn::class => $illegalMoveNotifier,
         ]);
     }
 

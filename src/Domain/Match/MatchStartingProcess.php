@@ -42,7 +42,7 @@ final class MatchStartingProcess implements Handler
         assert($command instanceof StartTheMatch);
 
         $proposal = $this->proposals->withId($command->proposal());
-        assert($proposal !== null);
+        assert($proposal !== null); // @todo error event instead?
 
         try {
             $match = $proposal->start(

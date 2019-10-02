@@ -6,6 +6,13 @@ trait DomainEventRecording
 {
     protected $events = [];
 
+    private function happened(DomainEvent ...$newEvents): void
+    {
+        foreach ($newEvents as $newEvent) {
+            $this->events[] = $newEvent;
+        }
+    }
+
     public function domainEvents(): iterable
     {
         return $this->events;

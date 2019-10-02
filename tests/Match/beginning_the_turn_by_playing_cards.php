@@ -75,7 +75,12 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(5, $this->cardsInTheHand->of($this->currentPlayer));
-        // @todo assert error stream output
+
+        $this->assertEquals(
+            'Not enough mana!',
+            $this->illegalMove->latestFor($this->currentPlayer)
+        );
+        $this->assertCount(1, $this->illegalMove->since(0, $this->currentPlayer));
     }
 
     /** @test */
@@ -95,7 +100,46 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->handle(PlayTheCard::number(0, $this->otherPlayer));
 
         $this->assertEmpty($this->battlefield->cardsInPlay($this->match->id()));
-        // @todo assert error stream output
+
+        $this->assertEquals(
+            'Cannot play cards right now.',
+            $this->illegalMove->latestFor($this->otherPlayer)
+        );
+    }
+
+    /** @test */
+    function not_playing_cards_in_the_other_players_turn_twice()
+    {
+        $this->handle(PlayTheCard::number(0, $this->otherPlayer));
+        $this->handle(PlayTheCard::number(0, $this->otherPlayer));
+
+        $this->assertEmpty($this->battlefield->cardsInPlay($this->match->id()));
+
+        $this->assertEquals(
+            'Cannot play cards right now.',
+            $this->illegalMove->latestFor($this->otherPlayer)
+        );
+        $this->assertCount(
+            2,
+            $this->illegalMove->since(0, $this->otherPlayer)
+        );
+    }
+
+    /** @test */
+    function no_illegal_move_messages_when_all_moves_were_legal()
+    {
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+
+        $this->assertNull($this->illegalMove->latestFor($this->currentPlayer));
+        $this->assertEmpty($this->illegalMove->since(0, $this->currentPlayer));
+    }
+
+    /** @test */
+    function no_illegal_move_messages_after_the_current_one()
+    {
+        $this->handle(PlayTheCard::number(0, $this->otherPlayer));
+
+        $this->assertCount(0, $this->illegalMove->since(1, $this->otherPlayer));
     }
 
     /** @test */

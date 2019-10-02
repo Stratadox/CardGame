@@ -2,9 +2,7 @@
 
 namespace Stratadox\CardGame\Match;
 
-use function array_merge;
 use function count;
-use RuntimeException;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
 use Throwable;
@@ -66,7 +64,7 @@ final class Player implements DomainEventRecorder
             $this->cards->drawFromTopOfDeck($match, $this->id);
         }
         foreach ($this->cards->inHand() as $card) {
-            $this->events = array_merge($this->events, $card->domainEvents());
+            $this->happened(...$card->domainEvents());
             $card->eraseEvents();
         }
     }

@@ -29,6 +29,7 @@ final class Match implements DomainEventRecorder
         $this->events = $events;
     }
 
+    // @todo simplify match construction / move to factory
     public static function fromProposal(
         MatchId $id,
         ProposalId $proposal,
@@ -91,7 +92,7 @@ final class Match implements DomainEventRecorder
                 $when
             );
         } catch (NoSuchCard $noSuchCard) {
-            // events += tried to attack with card
+            //@todo this happened: tried to attack with unknown card
         }
     }
 
@@ -100,7 +101,7 @@ final class Match implements DomainEventRecorder
         $this->players->drawOpeningHands($this->id);
 
         foreach ($this->players as $player) {
-            $this->addEvents(...$player->domainEvents());
+            $this->happened(...$player->domainEvents());
             $player->eraseEvents();
         }
     }
@@ -116,7 +117,7 @@ final class Match implements DomainEventRecorder
         DateTimeInterface $when
     ): void {
         if ($this->turn->prohibitsPlaying($thePlayer->cardInHand($cardNumber), $when)) {
-            // events += new CannotPlay($theCard)?
+            $this->happened(new TriedPlayingCardOutOfTurn($this->id, $thePlayer->id()));
             return;
         }
 
@@ -130,7 +131,7 @@ final class Match implements DomainEventRecorder
         DateTimeInterface $when
     ): void {
         if ($this->turn->prohibitsAttacking($thePlayer->cardInPlay($cardNumber), $when)) {
-            // events += new CannotPlay($theCard)?
+            // @todo this happened: tried attacking out of turn
             return;
         }
 
@@ -140,14 +141,14 @@ final class Match implements DomainEventRecorder
     private function play(Card $theCard, Player $thePlayer): void
     {
         if ($thePlayer->cannotPay($theCard->cost())) {
-            // events += new CannotPayFor($theCard)?
+            $this->happened(new PlayerDidNotHaveTheMana($this->id, $thePlayer->id()));
             return;
         }
 
         $thePlayer->pay($theCard->cost());
         $theCard->play($this->id, $thePlayer->cardsInPlay(), $thePlayer->id());
 
-        $this->addEvents(...$theCard->domainEvents());
+        $this->happened(...$theCard->domainEvents());
         $theCard->eraseEvents();
     }
 
@@ -155,14 +156,7 @@ final class Match implements DomainEventRecorder
     {
         $theCard->sendToAttack($this->id, $thePlayer->id());
 
-        $this->addEvents(...$theCard->domainEvents());
+        $this->happened(...$theCard->domainEvents());
         $theCard->eraseEvents();
-    }
-
-    private function addEvents(MatchEvent ...$newEvents): void
-    {
-        foreach ($newEvents as $newEvent) {
-            $this->events[] = $newEvent;
-        }
     }
 }

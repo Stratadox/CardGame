@@ -6,6 +6,7 @@ use function assert;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CommandHandling\Handler;
 
+// @todo rename?
 final class EndPlayPhaseProcess implements Handler
 {
     private $matches;

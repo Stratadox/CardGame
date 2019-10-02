@@ -3,7 +3,6 @@
 namespace Stratadox\CardGame\Match;
 
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\MatchId;
 
 interface MatchEvent extends DomainEvent
 {
