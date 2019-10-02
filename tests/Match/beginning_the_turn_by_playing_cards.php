@@ -6,7 +6,6 @@ use function assert;
 use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\PlayerId;
 use Stratadox\CardGame\Match\PlayTheCard;
-use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 
 /**
@@ -16,6 +15,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
 {
     /** @var PlayerId */
     private $currentPlayer;
+    /** @var PlayerId */
     private $otherPlayer;
     private $justOverTheCardPlayingTimeLimit;
 
@@ -23,7 +23,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        assert($this->match instanceof OngoingMatch);
+        assert($this->match !== null);
         foreach ($this->match->players() as $thePlayer) {
             if ($this->match->itIsTheTurnOf($thePlayer)) {
                 $this->currentPlayer = $thePlayer;

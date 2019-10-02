@@ -62,16 +62,21 @@ final class Card implements DomainEventRecorder
         return $this->location->hasHigherPositionThan($other->location);
     }
 
+    public function draw(MatchId $match, int $position, PlayerId $player): void
+    {
+        $this->location = $this->location->toHand($position);
+        $this->events = array_merge($this->events, $this->template->drawingEvents($match, $player));
+    }
+
     public function play(MatchId $match, int $position, PlayerId $player): void
     {
         $this->location = $this->template->playingMove($position);
         $this->events = array_merge($this->events, $this->template->playingEvents($match, $player));
     }
 
-    public function draw(MatchId $match, int $position, PlayerId $player): void
+    public function sendToAttack(MatchId $match, PlayerId $player): void
     {
-        $this->location = $this->location->toHand($position);
-        $this->events = array_merge($this->events, $this->template->drawingEvents($match, $player));
+        $this->events = array_merge($this->events, $this->template->attackingEvents($match, $player));
     }
 
     public function cost(): Mana

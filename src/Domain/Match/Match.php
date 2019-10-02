@@ -4,7 +4,6 @@ namespace Stratadox\CardGame\Match;
 
 use function array_keys;
 use function array_map;
-use function array_merge;
 use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
@@ -80,12 +79,28 @@ final class Match implements DomainEventRecorder
         $this->putIntoPlay($this->players->withId($thePlayer), $cardNumber, $when);
     }
 
+    public function attackWithCard(
+        int $cardNumber,
+        PlayerId $thePlayer,
+        DateTimeInterface $when
+    ): void {
+        try {
+            $this->moveToAttack(
+                $this->players->withId($thePlayer),
+                $cardNumber,
+                $when
+            );
+        } catch (NoSuchCard $noSuchCard) {
+            // events += tried to attack with card
+        }
+    }
+
     public function drawOpeningHands(): void
     {
         $this->players->drawOpeningHands($this->id);
 
         foreach ($this->players as $player) {
-            $this->events = array_merge($this->events, $player->domainEvents());
+            $this->addEvents(...$player->domainEvents());
             $player->eraseEvents();
         }
     }
@@ -108,6 +123,20 @@ final class Match implements DomainEventRecorder
         $this->play($thePlayer->cardInHand($cardNumber), $thePlayer);
     }
 
+    /** @throws NoSuchCard */
+    private function moveToAttack(
+        Player $thePlayer,
+        int $cardNumber,
+        DateTimeInterface $when
+    ): void {
+        if ($this->turn->prohibitsAttacking($thePlayer->cardInPlay($cardNumber), $when)) {
+            // events += new CannotPlay($theCard)?
+            return;
+        }
+
+        $this->attackWith($thePlayer->cardInPlay($cardNumber), $thePlayer);
+    }
+
     private function play(Card $theCard, Player $thePlayer): void
     {
         if ($thePlayer->cannotPay($theCard->cost())) {
@@ -118,7 +147,22 @@ final class Match implements DomainEventRecorder
         $thePlayer->pay($theCard->cost());
         $theCard->play($this->id, $thePlayer->cardsInPlay(), $thePlayer->id());
 
-        $this->events = array_merge($this->events, $theCard->domainEvents());
+        $this->addEvents(...$theCard->domainEvents());
         $theCard->eraseEvents();
+    }
+
+    private function attackWith(Card $theCard, Player $thePlayer): void
+    {
+        $theCard->sendToAttack($this->id, $thePlayer->id());
+
+        $this->addEvents(...$theCard->domainEvents());
+        $theCard->eraseEvents();
+    }
+
+    private function addEvents(MatchEvent ...$newEvents): void
+    {
+        foreach ($newEvents as $newEvent) {
+            $this->events[] = $newEvent;
+        }
     }
 }

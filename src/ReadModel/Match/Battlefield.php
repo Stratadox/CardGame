@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
+use function array_filter;
 use Stratadox\CardGame\Match\MatchId;
 
 class Battlefield
@@ -14,8 +15,19 @@ class Battlefield
     }
 
     /** @return Card[] */
-    public function cardsInPlay(MatchId $match): iterable
+    public function cardsInPlay(MatchId $match): array
     {
         return $this->cards[$match->id()] ?? [];
+    }
+
+    /** @return Card[] */
+    public function attackers(MatchId $match): array
+    {
+        return array_filter(
+            $this->cardsInPlay($match),
+            function (Card $card): bool {
+                return $card->isAttacking();
+            }
+        );
     }
 }

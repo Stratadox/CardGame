@@ -23,9 +23,22 @@ final class Turn
             $this->isInTime($when->getTimestamp() - $this->since->getTimestamp());
     }
 
+    public function allowsAttacking(Card $theCard, DateTimeInterface $when): bool
+    {
+        return $this->currentPlayer->is($theCard->owner()) && (
+            !$this->canPlay ||
+            !$this->isInTime($when->getTimestamp() - $this->since->getTimestamp()
+        ));
+    }
+
     public function prohibitsPlaying(Card $theCard, DateTimeInterface $when): bool
     {
         return !$this->allowsPlaying($theCard, $when);
+    }
+
+    public function prohibitsAttacking(Card $theCard, DateTimeInterface $when): bool
+    {
+        return !$this->allowsAttacking($theCard, $when);
     }
 
     public function endCardPlayingPhaseFor(PlayerId $thePlayer): Turn

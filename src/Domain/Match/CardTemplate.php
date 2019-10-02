@@ -8,6 +8,8 @@ interface CardTemplate
     public function playingEvents(MatchId $match, PlayerId $player): array;
     /** @return MatchEvent[] */
     public function drawingEvents(MatchId $match, PlayerId $player): array;
+    /** @return MatchEvent[] */
+    public function attackingEvents(MatchId $match, PlayerId $player): array;
     public function playingMove(int $position): Location;
     public function cost(): Mana;
 }

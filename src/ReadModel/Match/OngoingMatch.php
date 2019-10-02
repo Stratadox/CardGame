@@ -8,8 +8,8 @@ use Stratadox\CardGame\Match\PlayerId;
 final class OngoingMatch
 {
     private $id;
-    private $players;
     private $turn;
+    private $players;
 
     public function __construct(MatchId $match, PlayerId $whoStarts, PlayerId ...$players)
     {

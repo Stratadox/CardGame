@@ -4,8 +4,10 @@ namespace Stratadox\CardGame\Match;
 
 use function array_merge;
 use function count;
+use RuntimeException;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
+use Throwable;
 
 final class Player implements DomainEventRecorder
 {
@@ -41,6 +43,16 @@ final class Player implements DomainEventRecorder
     public function cardInHand(int $number): Card
     {
         return $this->cards->inHand()[$number];
+    }
+
+    /** @throws NoSuchCard */
+    public function cardInPlay(int $number): Card
+    {
+        try {
+            return $this->cards->inPlay()[$number];
+        } catch (Throwable $notFound) {
+            throw NoSuchCard::atPosition($number, $notFound);
+        }
     }
 
     public function cardsInPlay(): int

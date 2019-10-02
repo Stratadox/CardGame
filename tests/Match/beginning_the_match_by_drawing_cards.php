@@ -42,7 +42,7 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
 
         $this->proposal = $this->acceptedProposals->since($this->clock->now())[0]->id();
 
-        $this->bogusCard = new Card('bogus', 'bogus', 0);
+        $this->bogusCard = new Card('bogus');
     }
 
     /** @test */

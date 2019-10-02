@@ -25,6 +25,11 @@ final class UnitTemplate implements CardTemplate
         return [new CardWasDrawn($match, $this->card, $player)];
     }
 
+    public function attackingEvents(MatchId $match, PlayerId $player): array
+    {
+        return [new UnitMovedToAttack($match, $this->card)];
+    }
+
     public function playingMove(int $position): Location
     {
         return Location::inPlay($position);

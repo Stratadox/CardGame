@@ -31,6 +31,8 @@ use Stratadox\CardGame\Infrastructure\Test\InMemoryRedirectSources;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultAccountIdGenerator;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultProposalIdGenerator;
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
+use Stratadox\CardGame\Match\AttackingProcess;
+use Stratadox\CardGame\Match\AttackWithCard;
 use Stratadox\CardGame\Match\CardPlayingProcess;
 use Stratadox\CardGame\Match\CardWasDrawn;
 use Stratadox\CardGame\Match\EndCardPlaying;
@@ -45,6 +47,7 @@ use Stratadox\CardGame\Account\VisitorOpenedAnAccount;
 use Stratadox\CardGame\Account\AccountOpeningProcess;
 use Stratadox\CardGame\Account\OpenAnAccount;
 use Stratadox\CardGame\Match\UnitMovedIntoPlay;
+use Stratadox\CardGame\Match\UnitMovedToAttack;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
 use Stratadox\CardGame\Proposal\MatchPropositionProcess;
 use Stratadox\CardGame\Proposal\MatchWasProposed;
@@ -129,16 +132,16 @@ abstract class CardGameTest extends TestCase
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
         $this->testCard = [
-            new Card('card-id-1', 'test 1', 1),
-            new Card('card-id-2', 'test 2', 3),
-            new Card('card-id-3', 'test 3', 4),
-            new Card('card-id-4', 'test 4', 6),
-            new Card('card-id-5', 'test 5', 2),
-            new Card('card-id-6', 'test 6', 5),
-            new Card('card-id-7', 'test 7', 2),
-            new Card('card-id-8', 'test 8', 2),
-            new Card('card-id-9', 'test 9', 2),
-            new Card('card-id-10', 'test 10', 2),
+            new Card('card-id-1'),
+            new Card('card-id-2'),
+            new Card('card-id-3'),
+            new Card('card-id-4'),
+            new Card('card-id-5'),
+            new Card('card-id-6'),
+            new Card('card-id-7'),
+            new Card('card-id-8'),
+            new Card('card-id-9'),
+            new Card('card-id-10'),
         ];
 
         // @todo: extract TestConfiguration
@@ -157,6 +160,7 @@ abstract class CardGameTest extends TestCase
         $matchPublisher = new MatchPublisher($this->ongoingMatches);
         $allCards = new AllCards(...$this->testCard);
         $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
+        $battlefieldUpdater = new BattlefieldUpdater($this->battlefield, $allCards);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
             VisitedPage::class => new StatisticsUpdater($this->statistics),
@@ -173,11 +177,12 @@ abstract class CardGameTest extends TestCase
             ],
             CardWasDrawn::class => $handAdjuster,
             MatchHasBegun::class => $matchPublisher,
+            SpellVanishedToTheVoid::class => $handAdjuster,
             UnitMovedIntoPlay::class => [
-                new BattlefieldUpdater($this->battlefield, $allCards),
+                $battlefieldUpdater,
                 $handAdjuster,
             ],
-            SpellVanishedToTheVoid::class => $handAdjuster,
+            UnitMovedToAttack::class => $battlefieldUpdater,
         ]);
     }
 
@@ -230,10 +235,6 @@ abstract class CardGameTest extends TestCase
                 $this->clock,
                 $eventBag
             ),
-//            DrawCard::class => new CardDrawingProcess(
-//                $matches,
-//                $eventBag
-//            ),
             PlayTheCard::class => new CardPlayingProcess(
                 $matches,
                 $this->clock,
@@ -241,6 +242,11 @@ abstract class CardGameTest extends TestCase
             ),
             EndCardPlaying::class => new EndPlayPhaseProcess(
                 $matches,
+                $eventBag
+            ),
+            AttackWithCard::class => new AttackingProcess(
+                $matches,
+                $this->clock,
                 $eventBag
             ),
         ]));

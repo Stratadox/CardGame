@@ -25,6 +25,12 @@ final class SpellTemplate implements CardTemplate
         return [new CardWasDrawn($match, $this->card, $player)];
     }
 
+    public function attackingEvents(MatchId $match, PlayerId $player): array
+    {
+        // @todo throw spellCannotAttack?
+        return [];
+    }
+
     public function playingMove(int $position): Location
     {
         return Location::inVoid();

@@ -16,6 +16,7 @@ class AllCards
         }
     }
 
+    // @todo how to handle doubles, if card id is a deck-cardId?
     public function withId(CardId $card): Card
     {
         return $this->cards[$card->id()];
