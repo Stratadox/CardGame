@@ -23,6 +23,9 @@ final class BattlefieldUpdater implements EventHandler
     {
         assert($event instanceof UnitMovedIntoPlay);
 
-        $this->battlefield->add($this->cards->withId($event->card()));
+        $this->battlefield->add(
+            $this->cards->withId($event->card()),
+            $event->aggregateId()
+        );
     }
 }

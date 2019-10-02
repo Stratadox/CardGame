@@ -268,10 +268,12 @@ abstract class CardGameTest extends TestCase
         ));
     }
 
-    protected function setUpNewMatch(): void
-    {
-        $visitor1 = VisitorId::from('id-1');
-        $visitor2 = VisitorId::from('id-2');
+    protected function setUpNewMatch(
+        string $id1 = 'id-1',
+        string $id2 = 'id-2'
+    ): void {
+        $visitor1 = VisitorId::from($id1);
+        $visitor2 = VisitorId::from($id2);
 
         $this->signUpForTheGame($visitor1);
         $this->signUpForTheGame($visitor2);

@@ -37,7 +37,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     /** @test */
     function starting_with_no_cards_on_the_battlefield()
     {
-        $this->assertEmpty($this->battlefield->cardsInPlay());
+        $this->assertEmpty($this->battlefield->cardsInPlay($this->match->id()));
     }
 
     /** @test */
@@ -45,7 +45,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
 
-        $this->assertCount(1, $this->battlefield->cardsInPlay());
+        $this->assertCount(1, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(6, $this->cardsInTheHand->of($this->currentPlayer));
     }
 
@@ -58,7 +58,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
 
-        $this->assertCount(2, $this->battlefield->cardsInPlay());
+        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(5, $this->cardsInTheHand->of($this->currentPlayer));
     }
 
@@ -73,7 +73,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
 
-        $this->assertCount(2, $this->battlefield->cardsInPlay());
+        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(5, $this->cardsInTheHand->of($this->currentPlayer));
         // @todo assert error stream output
     }
@@ -85,7 +85,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
 
         $this->handle(PlayTheCard::number(2, $this->currentPlayer));
 
-        $this->assertCount(0, $this->battlefield->cardsInPlay());
+        $this->assertCount(0, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(6, $this->cardsInTheHand->of($this->currentPlayer));
     }
 
@@ -94,7 +94,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         $this->handle(PlayTheCard::number(0, $this->otherPlayer));
 
-        $this->assertEmpty($this->battlefield->cardsInPlay());
+        $this->assertEmpty($this->battlefield->cardsInPlay($this->match->id()));
         // @todo assert error stream output
     }
 
@@ -105,7 +105,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
 
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
 
-        $this->assertCount(0, $this->battlefield->cardsInPlay());
+        $this->assertCount(0, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(7, $this->cardsInTheHand->of($this->currentPlayer));
     }
 
@@ -116,7 +116,23 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
 
         $this->handle(PlayTheCard::number(0, $this->currentPlayer));
 
-        $this->assertCount(0, $this->battlefield->cardsInPlay());
+        $this->assertCount(0, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(7, $this->cardsInTheHand->of($this->currentPlayer));
+    }
+
+    /** @test */
+    function playing_a_card_while_another_match_is_also_going_on()
+    {
+        $ourMatchId = $this->match->id();
+
+        $this->setUpNewMatch('unrelated', 'players');
+
+        $theirMatchId = $this->match->id();
+
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
+
+        $this->assertCount(0, $this->battlefield->cardsInPlay($theirMatchId));
+        $this->assertCount(1, $this->battlefield->cardsInPlay($ourMatchId));
+        $this->assertCount(6, $this->cardsInTheHand->of($this->currentPlayer));
     }
 }

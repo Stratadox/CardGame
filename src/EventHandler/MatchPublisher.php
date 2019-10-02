@@ -41,6 +41,7 @@ final class MatchPublisher implements EventHandler
         $this->matches->addFromProposal(
             $this->proposalFor[(string) $event->aggregateId()],
             new OngoingMatch(
+                $event->aggregateId(),
                 $event->whoBegins(),
                 ...$this->playersFor[(string) $event->aggregateId()]
             )
