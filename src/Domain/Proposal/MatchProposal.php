@@ -47,7 +47,7 @@ final class MatchProposal implements DomainEventRecorder
     public function accept(DateTimeInterface $now): void
     {
         if ($now > $this->validUntil) {
-            // @todo events += new TriedAcceptingExpiredProposal($this->id, $now)
+            $this->happened(new TriedAcceptingExpiredProposal($this->id));
             return;
         }
         $this->isAccepted = true;

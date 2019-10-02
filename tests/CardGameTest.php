@@ -59,6 +59,7 @@ use Stratadox\CardGame\Proposal\MatchWasProposed;
 use Stratadox\CardGame\Proposal\ProposalAcceptationProcess;
 use Stratadox\CardGame\Proposal\ProposalWasAccepted;
 use Stratadox\CardGame\Proposal\ProposeMatch;
+use Stratadox\CardGame\Proposal\TriedAcceptingExpiredProposal;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
 use Stratadox\CardGame\ReadModel\IllegalMoveStream;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
@@ -193,6 +194,7 @@ abstract class CardGameTest extends TestCase
                 $matchPublisher,
             ],
             TriedStartingMatchForPendingProposal::class => $proposalProblemNotifier,
+            TriedAcceptingExpiredProposal::class => $proposalProblemNotifier,
             CardWasDrawn::class => $handAdjuster,
             MatchHasBegun::class => $matchPublisher,
             SpellVanishedToTheVoid::class => $handAdjuster,

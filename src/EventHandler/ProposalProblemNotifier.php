@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\EventHandler;
 
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\TriedStartingMatchForPendingProposal;
+use Stratadox\CardGame\Proposal\TriedAcceptingExpiredProposal;
 use Stratadox\CardGame\ReadModel\ProposalProblemStream;
 
 final class ProposalProblemNotifier implements EventHandler
@@ -21,6 +22,12 @@ final class ProposalProblemNotifier implements EventHandler
             $this->proposalProblems->addFor(
                 $event->aggregateId(),
                 'The proposal is still pending!'
+            );
+        }
+        if ($event instanceof TriedAcceptingExpiredProposal) {
+            $this->proposalProblems->addFor(
+                $event->aggregateId(),
+                'The proposal has already expired!'
             );
         }
     }
