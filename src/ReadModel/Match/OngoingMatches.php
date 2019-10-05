@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
+use Stratadox\CardGame\Match\MatchId;
 use Stratadox\CardGame\Proposal\ProposalId;
 
 class OngoingMatches
@@ -21,5 +22,15 @@ class OngoingMatches
             throw NoSuchMatch::forProposal($proposal);
         }
         return $this->matches[$proposal->id()];
+    }
+
+    public function withId(MatchId $id): OngoingMatch
+    {
+        foreach ($this->matches as $ongoingMatch) {
+            if ($id->is($ongoingMatch->id())) {
+                return $ongoingMatch;
+            }
+        }
+        // @todo throw
     }
 }

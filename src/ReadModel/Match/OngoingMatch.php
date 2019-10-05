@@ -29,6 +29,11 @@ final class OngoingMatch
         return $this->players;
     }
 
+    public function beganTheTurnOf(PlayerId $player): void
+    {
+        $this->turn = $player;
+    }
+
     public function itIsTheTurnOf(PlayerId $player): bool
     {
         return $this->turn->is($player);

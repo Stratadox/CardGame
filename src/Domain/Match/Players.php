@@ -37,4 +37,18 @@ final class Players extends ImmutableCollection
             $thePlayer->drawOpeningHand($match);
         }
     }
+
+    public function after(PlayerId $player): PlayerId
+    {
+        return $this->nextPlayer($player)->id();
+    }
+
+    private function nextPlayer(PlayerId $player): Player
+    {
+        // @todo better
+        if ($player->is($this[0]->id())) {
+            return $this[1];
+        }
+        return $this[0];
+    }
 }

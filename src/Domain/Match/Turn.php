@@ -51,4 +51,9 @@ final class Turn
     {
         return $interval < 20;
     }
+
+    public function of(PlayerId $thePlayer, DateTimeInterface $since): Turn
+    {
+        return new Turn($thePlayer, $since);
+    }
 }

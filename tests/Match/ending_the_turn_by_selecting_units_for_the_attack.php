@@ -5,6 +5,7 @@ namespace Stratadox\CardGame\Test\Match;
 use function assert;
 use Stratadox\CardGame\Match\AttackWithCard;
 use Stratadox\CardGame\Match\EndCardPlaying;
+use Stratadox\CardGame\Match\EndTheTurn;
 use Stratadox\CardGame\Match\PlayerId;
 use Stratadox\CardGame\Match\PlayTheCard;
 use Stratadox\CardGame\Test\CardGameTest;
@@ -65,5 +66,14 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
         $this->handle(AttackWithCard::number(2, $this->currentPlayer));
 
         $this->assertCount(0, $this->battlefield->attackers($this->match->id()));
+    }
+
+    /** @test */
+    function ending_the_turn_after_the_attack()
+    {
+        $this->handle(EndTheTurn::for($this->currentPlayer));
+
+        $this->assertFalse($this->match->itIsTheTurnOf($this->currentPlayer));
+        $this->assertTrue($this->match->itIsTheTurnOf($this->otherPlayer));
     }
 }

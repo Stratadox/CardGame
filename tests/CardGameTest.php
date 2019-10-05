@@ -11,6 +11,7 @@ use Ramsey\Uuid\UuidFactory;
 use function sprintf;
 use Stratadox\CardGame\EventHandler\IllegalMoveNotifier;
 use Stratadox\CardGame\EventHandler\ProposalProblemNotifier;
+use Stratadox\CardGame\EventHandler\TurnSwitcher;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
 use Stratadox\CardGame\Infrastructure\Test\OneAtATimeBus;
 use Stratadox\CardGame\EventBag;
@@ -39,6 +40,8 @@ use Stratadox\CardGame\Match\CardPlayingProcess;
 use Stratadox\CardGame\Match\CardWasDrawn;
 use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\EndPlayPhaseProcess;
+use Stratadox\CardGame\Match\EndTheTurn;
+use Stratadox\CardGame\Match\NextTurnBegan;
 use Stratadox\CardGame\Match\PlayerDidNotHaveTheMana;
 use Stratadox\CardGame\Match\SpellVanishedToTheVoid;
 use Stratadox\CardGame\Match\PlayTheCard;
@@ -51,6 +54,7 @@ use Stratadox\CardGame\Account\AccountOpeningProcess;
 use Stratadox\CardGame\Account\OpenAnAccount;
 use Stratadox\CardGame\Match\TriedPlayingCardOutOfTurn;
 use Stratadox\CardGame\Match\TriedStartingMatchForPendingProposal;
+use Stratadox\CardGame\Match\TurnEndingProcess;
 use Stratadox\CardGame\Match\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\UnitMovedToAttack;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
@@ -205,6 +209,7 @@ abstract class CardGameTest extends TestCase
             UnitMovedToAttack::class => $battlefieldUpdater,
             PlayerDidNotHaveTheMana::class => $illegalMoveNotifier,
             TriedPlayingCardOutOfTurn::class => $illegalMoveNotifier,
+            NextTurnBegan::class => new TurnSwitcher($this->ongoingMatches)
         ]);
     }
 
@@ -267,6 +272,11 @@ abstract class CardGameTest extends TestCase
                 $eventBag
             ),
             AttackWithCard::class => new AttackingProcess(
+                $matches,
+                $this->clock,
+                $eventBag
+            ),
+            EndTheTurn::class => new TurnEndingProcess(
                 $matches,
                 $this->clock,
                 $eventBag

@@ -97,7 +97,7 @@ class accepting_and_making_match_proposals extends CardGameTest
         );
         $this->assertEmpty(
             $this->proposalProblems->since(0, ProposalId::from('non-existing')),
-            'The error problem not be tracked based on the non-existing id, ' .
+            'The problem should not be tracked based on the non-existing id, ' .
             'because if this id happens to be generated at some future point ' .
             'in time, the problem stream would immediately contain a message.'
         );
