@@ -114,7 +114,6 @@ final class Match implements DomainEventRecorder
     public function endTurnOf(PlayerId $thePlayer, DateTimeInterface $when): void
     {
         $this->beginNextTurnFor($this->playerThatGoesAfter($thePlayer), $when);
-        $this->turn = $this->turn->of($this->playerThatGoesAfter($thePlayer), $when);
     }
 
     private function putIntoPlay(
