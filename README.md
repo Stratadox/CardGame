@@ -25,7 +25,7 @@ Players can play any number of cards they have mana for, but only one *mana pool
 per turn.
 
 ## Card types
-Cards can either be *spells*, *units* or *upgrades*.
+Cards can either be *mana pools*, *spells*, *units* or *upgrades*.
 
 A *spell* is a one-off card, having a (potentially devastating) effect before 
 disappearing into the void.
@@ -99,4 +99,3 @@ The attack itself will take place in the next players' turn.
 - "Base invaders": get bonus strength when not defended against
 ### Upgrade ideas
 - "Better gear": bonus strength
-- 
