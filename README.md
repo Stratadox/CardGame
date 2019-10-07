@@ -79,6 +79,33 @@ will participate in the attack.
 
 The attack itself will take place in the next players' turn.
 
+In bullet points, that makes:
+- Player 1, first turn:
+  - Gain mana
+  - Play cards
+  - Attack (quick units only)
+- Player 2, first turn:
+  - Gain mana
+  - Defend (spells only)
+  - Combat
+  - Play cards
+  - Attack (quick units only)
+- Player 1:
+  - Gain mana
+  - Draw card
+  - Defend
+  - Combat
+  - Play cards
+  - Attack
+- Player 2:
+  - Gain mana
+  - Draw card
+  - Defend
+  - Combat
+  - Play cards
+  - Attack
+- Etc
+
 ## Cards
 
 ### Defence spell ideas
