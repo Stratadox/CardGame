@@ -2,6 +2,8 @@
 
 namespace Stratadox\CardGame\Match;
 
+use BadMethodCallException;
+// @todo remove reference to foreign context
 use Stratadox\CardGame\Deck\CardId;
 
 final class SpellTemplate implements CardTemplate
@@ -27,13 +29,32 @@ final class SpellTemplate implements CardTemplate
 
     public function attackingEvents(MatchId $match, PlayerId $player): array
     {
-        // @todo throw spellCannotAttack?
+        return [];
+    }
+
+    public function defendingEvents(MatchId $match, PlayerId $player): array
+    {
+        return [];
+    }
+
+    public function dyingEvents(MatchId $match): array
+    {
         return [];
     }
 
     public function playingMove(int $position): Location
     {
         return Location::inVoid();
+    }
+
+    public function attackingMove(int $position): Location
+    {
+        throw new BadMethodCallException('Spells cannot attack.');
+    }
+
+    public function defendingMove(int $position): Location
+    {
+        throw new BadMethodCallException('Spells cannot defend.');
     }
 
     public function cost(): Mana

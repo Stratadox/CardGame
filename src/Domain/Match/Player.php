@@ -58,6 +58,11 @@ final class Player implements DomainEventRecorder
         return count($this->cards->inPlay());
     }
 
+    public function attackers(): Cards
+    {
+        return $this->cards->thatAttack();
+    }
+
     public function drawOpeningHand(MatchId $match): void
     {
         for ($i = 0; $i < $this->maxHandSize; $i++) {
@@ -77,5 +82,17 @@ final class Player implements DomainEventRecorder
     public function pay(Mana $theCostOfTheCard): void
     {
         $this->mana = $this->mana->minus($theCostOfTheCard);
+    }
+
+    public function counterTheAttackers(MatchId $match, Cards $attackers): void
+    {
+        foreach ($this->cards->thatDefend() as $theDefender) {
+            $theDefender->counterAttack(
+                $match,
+                $attackers->theOneThatAttacksTheAmbushOf($theDefender)
+            );
+            $this->happened(...$theDefender->domainEvents());
+            $theDefender->eraseEvents();
+        }
     }
 }

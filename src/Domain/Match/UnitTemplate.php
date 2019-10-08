@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Match;
 
+// @todo remove reference to foreign context
 use Stratadox\CardGame\Deck\CardId;
 
 final class UnitTemplate implements CardTemplate
@@ -30,9 +31,30 @@ final class UnitTemplate implements CardTemplate
         return [new UnitMovedToAttack($match, $this->card)];
     }
 
+    public function defendingEvents(MatchId $match, PlayerId $player): array
+    {
+        // @todo add UnitMovedToDefend?
+        return [];
+    }
+
+    public function dyingEvents(MatchId $match): array
+    {
+        return [new UnitDied($match, $this->card)];
+    }
+
     public function playingMove(int $position): Location
     {
         return Location::inPlay($position);
+    }
+
+    public function attackingMove(int $position): Location
+    {
+        return Location::attackingAt($position);
+    }
+
+    public function defendingMove(int $position): Location
+    {
+        return Location::defendingAgainst($position);
     }
 
     public function cost(): Mana

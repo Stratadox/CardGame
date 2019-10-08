@@ -3,6 +3,7 @@
 namespace Stratadox\CardGame\EventHandler;
 
 use Stratadox\CardGame\DomainEvent;
+use Stratadox\CardGame\Match\UnitDied;
 use Stratadox\CardGame\Match\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\UnitMovedToAttack;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
@@ -24,11 +25,18 @@ final class BattlefieldUpdater implements EventHandler
         if ($event instanceof UnitMovedIntoPlay) {
             $this->battlefield->add(
                 $this->cards->withId($event->card()),
-                $event->aggregateId()
+                $event->aggregateId(),
+                $event->player()
             );
         }
         if ($event instanceof UnitMovedToAttack) {
             $this->cards->withId($event->card())->attack();
+        }
+        if ($event instanceof UnitDied) {
+            $this->battlefield->remove(
+                $this->cards->withId($event->card()),
+                $event->aggregateId()
+            );
         }
     }
 }

@@ -41,6 +41,7 @@ final class MatchPropositionProcess implements Handler
         $proposal = $this->proposeMatch(
             $this->players->withId($proposition->proposedBy()),
             $proposition->proposedTo(),
+            // @todo cloning the clock is leaky abstraction, fix in right place
             (clone $this->clock)->fastForward(new DateInterval('PT30S')),
             $this->newIdentity->generate()
         );

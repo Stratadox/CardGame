@@ -14,6 +14,16 @@ class Battlefield
         $this->cards[$match->id()][] = $card;
     }
 
+    public function remove(Card $cardToRemove, MatchId $match): void
+    {
+        $this->cards[$match->id()] = array_filter(
+            $this->cards[$match->id()],
+            function (Card $card) use ($cardToRemove): bool {
+                return !$card->is($cardToRemove);
+            }
+        );
+    }
+
     /** @return Card[] */
     public function cardsInPlay(MatchId $match): array
     {

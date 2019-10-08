@@ -3,9 +3,6 @@
 namespace Stratadox\CardGame\Test;
 
 use DateInterval;
-use PHPUnit\Framework\Constraint\Constraint;
-use PHPUnit\Framework\Constraint\LogicalOr;
-use PHPUnit\Framework\Constraint\LogicalXor;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
 use function sprintf;
@@ -36,9 +33,13 @@ use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultProposalIdGenera
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
 use Stratadox\CardGame\Match\AttackingProcess;
 use Stratadox\CardGame\Match\AttackWithCard;
+use Stratadox\CardGame\Match\BlockTheAttacker;
 use Stratadox\CardGame\Match\CardPlayingProcess;
 use Stratadox\CardGame\Match\CardWasDrawn;
+use Stratadox\CardGame\Match\CombatProcess;
+use Stratadox\CardGame\Match\BlockingProcess;
 use Stratadox\CardGame\Match\EndCardPlaying;
+use Stratadox\CardGame\Match\EndBlocking;
 use Stratadox\CardGame\Match\EndPlayPhaseProcess;
 use Stratadox\CardGame\Match\EndTheTurn;
 use Stratadox\CardGame\Match\NextTurnBegan;
@@ -55,6 +56,7 @@ use Stratadox\CardGame\Account\OpenAnAccount;
 use Stratadox\CardGame\Match\TriedPlayingCardOutOfTurn;
 use Stratadox\CardGame\Match\TriedStartingMatchForPendingProposal;
 use Stratadox\CardGame\Match\TurnEndingProcess;
+use Stratadox\CardGame\Match\UnitDied;
 use Stratadox\CardGame\Match\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\UnitMovedToAttack;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
@@ -94,9 +96,6 @@ abstract class CardGameTest extends TestCase
 {
     /** @var Handler */
     private $input;
-
-    /** @var Handler[] */
-    private $overruledHandlers = [];
 
     /** @var RewindableClock */
     protected $clock;
@@ -209,15 +208,9 @@ abstract class CardGameTest extends TestCase
             UnitMovedToAttack::class => $battlefieldUpdater,
             PlayerDidNotHaveTheMana::class => $illegalMoveNotifier,
             TriedPlayingCardOutOfTurn::class => $illegalMoveNotifier,
-            NextTurnBegan::class => new TurnSwitcher($this->ongoingMatches)
+            NextTurnBegan::class => new TurnSwitcher($this->ongoingMatches),
+            UnitDied::class => $battlefieldUpdater,
         ]);
-    }
-
-    protected function overruleCommandHandler(
-        string $command,
-        Handler $handler
-    ): void {
-        $this->overruledHandlers[$command] = $handler;
     }
 
     private function commandBus(EventBag $eventBag): Handler
@@ -277,6 +270,16 @@ abstract class CardGameTest extends TestCase
                 $eventBag
             ),
             EndTheTurn::class => new TurnEndingProcess(
+                $matches,
+                $this->clock,
+                $eventBag
+            ),
+            BlockTheAttacker::class => new BlockingProcess(
+                $matches,
+                $this->clock,
+                $eventBag
+            ),
+            EndBlocking::class => new CombatProcess(
                 $matches,
                 $this->clock,
                 $eventBag

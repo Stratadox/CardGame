@@ -12,7 +12,7 @@ New decks can be formed with any of the cards owned by the player.
 The cards can be in any number of decks at the same time.
 
 The number of copies per card that are allowed in a deck is limited by the 
-rarity of the card.
+rarity of the card, and by the number of copies owned by the player.
 
 ## Card game
 Each match starts with the players drawing their initial hands from their decks.

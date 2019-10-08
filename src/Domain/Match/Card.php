@@ -2,7 +2,6 @@
 
 namespace Stratadox\CardGame\Match;
 
-use function array_merge;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
 
@@ -42,6 +41,11 @@ final class Card implements DomainEventRecorder
         return $this->owner;
     }
 
+    public function isInDeck(): bool
+    {
+        return $this->location->isInDeck();
+    }
+
     public function isInHand(): bool
     {
         return $this->location->isInHand();
@@ -52,9 +56,19 @@ final class Card implements DomainEventRecorder
         return $this->location->isInPlay();
     }
 
-    public function isInDeck(): bool
+    public function isAttacking(): bool
     {
-        return $this->location->isInDeck();
+        return $this->location->isAttacking();
+    }
+
+    public function isDefending(): bool
+    {
+        return $this->location->isDefending();
+    }
+
+    public function isAttackingThe(Card $defender): bool
+    {
+        return $this->location->isAttackingThe($defender->location);
     }
 
     public function hasHigherPositionThan(Card $other): bool
@@ -65,18 +79,32 @@ final class Card implements DomainEventRecorder
     public function draw(MatchId $match, int $position, PlayerId $player): void
     {
         $this->location = $this->location->toHand($position);
-        $this->events = array_merge($this->events, $this->template->drawingEvents($match, $player));
+        $this->happened(...$this->template->drawingEvents($match, $player));
     }
 
     public function play(MatchId $match, int $position, PlayerId $player): void
     {
         $this->location = $this->template->playingMove($position);
-        $this->events = array_merge($this->events, $this->template->playingEvents($match, $player));
+        $this->happened(...$this->template->playingEvents($match, $player));
     }
 
-    public function sendToAttack(MatchId $match, PlayerId $player): void
+    public function sendToAttack(MatchId $match, int $position, PlayerId $player): void
     {
-        $this->events = array_merge($this->events, $this->template->attackingEvents($match, $player));
+        $this->location = $this->template->attackingMove($position);
+        $this->happened(...$this->template->attackingEvents($match, $player));
+    }
+
+    public function sendToDefendAgainst(MatchId $match, int $position, PlayerId $player): void
+    {
+        $this->location = $this->template->defendingMove($position);
+        $this->happened(...$this->template->defendingEvents($match, $player));
+    }
+
+    public function counterAttack(MatchId $match, Card $attacker): void
+    {
+        // kill 'm for now... @todo combat mechanics
+        $attacker->location = Location::inVoid();
+        $this->happened(...$attacker->template->dyingEvents($match));
     }
 
     public function cost(): Mana

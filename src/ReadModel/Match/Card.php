@@ -12,10 +12,15 @@ final class Card
         $this->id = $id;
     }
 
-    // @todo is this out id or our template?
+    // @todo is this our id or our template?
     public function id(): string
     {
         return $this->id;
+    }
+
+    public function is(Card $theOther): bool
+    {
+        return $this->id === $theOther->id;
     }
 
     public function isAttacking(): bool
@@ -23,6 +28,7 @@ final class Card
         return $this->attacking;
     }
 
+    // @todo is this the match card or the deck card?
     public function attack(): void
     {
         $this->attacking = true;

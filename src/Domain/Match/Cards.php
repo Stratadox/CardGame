@@ -34,6 +34,20 @@ final class Cards extends ImmutableCollection
         });
     }
 
+    public function thatAttack(): Cards
+    {
+        return $this->filterBy(function (Card $card): bool {
+            return $card->isAttacking();
+        });
+    }
+
+    public function thatDefend(): Cards
+    {
+        return $this->filterBy(function (Card $card): bool {
+            return $card->isDefending();
+        });
+    }
+
     public function inDeck(): Cards
     {
         return $this->filterBy(function (Card $card): bool {
@@ -44,6 +58,13 @@ final class Cards extends ImmutableCollection
     public function drawFromTopOfDeck(MatchId $match, PlayerId $player): void
     {
         $this->inDeck()->topMost()->draw($match, count($this->inHand()), $player);
+    }
+
+    public function theOneThatAttacksTheAmbushOf(Card $defender): Card
+    {
+        return $this->filterBy(function (Card $card) use ($defender): bool {
+            return $card->isAttackingThe($defender);
+        })[0];
     }
 
     private function topMost(): Card
