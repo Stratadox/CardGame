@@ -24,7 +24,6 @@ use Stratadox\CardGame\Infrastructure\DomainEvents\CommandToEventGlue;
 use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
 use Stratadox\CardGame\Infrastructure\DomainEvents\EventCollector;
 use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultMatchIdGenerator;
-use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultPlayerIdGenerator;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryMatches;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryProposedMatches;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryRedirectSources;
@@ -249,7 +248,6 @@ abstract class CardGameTest extends TestCase
             StartTheMatch::class => new MatchStartingProcess(
                 $proposals,
                 new DefaultMatchIdGenerator($uuidFactory),
-                new DefaultPlayerIdGenerator($uuidFactory),
                 $matches,
                 $decks,
                 $this->clock,

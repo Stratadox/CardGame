@@ -9,7 +9,6 @@ use Stratadox\CardGame\Account\AccountId;
 use Stratadox\CardGame\Match\Decks;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\MatchId;
-use Stratadox\CardGame\Match\PlayerId;
 
 final class MatchProposal implements DomainEventRecorder
 {
@@ -69,7 +68,7 @@ final class MatchProposal implements DomainEventRecorder
         MatchId $theMatch,
         Decks $decks,
         DateTimeInterface $when,
-        PlayerId ...$players
+        int ...$players
     ): Match {
         if (!$this->isAccepted) {
             throw ProposalHasNotBeenAccepted::cannotStartMatch($this->id);

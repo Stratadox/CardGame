@@ -7,7 +7,6 @@ use Stratadox\CardGame\Match\BlockTheAttacker;
 use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\EndBlocking;
 use Stratadox\CardGame\Match\EndTheTurn;
-use Stratadox\CardGame\Match\PlayerId;
 use Stratadox\CardGame\Match\PlayTheCard;
 use Stratadox\CardGame\Test\CardGameTest;
 
@@ -16,9 +15,9 @@ use Stratadox\CardGame\Test\CardGameTest;
  */
 class fending_off_the_enemy_attackers extends CardGameTest
 {
-    /** @var PlayerId */
+    /** @var int */
     private $playerOne;
-    /** @var PlayerId */
+    /** @var int */
     private $playerTwo;
 
     protected function setUp(): void
@@ -32,17 +31,17 @@ class fending_off_the_enemy_attackers extends CardGameTest
                 $this->playerTwo = $thePlayer;
             }
         }
-        $this->handle(PlayTheCard::number(0, $this->playerOne));
-        $this->handle(PlayTheCard::number(1, $this->playerOne));
-        $this->handle(EndCardPlaying::phase($this->playerOne));
-        $this->handle(EndTheTurn::for($this->playerOne));
+        $this->handle(PlayTheCard::number(0, $this->playerOne, $this->match->id()));
+        $this->handle(PlayTheCard::number(1, $this->playerOne, $this->match->id()));
+        $this->handle(EndCardPlaying::phase($this->playerOne, $this->match->id()));
+        $this->handle(EndTheTurn::for($this->match->id(), $this->playerOne));
 
-        $this->handle(PlayTheCard::number(0, $this->playerOne));
-        $this->handle(PlayTheCard::number(1, $this->playerTwo));
-        $this->handle(EndCardPlaying::phase($this->playerTwo));
-        $this->handle(AttackWithCard::number(0, $this->playerTwo));
-        $this->handle(AttackWithCard::number(1, $this->playerTwo));
-        $this->handle(EndTheTurn::for($this->playerTwo));
+        $this->handle(PlayTheCard::number(0, $this->playerOne, $this->match->id()));
+        $this->handle(PlayTheCard::number(1, $this->playerTwo, $this->match->id()));
+        $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id()));
+        $this->handle(AttackWithCard::number(0, $this->playerTwo, $this->match->id()));
+        $this->handle(AttackWithCard::number(1, $this->playerTwo, $this->match->id()));
+        $this->handle(EndTheTurn::for($this->match->id(), $this->playerTwo));
     }
 
     /** @test */
@@ -51,8 +50,8 @@ class fending_off_the_enemy_attackers extends CardGameTest
         // @todo can we improve clarity here? Maybe:
         // $this->handle(Block::attacker(0)->withDefender(0)->as($player))
 
-        $this->handle(BlockTheAttacker::number(0, 0, $this->playerOne));
-        $this->handle(EndBlocking::phase($this->playerOne));
+        $this->handle(BlockTheAttacker::number(0, 0, $this->playerOne, $this->match->id()));
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
 
         $this->assertCount(1, $this->battlefield->cardsInPlay($this->match->id()));
     }

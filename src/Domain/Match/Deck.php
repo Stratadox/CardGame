@@ -6,7 +6,7 @@ use Stratadox\CardGame\Deck\CardId;
 
 final class Deck
 {
-    public function cardsFor(PlayerId $player): Cards
+    public function cardsFor(int $player): Cards
     {
         return new Cards(
             Card::inDeck($player, 7, new UnitTemplate(CardId::from('card-id-1'), new Mana(1))),

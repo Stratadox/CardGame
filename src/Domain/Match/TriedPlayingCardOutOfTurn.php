@@ -7,7 +7,7 @@ final class TriedPlayingCardOutOfTurn implements MatchEvent
     private $match;
     private $player;
 
-    public function __construct(MatchId $match, PlayerId $player)
+    public function __construct(MatchId $match, int $player)
     {
         $this->match = $match;
         $this->player = $player;
@@ -18,7 +18,12 @@ final class TriedPlayingCardOutOfTurn implements MatchEvent
         return $this->match;
     }
 
-    public function player(): PlayerId
+    public function match(): MatchId
+    {
+        return $this->aggregateId();
+    }
+
+    public function player(): int
     {
         return $this->player;
     }

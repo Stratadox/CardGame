@@ -17,18 +17,9 @@ final class Players extends ImmutableCollection
         return parent::current();
     }
 
-    public function pickRandomId(): PlayerId
+    public function pickRandom(): int
     {
-        return $this[array_rand($this->items())]->id();
-    }
-
-    public function withId(PlayerId $thePlayer): Player
-    {
-        foreach ($this as $thisOne) {
-            if ($thePlayer->is($thisOne->id())) {
-                return $thisOne;
-            }
-        }
+        return array_rand($this->items());
     }
 
     public function drawOpeningHands(MatchId $match): void
@@ -38,17 +29,8 @@ final class Players extends ImmutableCollection
         }
     }
 
-    public function after(PlayerId $player): PlayerId
+    public function after(int $player): int
     {
-        return $this->nextPlayer($player)->id();
-    }
-
-    private function nextPlayer(PlayerId $player): Player
-    {
-        // @todo better
-        if ($player->is($this[0]->id())) {
-            return $this[1];
-        }
-        return $this[0];
+        return $player === 0 ? 1 : 0;
     }
 }

@@ -5,7 +5,6 @@ namespace Stratadox\CardGame\EventHandler;
 use function assert;
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\NextTurnBegan;
-use Stratadox\CardGame\Match\PlayerId;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
 
@@ -30,7 +29,7 @@ final class TurnSwitcher implements EventHandler
     }
 
     private function becameTheTurnOf(
-        PlayerId $theNextPlayer,
+        int $theNextPlayer,
         OngoingMatch $inTheMatch
     ): void {
         $inTheMatch->beganTheTurnOf($theNextPlayer);

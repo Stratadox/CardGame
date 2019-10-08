@@ -5,13 +5,13 @@ namespace Stratadox\CardGame\Match;
 interface CardTemplate
 {
     /** @return MatchEvent[] */
-    public function playingEvents(MatchId $match, PlayerId $player): array;
+    public function playingEvents(MatchId $match, int $player): array;
     /** @return MatchEvent[] */
-    public function drawingEvents(MatchId $match, PlayerId $player): array;
+    public function drawingEvents(MatchId $match, int $player): array;
     /** @return MatchEvent[] */
-    public function attackingEvents(MatchId $match, PlayerId $player): array;
+    public function attackingEvents(MatchId $match, int $player): array;
     /** @return MatchEvent[] */
-    public function defendingEvents(MatchId $match, PlayerId $player): array;
+    public function defendingEvents(MatchId $match, int $player): array;
     /** @return MatchEvent[] */
     public function dyingEvents(MatchId $match): array;
     public function playingMove(int $position): Location;

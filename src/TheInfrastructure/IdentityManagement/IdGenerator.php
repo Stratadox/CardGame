@@ -16,7 +16,7 @@ abstract class IdGenerator
         $this->uuidFactory = $uuidFactory;
     }
 
-    public function newIdFor(string $type): UuidInterface
+    protected function newIdFor(string $type): UuidInterface
     {
         try {
             return $this->uuidFactory->uuid4();

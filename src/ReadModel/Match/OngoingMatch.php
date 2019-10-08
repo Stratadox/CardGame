@@ -3,7 +3,6 @@
 namespace Stratadox\CardGame\ReadModel\Match;
 
 use Stratadox\CardGame\Match\MatchId;
-use Stratadox\CardGame\Match\PlayerId;
 
 final class OngoingMatch
 {
@@ -11,7 +10,7 @@ final class OngoingMatch
     private $turn;
     private $players;
 
-    public function __construct(MatchId $match, PlayerId $whoStarts, PlayerId ...$players)
+    public function __construct(MatchId $match, int $whoStarts, int ...$players)
     {
         $this->id = $match;
         $this->turn = $whoStarts;
@@ -23,19 +22,19 @@ final class OngoingMatch
         return $this->id;
     }
 
-    /** @return PlayerId[] */
+    /** @return int[] */
     public function players(): array
     {
         return $this->players;
     }
 
-    public function beganTheTurnOf(PlayerId $player): void
+    public function beganTheTurnOf(int $player): void
     {
         $this->turn = $player;
     }
 
-    public function itIsTheTurnOf(PlayerId $player): bool
+    public function itIsTheTurnOf(int $player): bool
     {
-        return $this->turn->is($player);
+        return $this->turn === $player;
     }
 }

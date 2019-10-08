@@ -10,7 +10,7 @@ final class Turn
     private $since;
     private $canPlay = true;
 
-    public function __construct(PlayerId $player, DateTimeInterface $since)
+    public function __construct(int $player, DateTimeInterface $since)
     {
         $this->currentPlayer = $player;
         $this->since = $since;
@@ -18,14 +18,14 @@ final class Turn
 
     public function allowsPlaying(Card $theCard, DateTimeInterface $when): bool
     {
-        return $this->currentPlayer->is($theCard->owner()) &&
+        return $this->currentPlayer === $theCard->owner() &&
             $this->canPlay &&
             $this->isInTime($when->getTimestamp() - $this->since->getTimestamp());
     }
 
     public function allowsAttacking(Card $theCard, DateTimeInterface $when): bool
     {
-        return $this->currentPlayer->is($theCard->owner()) && (
+        return $this->currentPlayer === $theCard->owner() && (
             !$this->canPlay ||
             !$this->isInTime($when->getTimestamp() - $this->since->getTimestamp()
         ));
@@ -41,7 +41,7 @@ final class Turn
         return !$this->allowsAttacking($theCard, $when);
     }
 
-    public function endCardPlayingPhaseFor(PlayerId $thePlayer): Turn
+    public function endCardPlayingPhaseFor(int $thePlayer): Turn
     {
         $this->canPlay = false;
         return $this;
@@ -52,7 +52,7 @@ final class Turn
         return $interval < 20;
     }
 
-    public function of(PlayerId $thePlayer, DateTimeInterface $since): Turn
+    public function of(int $thePlayer, DateTimeInterface $since): Turn
     {
         return new Turn($thePlayer, $since);
     }

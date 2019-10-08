@@ -24,11 +24,11 @@ final class EndPlayPhaseProcess implements Handler
 
         $this->endPlayPhase(
             $command->player(),
-            $this->matches->forPlayer($command->player())
+            $this->matches->withId($command->match())
         );
     }
 
-    private function endPlayPhase(PlayerId $thePlayer, Match $theMatch): void
+    private function endPlayPhase(int $thePlayer, Match $theMatch): void
     {
         $theMatch->endCardPlayingPhaseFor($thePlayer);
 

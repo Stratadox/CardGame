@@ -11,31 +11,31 @@ final class Player implements DomainEventRecorder
 {
     use DomainEventRecording;
 
-    private $id;
+    private $playerNumber;
     private $cards;
     private $maxHandSize;
     private $mana;
 
     public function __construct(
-        PlayerId $id,
+        int $id,
         Cards $cards,
         int $maxHandSize,
         Mana $mana
     ) {
-        $this->id = $id;
+        $this->playerNumber = $id;
         $this->cards = $cards;
         $this->maxHandSize = $maxHandSize;
         $this->mana = $mana;
     }
 
-    public static function from(PlayerId $playerId, Cards $cards): self
+    public static function from(int $playerId, Cards $cards): self
     {
         return new self($playerId, $cards, 7, new Mana(4));
     }
 
-    public function id(): PlayerId
+    public function number(): int
     {
-        return $this->id;
+        return $this->playerNumber;
     }
 
     public function cardInHand(int $number): Card
@@ -66,7 +66,7 @@ final class Player implements DomainEventRecorder
     public function drawOpeningHand(MatchId $match): void
     {
         for ($i = 0; $i < $this->maxHandSize; $i++) {
-            $this->cards->drawFromTopOfDeck($match, $this->id);
+            $this->cards->drawFromTopOfDeck($match, $this->playerNumber);
         }
         foreach ($this->cards->inHand() as $card) {
             $this->happened(...$card->domainEvents());

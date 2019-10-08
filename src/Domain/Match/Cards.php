@@ -55,7 +55,7 @@ final class Cards extends ImmutableCollection
         });
     }
 
-    public function drawFromTopOfDeck(MatchId $match, PlayerId $player): void
+    public function drawFromTopOfDeck(MatchId $match, int $player): void
     {
         $this->inDeck()->topMost()->draw($match, count($this->inHand()), $player);
     }

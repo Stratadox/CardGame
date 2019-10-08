@@ -28,12 +28,12 @@ final class TurnEndingProcess implements Handler
         assert($command instanceof EndTheTurn);
 
         $this->endTurn(
-            $this->matches->forPlayer($command->player()),
+            $this->matches->withId($command->match()),
             $command->player()
         );
     }
 
-    private function endTurn(Match $theMatch, PlayerId $player): void
+    private function endTurn(Match $theMatch, int $player): void
     {
         $theMatch->endTurnOf($player, $this->clock->now());
         $this->eventBag->takeFrom($theMatch);

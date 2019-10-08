@@ -13,7 +13,7 @@ final class StartedMatchForProposal implements MatchEvent
     public function __construct(
         MatchId $matchId,
         ProposalId $proposalId,
-        PlayerId ...$players
+        int ...$players
     ) {
         $this->matchId = $matchId;
         $this->proposalId = $proposalId;
@@ -30,7 +30,7 @@ final class StartedMatchForProposal implements MatchEvent
         return $this->proposalId;
     }
 
-    /** @return PlayerId[] */
+    /** @return int[] */
     public function players(): array
     {
         return $this->players;

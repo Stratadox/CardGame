@@ -22,12 +22,18 @@ final class HandAdjuster implements EventHandler
 
     public function handle(DomainEvent $event): void
     {
-        if($event instanceof UnitMovedIntoPlay) {
-            $this->cardsInHand->played((string) $event->card(), $event->player());
-        } else if ($event instanceof SpellVanishedToTheVoid) {
-            $this->cardsInHand->played((string) $event->card(), $event->player());
+        if(
+            $event instanceof UnitMovedIntoPlay ||
+            $event instanceof SpellVanishedToTheVoid
+        ) {
+            $this->cardsInHand->played(
+                (string) $event->card(),
+                $event->match(),
+                $event->player()
+            );
         } else if ($event instanceof CardWasDrawn) {
             $this->cardsInHand->draw(
+                $event->match(),
                 $event->player(),
                 $this->cards->withId($event->card())
             );

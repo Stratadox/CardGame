@@ -13,7 +13,7 @@ final class Card implements DomainEventRecorder
     private $location;
     private $template;
 
-    private function __construct(PlayerId $owner, Location $location, CardTemplate $template)
+    private function __construct(int $owner, Location $location, CardTemplate $template)
     {
         $this->owner = $owner;
         $this->location = $location;
@@ -21,22 +21,14 @@ final class Card implements DomainEventRecorder
     }
 
     public static function inDeck(
-        PlayerId $owner,
+        int $owner,
         int $position,
         CardTemplate $template
     ): self {
         return new self($owner, Location::inDeck($position), $template);
     }
 
-    public static function inHand(
-        PlayerId $owner,
-        int $position,
-        CardTemplate $template
-    ): self {
-        return new self($owner, Location::inHand($position), $template);
-    }
-
-    public function owner(): PlayerId
+    public function owner(): int
     {
         return $this->owner;
     }
@@ -76,25 +68,25 @@ final class Card implements DomainEventRecorder
         return $this->location->hasHigherPositionThan($other->location);
     }
 
-    public function draw(MatchId $match, int $position, PlayerId $player): void
+    public function draw(MatchId $match, int $position, int $player): void
     {
         $this->location = $this->location->toHand($position);
         $this->happened(...$this->template->drawingEvents($match, $player));
     }
 
-    public function play(MatchId $match, int $position, PlayerId $player): void
+    public function play(MatchId $match, int $position, int $player): void
     {
         $this->location = $this->template->playingMove($position);
         $this->happened(...$this->template->playingEvents($match, $player));
     }
 
-    public function sendToAttack(MatchId $match, int $position, PlayerId $player): void
+    public function sendToAttack(MatchId $match, int $position, int $player): void
     {
         $this->location = $this->template->attackingMove($position);
         $this->happened(...$this->template->attackingEvents($match, $player));
     }
 
-    public function sendToDefendAgainst(MatchId $match, int $position, PlayerId $player): void
+    public function sendToDefendAgainst(MatchId $match, int $position, int $player): void
     {
         $this->location = $this->template->defendingMove($position);
         $this->happened(...$this->template->defendingEvents($match, $player));

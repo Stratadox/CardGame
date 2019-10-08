@@ -31,7 +31,7 @@ final class BlockingProcess implements Handler
         assert($command instanceof BlockTheAttacker);
 
         $this->sendIntoBattle(
-            $this->matches->forPlayer($command->player()),
+            $this->matches->withId($command->match()),
             $command->player(),
             $command->defender(),
             $command->attacker()
@@ -40,7 +40,7 @@ final class BlockingProcess implements Handler
 
     private function sendIntoBattle(
         Match $theMatch,
-        PlayerId $thePlayer,
+        int $thePlayer,
         int $defender,
         int $attacker
     ): void {

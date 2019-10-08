@@ -13,7 +13,7 @@ final class UnitMovedIntoPlay implements MatchEvent
     public function __construct(
         MatchId $match,
         CardId $card,
-        PlayerId $player
+        int $player
     ) {
         $this->card = $card;
         $this->match = $match;
@@ -25,12 +25,17 @@ final class UnitMovedIntoPlay implements MatchEvent
         return $this->match;
     }
 
+    public function match(): MatchId
+    {
+        return $this->aggregateId();
+    }
+
     public function card(): CardId
     {
         return $this->card;
     }
 
-    public function player(): PlayerId
+    public function player(): int
     {
         return $this->player;
     }

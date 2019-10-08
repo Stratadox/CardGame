@@ -4,21 +4,29 @@ namespace Stratadox\CardGame\Match;
 
 final class EndBlocking
 {
-    /** @var PlayerId */
-    private $forThePlayer;
+    /** @var MatchId */
+    private $match;
+    /** @var int */
+    private $player;
 
-    public function __construct(PlayerId $forThePlayer)
+    public function __construct(MatchId $match, int $player)
     {
-        $this->forThePlayer = $forThePlayer;
+        $this->match = $match;
+        $this->player = $player;
     }
 
-    public static function phase(PlayerId $forWhom): self
+    public static function phase(MatchId $match, int $player): self
     {
-        return new self($forWhom);
+        return new self($match, $player);
     }
 
-    public function player(): PlayerId
+    public function match(): MatchId
     {
-        return $this->forThePlayer;
+        return $this->match;
+    }
+
+    public function player(): int
+    {
+        return $this->player;
     }
 }

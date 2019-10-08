@@ -6,10 +6,10 @@ final class NextTurnBegan implements MatchEvent
 {
     /** @var MatchId */
     private $match;
-    /** @var PlayerId */
+    /** @var int */
     private $player;
 
-    public function __construct(MatchId $match, PlayerId $player)
+    public function __construct(MatchId $match, int $player)
     {
         $this->match = $match;
         $this->player = $player;
@@ -20,7 +20,7 @@ final class NextTurnBegan implements MatchEvent
         return $this->match;
     }
 
-    public function player(): PlayerId
+    public function player(): int
     {
         return $this->player;
     }

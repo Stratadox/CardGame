@@ -4,20 +4,29 @@ namespace Stratadox\CardGame\Match;
 
 final class EndCardPlaying
 {
+    /** @var int */
     private $player;
+    /** @var MatchId */
+    private $match;
 
-    private function __construct(PlayerId $player)
+    private function __construct(int $player, MatchId $match)
     {
         $this->player = $player;
+        $this->match = $match;
     }
 
-    public static function phase(PlayerId $player): self
+    public static function phase(int $player, MatchId $match): self
     {
-        return new self($player);
+        return new self($player, $match);
     }
 
-    public function player(): PlayerId
+    public function player(): int
     {
         return $this->player;
+    }
+
+    public function match(): MatchId
+    {
+        return $this->match;
     }
 }

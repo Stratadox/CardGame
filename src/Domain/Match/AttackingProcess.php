@@ -25,7 +25,7 @@ final class AttackingProcess implements Handler
         assert($command instanceof AttackWithCard);
 
         $this->sendIntoBattle(
-            $this->matches->forPlayer($command->player()),
+            $this->matches->withId($command->match()),
             $command->player(),
             $command->cardNumber()
         );
@@ -33,7 +33,7 @@ final class AttackingProcess implements Handler
 
     public function sendIntoBattle(
         Match $theMatch,
-        PlayerId $player,
+        int $player,
         int $cardNumber
     ): void {
         $theMatch->attackWithCard($cardNumber, $player, $this->clock->now());

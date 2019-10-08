@@ -36,7 +36,7 @@ final class Match implements DomainEventRecorder
         ProposalId $proposal,
         Decks $decks,
         DateTimeInterface $startTime,
-        PlayerId ...$players
+        int ...$players
     ): self {
         return Match::begin(
             $id,
@@ -46,9 +46,9 @@ final class Match implements DomainEventRecorder
         );
     }
 
-    private static function players(Decks $decks, PlayerId ...$ids): array
+    private static function players(Decks $decks, int ...$ids): array
     {
-        return array_map(function (PlayerId $playerId, int $i) use ($decks): Player {
+        return array_map(function (int $playerId, int $i) use ($decks): Player {
             return Player::from($playerId, $decks[$i]->cardsFor($playerId));
         }, $ids, array_keys($ids));
     }
@@ -59,7 +59,7 @@ final class Match implements DomainEventRecorder
         Players $players,
         DateTimeInterface $startTime
     ): Match {
-        $whoBegins = $players->pickRandomId();
+        $whoBegins = $players->pickRandom();
         return new Match(
             $id,
             new Turn($whoBegins, $startTime),
@@ -75,39 +75,41 @@ final class Match implements DomainEventRecorder
 
     public function playTheCard(
         int $cardNumber,
-        PlayerId $thePlayer,
+        int $thePlayer,
         DateTimeInterface $when
     ): void {
-        $this->putIntoPlay($this->players->withId($thePlayer), $cardNumber, $when);
+        $this->putIntoPlay($this->players[$thePlayer], $cardNumber, $when);
     }
 
     public function attackWithCard(
         int $cardNumber,
-        PlayerId $thePlayer,
+        int $thePlayer,
         DateTimeInterface $when
     ): void {
         try {
-            $this->moveToAttack(
-                $cardNumber,
-                $this->players->withId($thePlayer),
-                $when
-            );
+            $card = $this->players[$thePlayer]->cardInPlay($cardNumber);
         } catch (NoSuchCard $noSuchCard) {
             //@todo this happened: tried to attack with unknown card
+            return;
         }
+//        if ($this->turn->prohibitsAttacking($card, $when)) {
+//            // @todo this happened: tried attacking out of turn
+//            return;
+//        }
+        $this->attackWith($card, $this->players[$thePlayer]);
     }
 
     public function defendAgainst(
         int $attacker,
         int $defender,
-        PlayerId $attackingPlayer,
+        int $attackingPlayer,
         DateTimeInterface $when
     ): void {
         try {
             $this->moveToDefend(
                 $attacker,
                 $defender,
-                $this->players->withId($attackingPlayer),
+                $this->players[$attackingPlayer],
                 $when
             );
         } catch (NoSuchCard $noSuchCard) {
@@ -125,24 +127,24 @@ final class Match implements DomainEventRecorder
         }
     }
 
-    public function endCardPlayingPhaseFor(PlayerId $thePlayer): void
+    public function endCardPlayingPhaseFor(int $thePlayer): void
     {
         $this->turn = $this->turn->endCardPlayingPhaseFor($thePlayer);
     }
 
-    public function endTurnOf(PlayerId $thePlayer, DateTimeInterface $when): void
+    public function endTurnOf(int $thePlayer, DateTimeInterface $when): void
     {
-        $this->beginNextTurnFor($this->playerThatGoesAfter($thePlayer), $when);
+        $this->beginNextTurnFor($this->players->after($thePlayer), $when);
     }
 
     public function letTheCombatBegin(
-        PlayerId $theDefendingPlayer,
+        int $theDefendingPlayer,
         DateTimeInterface $when
     ): void {
         // @todo check with turn if time for combat
         $this->attackTheAttackers(
-            $this->players->withId($theDefendingPlayer),
-            $this->players->withId($this->playerThatGoesAfter($theDefendingPlayer))
+            $this->players[$theDefendingPlayer],
+            $this->players[$this->playerThatGoesAfter($theDefendingPlayer)]
         );
     }
 
@@ -152,25 +154,11 @@ final class Match implements DomainEventRecorder
         DateTimeInterface $when
     ): void {
         if ($this->turn->prohibitsPlaying($thePlayer->cardInHand($cardNumber), $when)) {
-            $this->happened(new TriedPlayingCardOutOfTurn($this->id, $thePlayer->id()));
+            $this->happened(new TriedPlayingCardOutOfTurn($this->id, $thePlayer->number()));
             return;
         }
 
         $this->play($thePlayer->cardInHand($cardNumber), $thePlayer);
-    }
-
-    /** @throws NoSuchCard */
-    private function moveToAttack(
-        int $cardNumber,
-        Player $thePlayer,
-        DateTimeInterface $when
-    ): void {
-        if ($this->turn->prohibitsAttacking($thePlayer->cardInPlay($cardNumber), $when)) {
-            // @todo this happened: tried attacking out of turn
-            return;
-        }
-
-        $this->attackWith($thePlayer->cardInPlay($cardNumber), $thePlayer);
     }
 
     /** @throws NoSuchCard */
@@ -187,12 +175,12 @@ final class Match implements DomainEventRecorder
     private function play(Card $theCard, Player $thePlayer): void
     {
         if ($thePlayer->cannotPay($theCard->cost())) {
-            $this->happened(new PlayerDidNotHaveTheMana($this->id, $thePlayer->id()));
+            $this->happened(new PlayerDidNotHaveTheMana($this->id, $thePlayer->number()));
             return;
         }
 
         $thePlayer->pay($theCard->cost());
-        $theCard->play($this->id, $thePlayer->cardsInPlay(), $thePlayer->id());
+        $theCard->play($this->id, $thePlayer->cardsInPlay(), $thePlayer->number());
 
         $this->happened(...$theCard->domainEvents());
         $theCard->eraseEvents();
@@ -200,7 +188,7 @@ final class Match implements DomainEventRecorder
 
     private function attackWith(Card $theCard, Player $thePlayer): void
     {
-        $theCard->sendToAttack($this->id, count($thePlayer->attackers()), $thePlayer->id());
+        $theCard->sendToAttack($this->id, count($thePlayer->attackers()), $thePlayer->number());
 
         $this->happened(...$theCard->domainEvents());
         $theCard->eraseEvents();
@@ -214,7 +202,7 @@ final class Match implements DomainEventRecorder
         $theDefender->sendToDefendAgainst(
             $this->id,
             $theAttacker,
-            $thePlayer->id()
+            $thePlayer->number()
         );
 
         $this->happened(...$theDefender->domainEvents());
@@ -234,13 +222,13 @@ final class Match implements DomainEventRecorder
         $theDefendingPlayer->eraseEvents();
     }
 
-    private function playerThatGoesAfter(PlayerId $thePlayer): PlayerId
+    private function playerThatGoesAfter(int $thePlayer): int
     {
         return $this->players->after($thePlayer);
     }
 
     private function beginNextTurnFor(
-        PlayerId $theNextPlayer,
+        int $theNextPlayer,
         DateTimeInterface $sinceNow
     ): void {
         $this->turn = $this->turn->of($theNextPlayer, $sinceNow);

@@ -2,34 +2,39 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-use function array_merge as combine_cards;
+use function array_merge;
 use function array_values;
-use Stratadox\CardGame\Match\PlayerId;
+use Stratadox\CardGame\Match\MatchId;
 
 class CardsInHand
 {
-    /** @var Card[][] */
+    /** @var Card[][][] */
     private $cards = [];
 
-    public function draw(PlayerId $player, Card ...$cards): void
+    public function draw(MatchId $match, int $player, Card ...$cards): void
     {
-        $this->cards[$player->id()] = combine_cards($this->of($player), $cards);
+        $this->cards[$match->id()][$player] = array_merge(
+            $this->ofPlayer($player, $match),
+            $cards
+        );
     }
 
     // @todo use position over card template id!
-    public function played(string $card, PlayerId $player): void
+    public function played(string $card, MatchId $match, int $player): void
     {
-        foreach ($this->cards[$player->id()] as $cardNumber => $cardInHand) {
+        foreach ($this->cards[$match->id()][$player] as $cardNumber => $cardInHand) {
             if ($card === $cardInHand->id()) {
-                unset($this->cards[$player->id()][$cardNumber]);
+                unset($this->cards[$match->id()][$player][$cardNumber]);
             }
         }
-        $this->cards[$player->id()] = array_values($this->cards[$player->id()]);
+        $this->cards[$match->id()][$player] = array_values(
+            $this->cards[$match->id()][$player]
+        );
     }
 
     /** @return Card[] */
-    public function of(PlayerId $player): array
+    public function ofPlayer(int $player, MatchId $match): array
     {
-        return $this->cards[$player->id()] ?? [];
+        return $this->cards[$match->id()][$player] ?? [];
     }
 }

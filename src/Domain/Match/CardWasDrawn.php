@@ -10,7 +10,7 @@ final class CardWasDrawn implements MatchEvent
     private $player;
     private $card;
 
-    public function __construct(MatchId $match, CardId $card, PlayerId $player)
+    public function __construct(MatchId $match, CardId $card, int $player)
     {
         $this->match = $match;
         $this->card = $card;
@@ -22,7 +22,12 @@ final class CardWasDrawn implements MatchEvent
         return $this->match;
     }
 
-    public function player(): PlayerId
+    public function match(): MatchId
+    {
+        return $this->aggregateId();
+    }
+
+    public function player(): int
     {
         return $this->player;
     }

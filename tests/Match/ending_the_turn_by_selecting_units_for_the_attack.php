@@ -5,7 +5,6 @@ namespace Stratadox\CardGame\Test\Match;
 use Stratadox\CardGame\Match\AttackWithCard;
 use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\EndTheTurn;
-use Stratadox\CardGame\Match\PlayerId;
 use Stratadox\CardGame\Match\PlayTheCard;
 use Stratadox\CardGame\Test\CardGameTest;
 
@@ -14,9 +13,9 @@ use Stratadox\CardGame\Test\CardGameTest;
  */
 class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
 {
-    /** @var PlayerId */
+    /** @var int */
     private $currentPlayer;
-    /** @var PlayerId */
+    /** @var int */
     private $otherPlayer;
 
     protected function setUp(): void
@@ -30,9 +29,9 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
                 $this->otherPlayer = $thePlayer;
             }
         }
-        $this->handle(PlayTheCard::number(1, $this->currentPlayer));
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer));
-        $this->handle(EndCardPlaying::phase($this->currentPlayer));
+        $this->handle(PlayTheCard::number(1, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(EndCardPlaying::phase($this->currentPlayer, $this->match->id()));
     }
 
     /** @test */
@@ -44,7 +43,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function selecting_a_unit_for_the_attack()
     {
-        $this->handle(AttackWithCard::number(0, $this->currentPlayer));
+        $this->handle(AttackWithCard::number(0, $this->currentPlayer, $this->match->id()));
 
         $this->assertCount(1, $this->battlefield->attackers($this->match->id()));
     }
@@ -52,8 +51,8 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function selecting_two_units_for_the_attack()
     {
-        $this->handle(AttackWithCard::number(0, $this->currentPlayer));
-        $this->handle(AttackWithCard::number(1, $this->currentPlayer));
+        $this->handle(AttackWithCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(AttackWithCard::number(1, $this->currentPlayer, $this->match->id()));
 
         $this->assertCount(2, $this->battlefield->attackers($this->match->id()));
     }
@@ -61,7 +60,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function not_attacking_with_non_existing_cards()
     {
-        $this->handle(AttackWithCard::number(2, $this->currentPlayer));
+        $this->handle(AttackWithCard::number(2, $this->currentPlayer, $this->match->id()));
 
         $this->assertCount(0, $this->battlefield->attackers($this->match->id()));
     }
@@ -69,7 +68,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function ending_the_turn_after_the_attack()
     {
-        $this->handle(EndTheTurn::for($this->currentPlayer));
+        $this->handle(EndTheTurn::for($this->match->id(), $this->currentPlayer));
 
         $this->assertFalse($this->match->itIsTheTurnOf($this->currentPlayer));
         $this->assertTrue($this->match->itIsTheTurnOf($this->otherPlayer));

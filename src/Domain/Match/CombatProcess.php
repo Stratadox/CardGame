@@ -32,11 +32,11 @@ final class CombatProcess implements Handler
 
         $this->timeForCombat(
             $command->player(),
-            $this->matches->forPlayer($command->player())
+            $this->matches->withId($command->match())
         );
     }
 
-    private function timeForCombat(PlayerId $thePlayer, Match $theMatch): void
+    private function timeForCombat(int $thePlayer, Match $theMatch): void
     {
         $theMatch->letTheCombatBegin($thePlayer, $this->clock->now());
 

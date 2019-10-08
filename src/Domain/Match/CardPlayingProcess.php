@@ -25,13 +25,13 @@ final class CardPlayingProcess implements Handler
         assert($command instanceof PlayTheCard);
 
         $this->play(
-            $this->matches->forPlayer($command->player()),
+            $this->matches->withId($command->match()),
             $command->player(),
             $command->cardNumber()
         );
     }
 
-    private function play(Match $theMatch, PlayerId $player, int $cardNumber): void
+    private function play(Match $theMatch, int $player, int $cardNumber): void
     {
         $theMatch->playTheCard($cardNumber, $player, $this->clock->now());
 

@@ -19,10 +19,10 @@ final class IllegalMoveNotifier implements EventHandler
     public function handle(DomainEvent $event): void
     {
         if ($event instanceof PlayerDidNotHaveTheMana) {
-            $this->illegalMoves->addFor($event->player(), 'Not enough mana!');
+            $this->illegalMoves->addFor($event->match(), $event->player(), 'Not enough mana!');
         }
         if ($event instanceof TriedPlayingCardOutOfTurn) {
-            $this->illegalMoves->addFor($event->player(), 'Cannot play cards right now.');
+            $this->illegalMoves->addFor($event->match(), $event->player(), 'Cannot play cards right now.');
         }
     }
 }

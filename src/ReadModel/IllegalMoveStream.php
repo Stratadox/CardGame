@@ -5,26 +5,26 @@ namespace Stratadox\CardGame\ReadModel;
 use function array_slice;
 use function end;
 use function is_string;
-use Stratadox\CardGame\Match\PlayerId;
+use Stratadox\CardGame\Match\MatchId;
 
 final class IllegalMoveStream
 {
     private $illegalMoves = [];
 
-    public function addFor(PlayerId $player, string $message): void
+    public function addFor(MatchId $match, int $player, string $message): void
     {
-        $this->illegalMoves[$player->id()][] = $message;
+        $this->illegalMoves[$match->id()][$player][] = $message;
     }
 
-    public function latestFor(PlayerId $player): ?string
+    public function latestFor(MatchId $match, int $player): ?string
     {
-        return $this->latest($this->illegalMoves[$player->id()] ?? []);
+        return $this->latest($this->illegalMoves[$match->id()][$player] ?? []);
     }
 
     /** @return string[] */
-    public function since(int $offset, PlayerId $player): array
+    public function since(int $offset, MatchId $match, int $player): array
     {
-        return array_slice($this->illegalMoves[$player->id()] ?? [], $offset);
+        return array_slice($this->illegalMoves[$match->id()][$player] ?? [], $offset);
     }
 
     private function latest(array $illegalMoves): ?string

@@ -7,7 +7,7 @@ final class MatchHasBegun implements MatchEvent
     private $match;
     private $whoBegins;
 
-    public function __construct(MatchId $match, PlayerId $whoBegins)
+    public function __construct(MatchId $match, int $whoBegins)
     {
         $this->match = $match;
         $this->whoBegins = $whoBegins;
@@ -18,7 +18,7 @@ final class MatchHasBegun implements MatchEvent
         return $this->match;
     }
 
-    public function whoBegins(): PlayerId
+    public function whoBegins(): int
     {
         return $this->whoBegins;
     }

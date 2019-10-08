@@ -13,7 +13,6 @@ final class MatchStartingProcess implements Handler
 {
     private $proposals;
     private $newMatchId;
-    private $newPlayerId;
     private $matches;
     private $decks;
     private $clock;
@@ -22,7 +21,6 @@ final class MatchStartingProcess implements Handler
     public function __construct(
         ProposedMatches $proposals,
         MatchIdGenerator $newMatchId,
-        PlayerIdGenerator $newPlayerId,
         Matches $matches,
         DeckForAccount $deckForAccount,
         Clock $clock,
@@ -30,7 +28,6 @@ final class MatchStartingProcess implements Handler
     ) {
         $this->proposals = $proposals;
         $this->newMatchId = $newMatchId;
-        $this->newPlayerId = $newPlayerId;
         $this->matches = $matches;
         $this->decks = $deckForAccount;
         $this->clock = $clock;
@@ -52,8 +49,8 @@ final class MatchStartingProcess implements Handler
                     $this->decks->deckFor($proposal->proposedBy())
                 ),
                 $this->clock->now(),
-                $this->newPlayerId->generate(),
-                $this->newPlayerId->generate()
+                0,
+                1
             );
         } catch (ProposalHasNotBeenAccepted $cannotStartYet) {
             $this->eventBag->add(

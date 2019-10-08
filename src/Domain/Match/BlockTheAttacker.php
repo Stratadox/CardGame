@@ -8,22 +8,26 @@ final class BlockTheAttacker
     private $defender;
     /** @var int */
     private $attacker;
-    /** @var PlayerId */
+    /** @var int */
     private $player;
+    /** @var MatchId */
+    private $match;
 
-    public function __construct(int $defender, int $attacker, PlayerId $player)
+    public function __construct(int $defender, int $attacker, int $player, MatchId $match)
     {
         $this->defender = $defender;
         $this->attacker = $attacker;
         $this->player = $player;
+        $this->match = $match;
     }
 
     public static function number(
         int $attacker,
         int $defender,
-        PlayerId $player
+        int $player,
+        MatchId $match
     ): self {
-        return new self($defender, $attacker, $player);
+        return new self($defender, $attacker, $player, $match);
     }
 
     public function defender(): int
@@ -36,8 +40,13 @@ final class BlockTheAttacker
         return $this->attacker;
     }
 
-    public function player(): PlayerId
+    public function player(): int
     {
         return $this->player;
+    }
+
+    public function match(): MatchId
+    {
+        return $this->match;
     }
 }

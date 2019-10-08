@@ -4,18 +4,23 @@ namespace Stratadox\CardGame\Match;
 
 final class AttackWithCard
 {
+    /** @var int */
     private $offset;
+    /** @var int */
     private $player;
+    /** @var MatchId */
+    private $match;
 
-    private function __construct(int $offset, PlayerId $player)
+    public function __construct(int $offset, int $player, MatchId $match)
     {
         $this->offset = $offset;
         $this->player = $player;
+        $this->match = $match;
     }
 
-    public static function number(int $offset, PlayerId $player): self
+    public static function number(int $offset, int $player, MatchId $match): self
     {
-        return new self($offset, $player);
+        return new self($offset, $player, $match);
     }
 
     public function cardNumber(): int
@@ -23,8 +28,13 @@ final class AttackWithCard
         return $this->offset;
     }
 
-    public function player(): PlayerId
+    public function player(): int
     {
         return $this->player;
+    }
+
+    public function match(): MatchId
+    {
+        return $this->match;
     }
 }

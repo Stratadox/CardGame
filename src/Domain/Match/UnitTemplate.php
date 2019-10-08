@@ -16,22 +16,22 @@ final class UnitTemplate implements CardTemplate
         $this->cost = $cost;
     }
 
-    public function playingEvents(MatchId $match, PlayerId $player): array
+    public function playingEvents(MatchId $match, int $player): array
     {
         return [new UnitMovedIntoPlay($match, $this->card, $player)];
     }
 
-    public function drawingEvents(MatchId $match, PlayerId $player): array
+    public function drawingEvents(MatchId $match, int $player): array
     {
         return [new CardWasDrawn($match, $this->card, $player)];
     }
 
-    public function attackingEvents(MatchId $match, PlayerId $player): array
+    public function attackingEvents(MatchId $match, int $player): array
     {
         return [new UnitMovedToAttack($match, $this->card)];
     }
 
-    public function defendingEvents(MatchId $match, PlayerId $player): array
+    public function defendingEvents(MatchId $match, int $player): array
     {
         // @todo add UnitMovedToDefend?
         return [];
