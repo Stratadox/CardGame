@@ -29,9 +29,6 @@ final class ProposalProblemStream
 
     private function latest(array $illegalMoves): ?string
     {
-        if (is_string(end($illegalMoves))) {
-            return end($illegalMoves);
-        }
-        return null;
+        return is_string(end($illegalMoves)) ? end($illegalMoves) : null;
     }
 }
