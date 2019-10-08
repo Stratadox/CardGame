@@ -1,5 +1,9 @@
-# [CardGame]
-[CardGame] is a turn-based deck-building card game.
+# CardGame
+CardGame is a turn-based deck-building card game.
+
+[![Build Status](https://travis-ci.org/Stratadox/CardGame.svg?branch=master)](https://travis-ci.org/Stratadox/CardGame)
+[![Coverage Status](https://coveralls.io/repos/github/Stratadox/CardGame/badge.svg?branch=master)](https://coveralls.io/github/Stratadox/CardGame?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Stratadox/CardGame/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Stratadox/CardGame/?branch=master)
 
 ## Turn based
 Players take turns in playing their cards.
