@@ -12,7 +12,6 @@ use Stratadox\CardGame\EventHandler\IllegalMoveNotifier;
 use Stratadox\CardGame\EventHandler\BringerOfBadNews;
 use Stratadox\CardGame\EventHandler\TurnSwitcher;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
-use Stratadox\CardGame\Infrastructure\Test\OneAtATimeBus;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\EventHandler\AccountOverviewCreator;
 use Stratadox\CardGame\EventHandler\BattlefieldUpdater;
@@ -230,7 +229,7 @@ abstract class CardGameTest extends TestCase
         $matches = new InMemoryMatches();
         $decks = new InMemoryDecks();
         $uuidFactory = new UuidFactory();
-        return new OneAtATimeBus(CommandBus::handling([
+        return CommandBus::handling([
             Visit::class => new VisitationProcess(
                 $visitors,
                 new InMemoryRedirectSources(),
@@ -292,7 +291,7 @@ abstract class CardGameTest extends TestCase
                 $this->clock,
                 $eventBag
             ),
-        ]));
+        ]);
     }
 
     protected function handle(object $command): void
