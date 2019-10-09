@@ -16,6 +16,7 @@ class AcceptedProposals
     /** @return AcceptedProposal[] */
     public function since(DateTimeInterface $begin): array
     {
+        // @todo
         return $this->proposals;
     }
 }

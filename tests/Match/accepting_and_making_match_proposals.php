@@ -41,47 +41,45 @@ class accepting_and_making_match_proposals extends CardGameTest
     /** @test */
     function no_proposals_until_a_match_is_proposed()
     {
-        $this->assertEmpty(
-            $this->matchProposals->for($this->accountOne)
-        );
-        $this->assertEmpty(
-            $this->matchProposals->for($this->accountTwo)
-        );
+        $this->assertEmpty($this->matchProposals->for($this->accountOne));
+        $this->assertEmpty($this->matchProposals->for($this->accountTwo));
     }
 
     /** @test */
     function proposing_a_match_to_another_player()
     {
-        $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
-
-        $this->assertNotEmpty(
-            $this->matchProposals->for($this->accountTwo)
+        $this->handle(
+            ProposeMatch::between($this->accountOne, $this->accountTwo, $this->id)
         );
+
+        $this->assertEmpty($this->matchProposals->for($this->accountOne));
+        $this->assertNotEmpty($this->matchProposals->for($this->accountTwo));
     }
 
     /** @test */
     function no_accepted_proposals_until_a_proposal_is_accepted()
     {
-        $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
-
-        $this->assertEmpty(
-            $this->acceptedProposals->since($this->allBegan)
+        $this->handle(
+            ProposeMatch::between($this->accountOne, $this->accountTwo, $this->id)
         );
+
+        $this->assertEmpty($this->acceptedProposals->since($this->allBegan));
     }
 
     /** @test */
     function accepting_a_proposal()
     {
-        $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
+        $this->handle(
+            ProposeMatch::between($this->accountOne, $this->accountTwo, $this->id)
+        );
 
         $this->handle(AcceptTheProposal::withId(
             $this->matchProposals->for($this->accountTwo)[0]->id(),
-            $this->accountTwo
+            $this->accountTwo,
+            $this->id
         ));
 
-        $this->assertNotEmpty(
-            $this->acceptedProposals->since($this->allBegan)
-        );
+        $this->assertNotEmpty($this->acceptedProposals->since($this->allBegan));
     }
 
     /** @test */
@@ -89,64 +87,69 @@ class accepting_and_making_match_proposals extends CardGameTest
     {
         $this->handle(AcceptTheProposal::withId(
             ProposalId::from('non-existing'),
-            $this->accountTwo
+            $this->accountTwo,
+            $this->id
         ));
 
-        $this->assertEmpty(
-            $this->acceptedProposals->since($this->allBegan)
+        $this->assertEmpty($this->acceptedProposals->since($this->allBegan));
+        $this->assertEquals(
+            ['Proposal not found'],
+            $this->refusals->for($this->id)
         );
-        $this->assertEmpty(
-            $this->proposalProblems->since(0, ProposalId::from('non-existing')),
-            'The problem should not be tracked based on the non-existing id, ' .
-            'because if this id happens to be generated at some future point ' .
-            'in time, the problem stream would immediately contain a message.'
-        );
-        // @todo how to track the problem, then? Command/request ids? Client ids?
     }
 
     /** @test */
     function cannot_accept_expired_proposals()
     {
-        $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
+        $this->handle(
+            ProposeMatch::between($this->accountOne, $this->accountTwo, $this->id)
+        );
         $proposalId = $this->matchProposals->for($this->accountTwo)[0]->id();
 
         $this->clock->fastForward($this->aLittleTooLong);
-        $this->handle(AcceptTheProposal::withId($proposalId, $this->accountTwo));
+        $this->handle(
+            AcceptTheProposal::withId($proposalId, $this->accountTwo, $this->id)
+        );
 
         $this->assertEmpty(
             $this->acceptedProposals->since($this->allBegan)
         );
         $this->assertEquals(
-            'The proposal has already expired!',
-            $this->proposalProblems->latestFor($proposalId)
+            ['The proposal has already expired!'],
+            $this->refusals->for($this->id)
         );
     }
 
     /** @test */
     function accepting_a_proposal_just_in_time()
     {
-        $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
+        $this->handle(
+            ProposeMatch::between($this->accountOne, $this->accountTwo, $this->id)
+        );
         $proposalId = $this->matchProposals->for($this->accountTwo)[0]->id();
 
 
         $this->clock->fastForward($this->almostTooLong);
-        $this->handle(AcceptTheProposal::withId($proposalId, $this->accountTwo));
-
-        $this->assertNotEmpty(
-            $this->acceptedProposals->since($this->allBegan)
+        $this->handle(
+            AcceptTheProposal::withId($proposalId, $this->accountTwo, $this->id)
         );
+
+        $this->assertNotEmpty($this->acceptedProposals->since($this->allBegan));
     }
 
     /** @test */
     function cannot_accept_proposals_for_others()
     {
-        $this->handle(ProposeMatch::between($this->accountOne, $this->accountTwo));
+        $this->handle(
+            ProposeMatch::between($this->accountOne, $this->accountTwo, $this->id)
+        );
         $proposalId = $this->matchProposals->for($this->accountTwo)[0]->id();
 
-        $this->handle(AcceptTheProposal::withId($proposalId, $this->accountOne));
-
-        $this->assertEmpty(
-            $this->acceptedProposals->since($this->allBegan)
+        $this->handle(
+            AcceptTheProposal::withId($proposalId, $this->accountOne, $this->id)
         );
+
+        $this->assertEmpty($this->acceptedProposals->since($this->allBegan));
+        $this->assertEquals(['Proposal not found'], $this->refusals->for($this->id));
     }
 }

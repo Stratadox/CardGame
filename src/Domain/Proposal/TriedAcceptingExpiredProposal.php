@@ -2,16 +2,19 @@
 
 namespace Stratadox\CardGame\Proposal;
 
-final class TriedAcceptingExpiredProposal implements ProposalEvent
+use Stratadox\CardGame\CorrelationId;
+use Stratadox\CardGame\RefusalEvent;
+
+final class TriedAcceptingExpiredProposal implements RefusalEvent
 {
     private $proposal;
 
-    public function __construct(ProposalId $proposal)
+    public function __construct(CorrelationId $proposal)
     {
         $this->proposal = $proposal;
     }
 
-    public function aggregateId(): ProposalId
+    public function aggregateId(): CorrelationId
     {
         return $this->proposal;
     }

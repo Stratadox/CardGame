@@ -54,7 +54,7 @@ final class MatchStartingProcess implements Handler
             );
         } catch (ProposalHasNotBeenAccepted $cannotStartYet) {
             $this->eventBag->add(
-                new TriedStartingMatchForPendingProposal($proposal->id())
+                new TriedStartingMatchForPendingProposal($command->correlationId())
             );
             return;
         }

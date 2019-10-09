@@ -25,8 +25,8 @@ class signing_up_for_the_game extends CardGameTest
     /** @test */
     function opening_a_guest_account()
     {
-        $this->handle(Visit::page('home', 'source', $this->visitorId));
-        $this->handle(OpenAnAccount::forVisitorWith($this->visitorId));
+        $this->handle(Visit::page('home', 'source', $this->visitorId, $this->id));
+        $this->handle(OpenAnAccount::forVisitorWith($this->visitorId, $this->id));
 
         $account = $this->accountOverviews->forVisitor($this->visitorId);
 
@@ -37,17 +37,20 @@ class signing_up_for_the_game extends CardGameTest
     /** @test */
     function not_opening_an_account_without_having_visited_any_page()
     {
-        $this->handle(OpenAnAccount::forVisitorWith($this->visitorId));
+        $this->handle(OpenAnAccount::forVisitorWith($this->visitorId, $this->id));
 
+        $this->assertEquals(
+            ['Cannot open account for unknown entity'],
+            $this->refusals->for($this->id)
+        );
         $this->expectException(NoAccountForVisitor::class);
-
         $this->accountOverviews->forVisitor($this->visitorId);
     }
 
     /** @test */
     function not_seeing_the_account_in_the_player_list_before_opening_it()
     {
-        $this->handle(Visit::page('home', 'source', $this->visitorId));
+        $this->handle(Visit::page('home', 'source', $this->visitorId, $this->id));
 
         $this->assertEmpty($this->playerList);
     }
@@ -55,8 +58,8 @@ class signing_up_for_the_game extends CardGameTest
     /** @test */
     function seeing_the_guest_account_in_the_player_list()
     {
-        $this->handle(Visit::page('home', 'source', $this->visitorId));
-        $this->handle(OpenAnAccount::forVisitorWith($this->visitorId));
+        $this->handle(Visit::page('home', 'source', $this->visitorId, $this->id));
+        $this->handle(OpenAnAccount::forVisitorWith($this->visitorId, $this->id));
 
         $this->assertNotEmpty($this->playerList);
     }

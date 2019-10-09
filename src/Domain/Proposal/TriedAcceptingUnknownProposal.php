@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Proposal;
 
 use Stratadox\CardGame\CorrelationId;
-use Stratadox\CardGame\DomainEvent;
+use Stratadox\CardGame\RefusalEvent;
 
-final class TriedStartingMatchForPendingProposal implements DomainEvent
+final class TriedAcceptingUnknownProposal implements RefusalEvent
 {
     private $correlationId;
 

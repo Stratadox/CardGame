@@ -55,7 +55,7 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     /** @test */
     function drawing_the_initial_hands_when_the_match_starts()
     {
-        $this->handle(StartTheMatch::forProposal($this->proposal));
+        $this->handle(StartTheMatch::forProposal($this->proposal, $this->id));
 
         $match = $this->ongoingMatches->forProposal($this->proposal);
 
@@ -79,15 +79,15 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     {
         $accountOne = $this->accountOverviews->forVisitor(VisitorId::from('id-1'))->id();
         $accountTwo = $this->accountOverviews->forVisitor(VisitorId::from('id-2'))->id();
-        $this->handle(ProposeMatch::between($accountOne, $accountTwo));
+        $this->handle(ProposeMatch::between($accountOne, $accountTwo, $this->id));
         $proposals = $this->matchProposals->for($accountTwo);
         $proposal = newest_of_the($proposals);
         assert($proposal instanceof MatchProposal);
-        $this->handle(StartTheMatch::forProposal($proposal->id()));
+        $this->handle(StartTheMatch::forProposal($proposal->id(), $this->id));
 
         $this->assertEquals(
-            'The proposal is still pending!',
-            $this->proposalProblems->latestFor($proposal->id())
+            ['The proposal is still pending!'],
+            $this->refusals->for($this->id)
         );
 
         $this->expectException(NoSuchMatch::class);
@@ -97,7 +97,7 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     /** @test */
     function one_of_the_players_has_the_first_turn()
     {
-        $this->handle(StartTheMatch::forProposal($this->proposal));
+        $this->handle(StartTheMatch::forProposal($this->proposal, $this->id));
 
         $match = $this->ongoingMatches->forProposal($this->proposal);
         [$playerOne, $playerTwo] = $match->players();

@@ -2,28 +2,34 @@
 
 namespace Stratadox\CardGame\Visiting;
 
+use Stratadox\CardGame\CorrelationId;
+
 final class Visit
 {
     private $page;
     private $redirectSource;
     private $visitorId;
+    private $correlationId;
 
     private function __construct(
         string $page,
         string $redirectSource,
-        VisitorId $visitorId
+        VisitorId $visitorId,
+        CorrelationId $correlationId
     ) {
         $this->page = $page;
         $this->redirectSource = $redirectSource;
         $this->visitorId = $visitorId;
+        $this->correlationId = $correlationId;
     }
 
     public static function page(
         string $page,
         string $redirectSource,
-        VisitorId $visitorId
+        VisitorId $visitorId,
+        CorrelationId $correlationId
     ): self {
-        return new self($page, $redirectSource, $visitorId);
+        return new self($page, $redirectSource, $visitorId, $correlationId);
     }
 
     public function whichPage(): string
@@ -39,5 +45,10 @@ final class Visit
     public function visitorId(): VisitorId
     {
         return $this->visitorId;
+    }
+
+    public function correlationId(): CorrelationId
+    {
+        return $this->correlationId;
     }
 }

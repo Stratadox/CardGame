@@ -31,7 +31,7 @@ class visiting extends CardGameTest
     function counting_redirects_from_a_source()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->assertEquals(1, $this->statistics->visitorsFrom('example.com'));
@@ -41,11 +41,11 @@ class visiting extends CardGameTest
     function counting_unique_redirects_from_a_source()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->assertEquals(1, $this->statistics->visitorsFrom('example.com'));
@@ -55,11 +55,11 @@ class visiting extends CardGameTest
     function counting_all_redirects_from_a_source()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->assertEquals(2, $this->statistics->visitsFrom('example.com'));
@@ -69,7 +69,7 @@ class visiting extends CardGameTest
     function counting_page_visits()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->assertEquals(1, $this->statistics->visitorsOnPage('home'));
@@ -80,10 +80,10 @@ class visiting extends CardGameTest
     function counting_multiple_page_visits()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
         $this->handle(
-            Visit::page('home', 'example.com', $this->otherVisitor)
+            Visit::page('home', 'example.com', $this->otherVisitor, $this->id)
         );
 
         $this->assertEquals(2, $this->statistics->visitorsOnPage('home'));
@@ -94,11 +94,11 @@ class visiting extends CardGameTest
     function counting_multiple_redirects_from_a_source()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->handle(
-            Visit::page('home', 'example.com', $this->otherVisitor)
+            Visit::page('home', 'example.com', $this->otherVisitor, $this->id)
         );
 
         $this->assertEquals(2, $this->statistics->visitorsFrom('example.com'));
@@ -108,10 +108,10 @@ class visiting extends CardGameTest
     function counting_unique_page_visits()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->assertEquals(1, $this->statistics->visitorsOnPage('home'));
@@ -121,10 +121,10 @@ class visiting extends CardGameTest
     function counting_all_page_visits()
     {
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
         $this->handle(
-            Visit::page('home', 'example.com', $this->visitorId)
+            Visit::page('home', 'example.com', $this->visitorId, $this->id)
         );
 
         $this->assertEquals(2, $this->statistics->visitsToPage('home'));

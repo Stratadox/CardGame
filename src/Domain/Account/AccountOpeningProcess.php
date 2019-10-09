@@ -32,8 +32,9 @@ final class AccountOpeningProcess implements Handler
 
         $visitor = $this->visitor->withId($command->visitorId());
         if ($visitor === null) {
-            // @todo emit something?
-            // @todo where to??
+            $this->eventBag->add(
+                new TriedOpeningAccountForUnknownEntity($command->correlationId())
+            );
             return;
         }
 

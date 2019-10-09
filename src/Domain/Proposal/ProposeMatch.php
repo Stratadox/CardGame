@@ -3,25 +3,30 @@
 namespace Stratadox\CardGame\Proposal;
 
 use Stratadox\CardGame\Account\AccountId;
+use Stratadox\CardGame\CorrelationId;
 
 final class ProposeMatch
 {
     private $proposedBy;
     private $proposedTo;
+    private $correlationId;
 
     private function __construct(
         AccountId $proposedBy,
-        AccountId $proposedTo
+        AccountId $proposedTo,
+        CorrelationId $correlationId
     ) {
         $this->proposedBy = $proposedBy;
         $this->proposedTo = $proposedTo;
+        $this->correlationId = $correlationId;
     }
 
     public static function between(
         AccountId $proposedBy,
-        AccountId $proposedTo
+        AccountId $proposedTo,
+        CorrelationId $correlationId
     ): ProposeMatch {
-        return new self($proposedBy, $proposedTo);
+        return new self($proposedBy, $proposedTo, $correlationId);
     }
 
     public function proposedBy(): AccountId
@@ -32,5 +37,10 @@ final class ProposeMatch
     public function proposedTo(): AccountId
     {
         return $this->proposedTo;
+    }
+
+    public function correlationId(): CorrelationId
+    {
+        return $this->correlationId;
     }
 }

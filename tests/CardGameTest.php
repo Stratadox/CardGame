@@ -6,8 +6,10 @@ use DateInterval;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
 use function sprintf;
+use Stratadox\CardGame\Account\TriedOpeningAccountForUnknownEntity;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventHandler\IllegalMoveNotifier;
-use Stratadox\CardGame\EventHandler\ProposalProblemNotifier;
+use Stratadox\CardGame\EventHandler\BringerOfBadNews;
 use Stratadox\CardGame\EventHandler\TurnSwitcher;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
 use Stratadox\CardGame\Infrastructure\Test\OneAtATimeBus;
@@ -65,7 +67,9 @@ use Stratadox\CardGame\Proposal\ProposalAcceptationProcess;
 use Stratadox\CardGame\Proposal\ProposalWasAccepted;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Proposal\TriedAcceptingExpiredProposal;
+use Stratadox\CardGame\Proposal\TriedAcceptingUnknownProposal;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
+use Stratadox\CardGame\ReadModel\Refusals;
 use Stratadox\CardGame\ReadModel\IllegalMoveStream;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
@@ -80,7 +84,6 @@ use Stratadox\CardGame\Account\AccountId;
 use Stratadox\CardGame\ReadModel\PageVisitsStatisticsReport;
 use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 use Stratadox\CardGame\ReadModel\Proposal\MatchProposals;
-use Stratadox\CardGame\ReadModel\ProposalProblemStream;
 use Stratadox\CardGame\Visiting\BroughtVisitor;
 use Stratadox\CardGame\Visiting\VisitedPage;
 use Stratadox\CardGame\Visiting\VisitationProcess;
@@ -132,12 +135,17 @@ abstract class CardGameTest extends TestCase
     /** @var IllegalMoveStream */
     protected $illegalMove;
 
-    /** @var ProposalProblemStream */
-    protected $proposalProblems;
+    /** @var Refusals */
+    protected $refusals;
+
+    /** @var CorrelationId For brevity's sake, it's one id for all requests */
+    protected $id;
 
     protected function setUp(): void
     {
         $this->clock = TestClock::make();
+
+        $this->id = CorrelationId::from('foo');
 
         $this->statistics = new PageVisitsStatisticsReport();
         $this->matchProposals = new MatchProposals($this->clock);
@@ -148,7 +156,7 @@ abstract class CardGameTest extends TestCase
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
         $this->illegalMove = new IllegalMoveStream();
-        $this->proposalProblems = new ProposalProblemStream();
+        $this->refusals = new Refusals();
         $this->testCard = [
             new Card('card-id-1'),
             new Card('card-id-2'),
@@ -180,7 +188,7 @@ abstract class CardGameTest extends TestCase
         $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
         $battlefieldUpdater = new BattlefieldUpdater($this->battlefield, $allCards);
         $illegalMoveNotifier = new IllegalMoveNotifier($this->illegalMove);
-        $proposalProblemNotifier = new ProposalProblemNotifier($this->proposalProblems);
+        $badNews = new BringerOfBadNews($this->refusals);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
             VisitedPage::class => new StatisticsUpdater($this->statistics),
@@ -195,8 +203,10 @@ abstract class CardGameTest extends TestCase
             StartedMatchForProposal::class => [
                 $matchPublisher,
             ],
-            TriedStartingMatchForPendingProposal::class => $proposalProblemNotifier,
-            TriedAcceptingExpiredProposal::class => $proposalProblemNotifier,
+            TriedOpeningAccountForUnknownEntity::class => $badNews,
+            TriedAcceptingExpiredProposal::class => $badNews,
+            TriedAcceptingUnknownProposal::class => $badNews,
+            TriedStartingMatchForPendingProposal::class => $badNews,
             CardWasDrawn::class => $handAdjuster,
             MatchHasBegun::class => $matchPublisher,
             SpellVanishedToTheVoid::class => $handAdjuster,
@@ -292,18 +302,19 @@ abstract class CardGameTest extends TestCase
 
     protected function signUpForTheGame(VisitorId $visitorId): void
     {
-        $this->handle(Visit::page('home', 'https://example.com', $visitorId));
-        $this->handle(OpenAnAccount::forVisitorWith($visitorId));
+        $this->handle(Visit::page('home', 'https://example.com', $visitorId, $this->id));
+        $this->handle(OpenAnAccount::forVisitorWith($visitorId, $this->id));
     }
 
     protected function prepareMatchBetween(
         AccountId $playerOne,
         AccountId $playerTwo
     ): void {
-        $this->handle(ProposeMatch::between($playerOne, $playerTwo));
+        $this->handle(ProposeMatch::between($playerOne, $playerTwo, $this->id));
         $this->handle(AcceptTheProposal::withId(
             $this->matchProposals->for($playerTwo)[0]->id(),
-            $playerTwo
+            $playerTwo,
+            $this->id
         ));
     }
 
@@ -324,7 +335,7 @@ abstract class CardGameTest extends TestCase
 
         $proposal = $this->acceptedProposals->since($this->clock->now())[0];
 
-        $this->handle(StartTheMatch::forProposal($proposal->id()));
+        $this->handle(StartTheMatch::forProposal($proposal->id(), $this->id));
 
         $this->match = $this->ongoingMatches->forProposal($proposal->id());
     }

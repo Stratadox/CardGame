@@ -20,6 +20,7 @@ final class PlayerList implements Countable
 
     public function count(): int
     {
+        // @todo make it an actual list
         return (int) !$this->empty;
     }
 }

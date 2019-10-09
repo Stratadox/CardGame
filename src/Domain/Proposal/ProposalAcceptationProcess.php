@@ -29,11 +29,20 @@ final class ProposalAcceptationProcess implements Handler
 
         $proposal = $this->proposals->withId($command->proposal());
         if (!$proposal || !$command->acceptingPlayer()->is($proposal->proposedTo())) {
-            // @todo new TriedToAcceptProposalWithInvalidId($command->proposalId())
+            $this->eventBag->add(
+                new TriedAcceptingUnknownProposal($command->correlationId())
+            );
             return;
         }
 
-        $proposal->accept($this->clock->now());
+        try {
+            $proposal->accept($this->clock->now());
+        } catch (ProposalHasAlreadyExpired $weAreTooLate) {
+            $this->eventBag->add(
+                new TriedAcceptingExpiredProposal($command->correlationId())
+            );
+            return;
+        }
 
         $this->eventBag->takeFrom($proposal);
     }
