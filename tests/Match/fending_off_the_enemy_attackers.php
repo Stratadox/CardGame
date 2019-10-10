@@ -3,6 +3,7 @@
 namespace Stratadox\CardGame\Test\Match;
 
 use Stratadox\CardGame\Match\AttackWithCard;
+use Stratadox\CardGame\Match\Block;
 use Stratadox\CardGame\Match\BlockTheAttacker;
 use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\EndBlocking;
@@ -47,10 +48,11 @@ class fending_off_the_enemy_attackers extends CardGameTest
     /** @test */
     function blocking_the_enemy()
     {
-        // @todo can we improve clarity here? Maybe:
-        // $this->handle(Block::attacker(0)->withDefender(0)->as($player))
-
-        $this->handle(BlockTheAttacker::number(0, 0, $this->playerOne, $this->match->id()));
+         $this->handle(Block::attacker(0)
+             ->withDefender(0)
+             ->as($this->playerOne)
+             ->in($this->match->id())
+             ->go());
         $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
 
         $this->assertCount(1, $this->battlefield->cardsInPlay($this->match->id()));
