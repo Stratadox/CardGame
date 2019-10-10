@@ -35,7 +35,7 @@ final class HandAdjuster implements EventHandler
             $this->cardsInHand->draw(
                 $event->match(),
                 $event->player(),
-                $this->cards->withId($event->card())
+                $this->cards->ofType($event->card())
             );
         }
     }

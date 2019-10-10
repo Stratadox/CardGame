@@ -12,12 +12,12 @@ class AllCards
     public function __construct(Card ...$cards)
     {
         foreach ($cards as $card) {
-            $this->cards[$card->id()] = $card;
+            $this->cards[$card->type()] = $card;
         }
     }
 
-    // @todo how to handle doubles, if card id is a deck-cardId?
-    public function withId(CardId $card): Card
+    // @todo remove in favour of... what? (match, player, realm, position)? :S
+    public function ofType(CardId $card): Card
     {
         return $this->cards[$card->id()];
     }

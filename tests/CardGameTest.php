@@ -157,16 +157,16 @@ abstract class CardGameTest extends TestCase
         $this->illegalMove = new IllegalMoveStream();
         $this->refusals = new Refusals();
         $this->testCard = [
-            new Card('card-id-1'),
-            new Card('card-id-2'),
-            new Card('card-id-3'),
-            new Card('card-id-4'),
-            new Card('card-id-5'),
-            new Card('card-id-6'),
-            new Card('card-id-7'),
-            new Card('card-id-8'),
-            new Card('card-id-9'),
-            new Card('card-id-10'),
+            new Card('card-type-1'),
+            new Card('card-type-2'),
+            new Card('card-type-3'),
+            new Card('card-type-4'),
+            new Card('card-type-5'),
+            new Card('card-type-6'),
+            new Card('card-type-7'),
+            new Card('card-type-3'), // 3 again !
+            new Card('card-type-8'),
+            new Card('card-type-9'),
         ];
 
         // @todo: extract TestConfiguration

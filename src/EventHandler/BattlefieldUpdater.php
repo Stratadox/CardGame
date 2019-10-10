@@ -24,17 +24,17 @@ final class BattlefieldUpdater implements EventHandler
     {
         if ($event instanceof UnitMovedIntoPlay) {
             $this->battlefield->add(
-                $this->cards->withId($event->card()),
+                $this->cards->ofType($event->card()),
                 $event->aggregateId()
             );
         }
         if ($event instanceof UnitMovedToAttack) {
             // @todo wont work with multiple matches..
-            $this->cards->withId($event->card())->attack();
+            $this->cards->ofType($event->card())->attack();
         }
         if ($event instanceof UnitDied) {
             $this->battlefield->remove(
-                $this->cards->withId($event->card()),
+                $this->cards->ofType($event->card()),
                 $event->match()
             );
         }

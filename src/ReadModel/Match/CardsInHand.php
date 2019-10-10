@@ -23,7 +23,7 @@ class CardsInHand
     public function played(string $card, MatchId $match, int $player): void
     {
         foreach ($this->cards[$match->id()][$player] as $cardNumber => $cardInHand) {
-            if ($card === $cardInHand->id()) {
+            if ($card === $cardInHand->type()) {
                 unset($this->cards[$match->id()][$player][$cardNumber]);
             }
         }
