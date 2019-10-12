@@ -32,9 +32,10 @@ final class AccountOpeningProcess implements Handler
 
         $visitor = $this->visitor->withId($command->visitorId());
         if ($visitor === null) {
-            $this->eventBag->add(
-                new TriedOpeningAccountForUnknownEntity($command->correlationId())
-            );
+            $this->eventBag->add(new TriedOpeningAccountForUnknownEntity(
+                $command->correlationId(),
+                'Cannot open account for unknown entity'
+            ));
             return;
         }
 

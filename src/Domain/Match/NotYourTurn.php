@@ -8,16 +8,16 @@ final class NotYourTurn extends RuntimeException
 {
     public static function cannotPlayCards(): self
     {
-        return new self('Cannot play cards now, it is not your turn.');
+        return new self('Cannot play cards right now');
     }
 
     public static function cannotDefend(): self
     {
-        return new self('Cannot send cards to defend anymore.');
+        return new self('Cannot block at this time');
     }
 
     public static function cannotAttack(): self
     {
-        return new self('Cannot send cards to attack anymore.');
+        return new self('Cannot attack at this time');
     }
 }

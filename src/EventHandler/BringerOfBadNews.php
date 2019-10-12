@@ -2,9 +2,7 @@
 
 namespace Stratadox\CardGame\EventHandler;
 
-use function array_keys;
 use function assert;
-use function get_class;
 use Stratadox\CardGame\Account\TriedOpeningAccountForUnknownEntity;
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\Event\PlayerDidNotHaveTheMana;
@@ -22,18 +20,6 @@ use Stratadox\CardGame\RefusalEvent;
 final class BringerOfBadNews implements EventHandler
 {
     private $refusals;
-    private static $messages = [
-        TriedOpeningAccountForUnknownEntity::class => 'Cannot open account for unknown entity',
-        TriedStartingMatchForPendingProposal::class => 'The proposal is still pending!',
-        TriedAcceptingExpiredProposal::class => 'The proposal has already expired!',
-        TriedAcceptingUnknownProposal::class => 'Proposal not found',
-        TriedStartingMatchWithoutProposal::class => 'Proposal not found',
-        PlayerDidNotHaveTheMana::class => 'Not enough mana!',
-        TriedPlayingCardOutOfTurn::class => 'Cannot play cards right now',
-        TriedAttackingWithUnknownCard::class => 'That card does not exist',
-        TriedAttackingOutOfTurn::class => 'Cannot attack at this time',
-        TriedBlockingOutOfTurn::class => 'Cannot block at this time',
-    ];
 
     public function __construct(Refusals $refusals)
     {
@@ -42,16 +28,24 @@ final class BringerOfBadNews implements EventHandler
 
     public function events(): iterable
     {
-        return array_keys(self::$messages);
+        return [
+            TriedOpeningAccountForUnknownEntity::class,
+            TriedStartingMatchForPendingProposal::class,
+            TriedAcceptingExpiredProposal::class,
+            TriedAcceptingUnknownProposal::class,
+            TriedStartingMatchWithoutProposal::class,
+            PlayerDidNotHaveTheMana::class,
+            TriedPlayingCardOutOfTurn::class,
+            TriedAttackingWithUnknownCard::class,
+            TriedAttackingOutOfTurn::class,
+            TriedBlockingOutOfTurn::class,
+        ];
     }
 
     public function handle(DomainEvent $event): void
     {
         assert($event instanceof RefusalEvent);
 
-        $this->refusals->addFor(
-            $event->aggregateId(),
-            BringerOfBadNews::$messages[get_class($event)]
-        );
+        $this->refusals->addFor($event->aggregateId(), $event->reason());
     }
 }

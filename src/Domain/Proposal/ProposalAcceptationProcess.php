@@ -30,7 +30,10 @@ final class ProposalAcceptationProcess implements Handler
         $proposal = $this->proposals->withId($command->proposal());
         if (!$proposal || !$command->acceptingPlayer()->is($proposal->proposedTo())) {
             $this->eventBag->add(
-                new TriedAcceptingUnknownProposal($command->correlationId())
+                new TriedAcceptingUnknownProposal(
+                    $command->correlationId(),
+                    'Proposal not found'
+                )
             );
             return;
         }
@@ -39,7 +42,10 @@ final class ProposalAcceptationProcess implements Handler
             $proposal->accept($this->clock->now());
         } catch (ProposalHasAlreadyExpired $weAreTooLate) {
             $this->eventBag->add(
-                new TriedAcceptingExpiredProposal($command->correlationId())
+                new TriedAcceptingExpiredProposal(
+                    $command->correlationId(),
+                    $weAreTooLate->getMessage()
+                )
             );
             return;
         }

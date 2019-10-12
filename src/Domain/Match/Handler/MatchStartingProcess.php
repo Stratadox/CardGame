@@ -48,7 +48,10 @@ final class MatchStartingProcess implements Handler
         $proposal = $this->proposals->withId($command->proposal());
         if ($proposal === null) {
             $this->eventBag->add(
-                new TriedStartingMatchWithoutProposal($command->correlationId())
+                new TriedStartingMatchWithoutProposal(
+                    $command->correlationId(),
+                    'Proposal not found'
+                )
             );
             return;
         }
@@ -66,7 +69,10 @@ final class MatchStartingProcess implements Handler
             );
         } catch (ProposalHasNotBeenAccepted $cannotStartYet) {
             $this->eventBag->add(
-                new TriedStartingMatchForPendingProposal($command->correlationId())
+                new TriedStartingMatchForPendingProposal(
+                    $command->correlationId(),
+                    $cannotStartYet->getMessage()
+                )
             );
             return;
         }

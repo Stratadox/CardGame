@@ -49,10 +49,17 @@ final class AttackingProcess implements Handler
         try {
             $theMatch->attackWithCard($cardNumber, $player, $this->clock->now());
         } catch (NoSuchCard $ohNo) {
-            $this->eventBag->add(new TriedAttackingWithUnknownCard($correlationId));
+            // @todo log?
+            $this->eventBag->add(new TriedAttackingWithUnknownCard(
+                $correlationId,
+                'That card does not exist'
+            ));
             return;
         } catch (NotYourTurn $ohNo) {
-            $this->eventBag->add(new TriedAttackingOutOfTurn($correlationId));
+            $this->eventBag->add(new TriedAttackingOutOfTurn(
+                $correlationId,
+                $ohNo->getMessage()
+            ));
             return;
         }
         $this->eventBag->takeFrom($theMatch);

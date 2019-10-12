@@ -7,12 +7,9 @@ use function sprintf;
 
 final class ProposalHasNotBeenAccepted extends RuntimeException
 {
-    public static function cannotStartMatch(ProposalId $proposal): self
+    public static function cannotStartMatch(): self
     {
-        return new self(sprintf(
-            'Cannot start the match, because proposal %s has not been accepted.',
-            $proposal
-        ));
+        return new self('The proposal is still pending!');
     }
 }
 

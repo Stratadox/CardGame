@@ -169,7 +169,7 @@ final class Match implements DomainEventRecorder
     private function play(Card $theCard, Player $thePlayer): void
     {
         if ($thePlayer->cannotPay($theCard->cost())) {
-            throw new NotEnoughMana('');
+            throw NotEnoughMana::toPlayThatCard();
         }
 
         $thePlayer->pay($theCard->cost());

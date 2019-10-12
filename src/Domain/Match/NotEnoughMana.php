@@ -6,5 +6,8 @@ use RuntimeException;
 
 final class NotEnoughMana extends RuntimeException
 {
-    // @todo constructor?
+    public static function toPlayThatCard(): self
+    {
+        return new self('Not enough mana!');
+    }
 }

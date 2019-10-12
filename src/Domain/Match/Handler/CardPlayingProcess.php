@@ -49,9 +49,15 @@ final class CardPlayingProcess implements Handler
         try {
             $theMatch->playTheCard($cardNumber, $player, $this->clock->now());
         } catch (NotEnoughMana $problem) {
-            $this->eventBag->add(new PlayerDidNotHaveTheMana($correlationId));
+            $this->eventBag->add(new PlayerDidNotHaveTheMana(
+                $correlationId,
+                $problem->getMessage()
+            ));
         } catch (NotYourTurn $problem) {
-            $this->eventBag->add(new TriedPlayingCardOutOfTurn($correlationId));
+            $this->eventBag->add(new TriedPlayingCardOutOfTurn(
+                $correlationId,
+                $problem->getMessage()
+            ));
         }
 
         $this->eventBag->takeFrom($theMatch);

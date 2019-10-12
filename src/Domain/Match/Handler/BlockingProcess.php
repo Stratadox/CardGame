@@ -63,7 +63,11 @@ final class BlockingProcess implements Handler
         } catch (NoSuchCard $ohNo) {
             //@todo this happened: tried to defend with unknown card
         } catch (NotYourTurn $ohNo) {
-            $this->eventBag->add(new TriedBlockingOutOfTurn($correlationId));
+            $this->eventBag->add(new TriedBlockingOutOfTurn(
+                $correlationId,
+                $ohNo->getMessage()
+            ));
+            return;
         }
 
         $this->eventBag->takeFrom($theMatch);

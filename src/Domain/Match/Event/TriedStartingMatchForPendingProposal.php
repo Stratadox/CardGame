@@ -2,20 +2,8 @@
 
 namespace Stratadox\CardGame\Match\Event;
 
-use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\RefusalEvent;
 
-final class TriedStartingMatchForPendingProposal implements RefusalEvent
+final class TriedStartingMatchForPendingProposal extends RefusalEvent
 {
-    private $correlationId;
-
-    public function __construct(CorrelationId $correlationId)
-    {
-        $this->correlationId = $correlationId;
-    }
-
-    public function aggregateId(): CorrelationId
-    {
-        return $this->correlationId;
-    }
 }

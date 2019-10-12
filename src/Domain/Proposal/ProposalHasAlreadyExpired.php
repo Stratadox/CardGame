@@ -9,7 +9,7 @@ final class ProposalHasAlreadyExpired extends RuntimeException
     public static function cannotAcceptItAnymore(): self
     {
         return new self(
-            'The proposal cannot be accepted anymore, because it has expired.'
+            'The proposal has already expired!'
         );
     }
 }
