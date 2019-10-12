@@ -12,17 +12,22 @@ class Dispatcher
     /** @var EventHandler[][] */
     private $handlers;
 
-    public function __construct(array $registry = [])
+    public function __construct(EventHandler ...$handlers)
     {
-        foreach ($registry as $eventClass => $handler) {
-            if (is_array($handler)) {
-                foreach ($handler as $theHandler) {
-                    $this->registerHandler($eventClass, $theHandler);
-                }
-            } else {
-                $this->registerHandler($eventClass, $handler);
+        foreach ($handlers as $eventHandler) {
+            foreach ($eventHandler->events() as $event) {
+                $this->registerHandler($event, $eventHandler);
             }
         }
+//        foreach ($registry as $eventClass => $handler) {
+//            if (is_array($handler)) {
+//                foreach ($handler as $theHandler) {
+//                    $this->registerHandler($eventClass, $theHandler);
+//                }
+//            } else {
+//                $this->registerHandler($eventClass, $handler);
+//            }
+//        }
     }
 
     public function dispatch(DomainEvent $event): void

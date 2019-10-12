@@ -17,6 +17,11 @@ final class StatisticsUpdater implements EventHandler
         $this->statistics = $statistics;
     }
 
+    public function events(): iterable
+    {
+        return [BroughtVisitor::class, VisitedPage::class];
+    }
+
     public function handle(DomainEvent $event): void
     {
         if ($event instanceof BroughtVisitor) {

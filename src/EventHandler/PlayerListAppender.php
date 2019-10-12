@@ -16,6 +16,11 @@ final class PlayerListAppender implements EventHandler
         $this->playerList = $playerList;
     }
 
+    public function events(): iterable
+    {
+        return [VisitorOpenedAnAccount::class];
+    }
+
     public function handle(DomainEvent $event): void
     {
         assert($event instanceof VisitorOpenedAnAccount);

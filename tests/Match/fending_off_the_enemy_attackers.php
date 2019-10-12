@@ -48,20 +48,22 @@ class fending_off_the_enemy_attackers extends CardGameTest
         $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
         $this->handle(PlayTheCard::number(1, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id()));
-        $this->handle(AttackWithCard::number(0, $this->playerTwo, $this->match->id()));
+        $this->handle(AttackWithCard::number(0, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(EndTheTurn::for($this->match->id(), $this->playerTwo));
 
+        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         // Turn 3: See test case
     }
 
     /** @test */
     function blocking_the_enemy()
     {
-        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
-         $this->handle(Block::attacker(0)
+         $this->handle(Block::theAttack()
+             ->ofAttacker(0)
              ->withDefender(0)
              ->as($this->playerOne)
              ->in($this->match->id())
+             ->trackedWith($this->id)
              ->go());
         $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
 
@@ -73,26 +75,38 @@ class fending_off_the_enemy_attackers extends CardGameTest
     {
         $this->clock->fastForward($this->tooLong);
 
-        $this->handle(Block::attacker(0)
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
             ->withDefender(0)
             ->as($this->playerOne)
             ->in($this->match->id())
+            ->trackedWith($this->id)
             ->go());
         $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
+        $this->assertEquals(
+            ['Cannot block at this time'],
+            $this->refusals->for($this->id)
+        );
     }
 
     /** @test */
     function not_blocking_in_the_enemy_turn()
     {
-        $this->handle(Block::attacker(0)
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
             ->withDefender(0)
             ->as($this->playerTwo)
             ->in($this->match->id())
+            ->trackedWith($this->id)
             ->go());
         $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
+        $this->assertEquals(
+            ['Cannot block at this time'],
+            $this->refusals->for($this->id)
+        );
     }
 }

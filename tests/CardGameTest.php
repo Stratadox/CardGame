@@ -48,6 +48,8 @@ use Stratadox\CardGame\Match\Event\NextTurnBegan;
 use Stratadox\CardGame\Match\Event\PlayerDidNotHaveTheMana;
 use Stratadox\CardGame\Match\Event\SpellVanishedToTheVoid;
 use Stratadox\CardGame\Match\Event\StartedMatchForProposal;
+use Stratadox\CardGame\Match\Event\TriedAttackingWithUnknownCard;
+use Stratadox\CardGame\Match\Event\TriedBlockingOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedPlayingCardOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedStartingMatchForPendingProposal;
 use Stratadox\CardGame\Match\Event\UnitDied;
@@ -176,42 +178,20 @@ abstract class CardGameTest extends TestCase
 
     private function eventDispatcher(): Dispatcher
     {
-        $matchPublisher = new MatchPublisher($this->ongoingMatches);
         $allCards = new AllCards(...$this->testCard);
-        $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
-        $battlefieldUpdater = new BattlefieldUpdater($this->battlefield, $allCards);
-        $badNews = new BringerOfBadNews($this->refusals);
-        return new Dispatcher([
-            BroughtVisitor::class => new StatisticsUpdater($this->statistics),
-            VisitedPage::class => new StatisticsUpdater($this->statistics),
-            VisitorOpenedAnAccount::class => [
-                new PlayerListAppender($this->playerList),
-                new AccountOverviewCreator($this->accountOverviews)
-            ],
-            MatchWasProposed::class => new ProposalSender($this->matchProposals),
-            ProposalWasAccepted::class => new ProposalAcceptanceNotifier(
-                $this->acceptedProposals
-            ),
-            StartedMatchForProposal::class => [
-                $matchPublisher,
-            ],
-            TriedOpeningAccountForUnknownEntity::class => $badNews,
-            TriedAcceptingExpiredProposal::class => $badNews,
-            TriedAcceptingUnknownProposal::class => $badNews,
-            TriedStartingMatchForPendingProposal::class => $badNews,
-            CardWasDrawn::class => $handAdjuster,
-            MatchHasBegun::class => $matchPublisher,
-            SpellVanishedToTheVoid::class => $handAdjuster,
-            UnitMovedIntoPlay::class => [
-                $battlefieldUpdater,
-                $handAdjuster,
-            ],
-            UnitMovedToAttack::class => $battlefieldUpdater,
-            PlayerDidNotHaveTheMana::class => $badNews,
-            TriedPlayingCardOutOfTurn::class => $badNews,
-            NextTurnBegan::class => new TurnSwitcher($this->ongoingMatches),
-            UnitDied::class => $battlefieldUpdater,
-        ]);
+        return new Dispatcher(
+            new MatchPublisher($this->ongoingMatches),
+            new HandAdjuster($this->cardsInTheHand, $allCards),
+            new BattlefieldUpdater($this->battlefield, $allCards),
+            new BringerOfBadNews($this->refusals),
+            new StatisticsUpdater($this->statistics),
+            new PlayerListAppender($this->playerList),
+            new PlayerListAppender($this->playerList),
+            new AccountOverviewCreator($this->accountOverviews),
+            new ProposalSender($this->matchProposals),
+            new ProposalAcceptanceNotifier($this->acceptedProposals),
+            new TurnSwitcher($this->ongoingMatches)
+        );
     }
 
     private function commandBus(EventBag $eventBag): Handler

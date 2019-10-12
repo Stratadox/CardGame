@@ -18,6 +18,11 @@ final class TurnSwitcher implements EventHandler
         $this->ongoingMatches = $ongoingMatches;
     }
 
+    public function events(): iterable
+    {
+        return [NextTurnBegan::class];
+    }
+
     public function handle(DomainEvent $nextTurn): void
     {
         assert($nextTurn instanceof NextTurnBegan);

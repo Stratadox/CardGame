@@ -7,4 +7,6 @@ use Stratadox\CardGame\DomainEvent;
 interface EventHandler
 {
     public function handle(DomainEvent $event): void;
+    /** @return string[] */
+    public function events(): iterable;
 }

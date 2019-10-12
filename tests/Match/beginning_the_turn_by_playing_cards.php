@@ -75,10 +75,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(5, $this->cardsInTheHand->ofPlayer($this->currentPlayer, $this->match->id()));
 
-        $this->assertEquals(
-            ['Not enough mana!'],
-            $this->refusals->for($this->id)
-        );
+        $this->assertEquals(['Not enough mana!'], $this->refusals->for($this->id));
     }
 
     /** @test */
@@ -99,10 +96,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
 
         $this->assertEmpty($this->battlefield->cardsInPlay($this->match->id()));
 
-        $this->assertEquals(
-            ['Cannot play cards right now'],
-            $this->refusals->for($this->id)
-        );
+        $this->assertEquals(['Cannot play cards right now'], $this->refusals->for($this->id));
     }
 
     /** @test */

@@ -20,6 +20,14 @@ final class MatchPublisher implements EventHandler
         $this->matches = $matches;
     }
 
+    public function events(): iterable
+    {
+        return [
+            StartedMatchForProposal::class,
+            MatchHasBegun::class,
+        ];
+    }
+
     public function handle(DomainEvent $event): void
     {
         if ($event instanceof StartedMatchForProposal) {

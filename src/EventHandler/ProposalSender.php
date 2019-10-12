@@ -17,6 +17,11 @@ final class ProposalSender implements EventHandler
         $this->proposals = $proposals;
     }
 
+    public function events(): iterable
+    {
+        return [MatchWasProposed::class];
+    }
+
     public function handle(DomainEvent $event): void
     {
         assert($event instanceof MatchWasProposed);

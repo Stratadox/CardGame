@@ -3,8 +3,10 @@
 namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\BlockTheAttacker;
+use Stratadox\CardGame\Match\Event\TriedBlockingOutOfTurn;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\CardGame\Match\NoSuchCard;
@@ -39,7 +41,8 @@ final class BlockingProcess implements Handler
             $this->matches->withId($command->match()),
             $command->player(),
             $command->defender(),
-            $command->attacker()
+            $command->attacker(),
+            $command->correlationId()
         );
     }
 
@@ -47,7 +50,8 @@ final class BlockingProcess implements Handler
         Match $theMatch,
         int $thePlayer,
         int $defender,
-        int $attacker
+        int $attacker,
+        CorrelationId $correlationId
     ): void {
         try {
             $theMatch->defendAgainst(
@@ -59,7 +63,7 @@ final class BlockingProcess implements Handler
         } catch (NoSuchCard $ohNo) {
             //@todo this happened: tried to defend with unknown card
         } catch (NotYourTurn $ohNo) {
-            //@todo this happened: tried to defend out-of-turn
+            $this->eventBag->add(new TriedBlockingOutOfTurn($correlationId));
         }
 
         $this->eventBag->takeFrom($theMatch);

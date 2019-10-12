@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Match\Command;
 
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Match\MatchId;
 
 final class BlockTheAttacker
@@ -14,22 +15,32 @@ final class BlockTheAttacker
     private $player;
     /** @var MatchId */
     private $match;
+    /** @var CorrelationId */
+    private $correlationId;
 
-    public function __construct(int $defender, int $attacker, int $player, MatchId $match)
-    {
+    private function __construct(
+        int $defender,
+        int $attacker,
+        int $player,
+        MatchId $match,
+        CorrelationId $correlationId
+    ) {
         $this->defender = $defender;
         $this->attacker = $attacker;
         $this->player = $player;
         $this->match = $match;
+        $this->correlationId = $correlationId;
     }
+
 
     public static function number(
         int $attacker,
         int $defender,
         int $player,
-        MatchId $match
+        MatchId $match,
+        CorrelationId $correlationId
     ): self {
-        return new self($defender, $attacker, $player, $match);
+        return new self($defender, $attacker, $player, $match, $correlationId);
     }
 
     public function defender(): int
@@ -50,5 +61,10 @@ final class BlockTheAttacker
     public function match(): MatchId
     {
         return $this->match;
+    }
+
+    public function correlationId(): CorrelationId
+    {
+        return $this->correlationId;
     }
 }

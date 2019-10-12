@@ -3,8 +3,10 @@
 namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
+use Stratadox\CardGame\Match\Event\TriedAttackingWithUnknownCard;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\CardGame\Match\NoSuchCard;
@@ -31,19 +33,21 @@ final class AttackingProcess implements Handler
         $this->sendIntoBattle(
             $this->matches->withId($command->match()),
             $command->player(),
-            $command->cardNumber()
+            $command->cardNumber(),
+            $command->correlationId()
         );
     }
 
     public function sendIntoBattle(
         Match $theMatch,
         int $player,
-        int $cardNumber
+        int $cardNumber,
+        CorrelationId $correlationId
     ): void {
         try {
             $theMatch->attackWithCard($cardNumber, $player, $this->clock->now());
         } catch (NoSuchCard $noSuchCard) {
-            //@todo this happened: tried to attack with unknown card
+            $this->eventBag->add(new TriedAttackingWithUnknownCard($correlationId));
             return;
         }
         $this->eventBag->takeFrom($theMatch);

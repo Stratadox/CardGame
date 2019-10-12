@@ -20,6 +20,15 @@ final class HandAdjuster implements EventHandler
         $this->cards = $allCards;
     }
 
+    public function events(): iterable
+    {
+        return [
+            UnitMovedIntoPlay::class,
+            SpellVanishedToTheVoid::class,
+            CardWasDrawn::class,
+        ];
+    }
+
     public function handle(DomainEvent $event): void
     {
         if(

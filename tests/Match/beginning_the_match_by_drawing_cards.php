@@ -95,6 +95,21 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     }
 
     /** @test */
+    function not_starting_matches_for_non_existing_proposals()
+    {
+        $nonExisting = ProposalId::from('foo');
+        $this->handle(StartTheMatch::forProposal($nonExisting, $this->id));
+
+        $this->assertEquals(
+            ['Proposal not found'],
+            $this->refusals->for($this->id)
+        );
+
+        $this->expectException(NoSuchMatch::class);
+        $this->ongoingMatches->forProposal($nonExisting);
+    }
+
+    /** @test */
     function one_of_the_players_has_the_first_turn()
     {
         $this->handle(StartTheMatch::forProposal($this->proposal, $this->id));

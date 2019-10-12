@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Match\Command;
 
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Match\MatchId;
 
 final class AttackWithCard
@@ -12,17 +13,28 @@ final class AttackWithCard
     private $player;
     /** @var MatchId */
     private $match;
+    /** @var CorrelationId */
+    private $correlationId;
 
-    public function __construct(int $offset, int $player, MatchId $match)
-    {
+    private function __construct(
+        int $offset,
+        int $player,
+        MatchId $match,
+        CorrelationId $correlationId
+    ) {
         $this->offset = $offset;
         $this->player = $player;
         $this->match = $match;
+        $this->correlationId = $correlationId;
     }
 
-    public static function number(int $offset, int $player, MatchId $match): self
-    {
-        return new self($offset, $player, $match);
+    public static function number(
+        int $offset,
+        int $player,
+        MatchId $match,
+        CorrelationId $correlationId
+    ): self {
+        return new self($offset, $player, $match, $correlationId);
     }
 
     public function cardNumber(): int
@@ -38,5 +50,10 @@ final class AttackWithCard
     public function match(): MatchId
     {
         return $this->match;
+    }
+
+    public function correlationId(): CorrelationId
+    {
+        return $this->correlationId;
     }
 }

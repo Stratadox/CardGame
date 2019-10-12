@@ -20,6 +20,15 @@ final class BattlefieldUpdater implements EventHandler
         $this->cards = $allCards;
     }
 
+    public function events(): iterable
+    {
+        return [
+            UnitMovedIntoPlay::class,
+            UnitMovedToAttack::class,
+            UnitDied::class
+        ];
+    }
+
     public function handle(DomainEvent $event): void
     {
         if ($event instanceof UnitMovedIntoPlay) {
@@ -29,7 +38,7 @@ final class BattlefieldUpdater implements EventHandler
             );
         }
         if ($event instanceof UnitMovedToAttack) {
-            // @todo wont work with multiple matches..
+            // @todo wont work with doubles..
             $this->cards->ofType($event->card())->attack();
         }
         if ($event instanceof UnitDied) {

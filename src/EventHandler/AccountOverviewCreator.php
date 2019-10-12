@@ -17,6 +17,11 @@ final class AccountOverviewCreator implements EventHandler
         $this->accountOverviews = $accountOverviews;
     }
 
+    public function events(): iterable
+    {
+        return [VisitorOpenedAnAccount::class];
+    }
+
     public function handle(DomainEvent $event): void
     {
         assert($event instanceof VisitorOpenedAnAccount);

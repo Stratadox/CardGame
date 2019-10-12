@@ -5,6 +5,7 @@ namespace Stratadox\CardGame\Match\Handler;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\DeckForAccount;
 use Stratadox\CardGame\Match\Decks;
+use Stratadox\CardGame\Match\Event\TriedStartingMatchWithoutProposal;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\CardGame\Match\MatchIdGenerator;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
@@ -45,7 +46,12 @@ final class MatchStartingProcess implements Handler
         assert($command instanceof StartTheMatch);
 
         $proposal = $this->proposals->withId($command->proposal());
-        assert($proposal !== null); // @todo error event instead?
+        if ($proposal === null) {
+            $this->eventBag->add(
+                new TriedStartingMatchWithoutProposal($command->correlationId())
+            );
+            return;
+        }
 
         try {
             $match = $proposal->start(
