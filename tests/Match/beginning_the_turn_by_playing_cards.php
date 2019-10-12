@@ -3,8 +3,8 @@
 namespace Stratadox\CardGame\Test\Match;
 
 use DateInterval;
-use Stratadox\CardGame\Match\EndCardPlaying;
-use Stratadox\CardGame\Match\PlayTheCard;
+use Stratadox\CardGame\Match\Command\EndCardPlaying;
+use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Test\CardGameTest;
 
 /**

@@ -1,9 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\Match\Command\EndCardPlaying;
+use Stratadox\CardGame\Match\Match;
+use Stratadox\CardGame\Match\Matches;
 use Stratadox\CommandHandling\Handler;
 
 final class EndPlayPhaseProcess implements Handler

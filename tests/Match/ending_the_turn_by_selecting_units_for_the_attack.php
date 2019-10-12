@@ -2,10 +2,10 @@
 
 namespace Stratadox\CardGame\Test\Match;
 
-use Stratadox\CardGame\Match\AttackWithCard;
-use Stratadox\CardGame\Match\EndCardPlaying;
-use Stratadox\CardGame\Match\EndTheTurn;
-use Stratadox\CardGame\Match\PlayTheCard;
+use Stratadox\CardGame\Match\Command\AttackWithCard;
+use Stratadox\CardGame\Match\Command\EndCardPlaying;
+use Stratadox\CardGame\Match\Command\EndTheTurn;
+use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Test\CardGameTest;
 
 /**

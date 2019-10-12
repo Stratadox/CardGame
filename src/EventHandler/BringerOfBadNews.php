@@ -4,9 +4,9 @@ namespace Stratadox\CardGame\EventHandler;
 
 use Stratadox\CardGame\Account\TriedOpeningAccountForUnknownEntity;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\PlayerDidNotHaveTheMana;
-use Stratadox\CardGame\Match\TriedPlayingCardOutOfTurn;
-use Stratadox\CardGame\Match\TriedStartingMatchForPendingProposal;
+use Stratadox\CardGame\Match\Event\PlayerDidNotHaveTheMana;
+use Stratadox\CardGame\Match\Event\TriedPlayingCardOutOfTurn;
+use Stratadox\CardGame\Match\Event\TriedStartingMatchForPendingProposal;
 use Stratadox\CardGame\Proposal\TriedAcceptingExpiredProposal;
 use Stratadox\CardGame\Proposal\TriedAcceptingUnknownProposal;
 use Stratadox\CardGame\ReadModel\Refusals;

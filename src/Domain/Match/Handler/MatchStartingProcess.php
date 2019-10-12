@@ -1,8 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Handler;
 
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\Match\DeckForAccount;
+use Stratadox\CardGame\Match\Decks;
+use Stratadox\CardGame\Match\Matches;
+use Stratadox\CardGame\Match\MatchIdGenerator;
+use Stratadox\CardGame\Match\Command\StartTheMatch;
+use Stratadox\CardGame\Match\Event\TriedStartingMatchForPendingProposal;
 use Stratadox\CardGame\Proposal\ProposalHasNotBeenAccepted;
 use Stratadox\CardGame\Proposal\ProposedMatches;
 use Stratadox\Clock\Clock;

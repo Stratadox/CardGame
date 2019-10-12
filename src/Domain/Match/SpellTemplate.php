@@ -5,6 +5,8 @@ namespace Stratadox\CardGame\Match;
 use BadMethodCallException;
 // @todo remove reference to foreign context
 use Stratadox\CardGame\Deck\CardId;
+use Stratadox\CardGame\Match\Event\CardWasDrawn;
+use Stratadox\CardGame\Match\Event\SpellVanishedToTheVoid;
 
 final class SpellTemplate implements CardTemplate
 {

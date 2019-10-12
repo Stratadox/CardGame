@@ -8,6 +8,9 @@ use function count;
 use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
+use Stratadox\CardGame\Match\Event\MatchHasBegun;
+use Stratadox\CardGame\Match\Event\NextTurnBegan;
+use Stratadox\CardGame\Match\Event\StartedMatchForProposal;
 use Stratadox\CardGame\Proposal\ProposalId;
 
 final class Match implements DomainEventRecorder

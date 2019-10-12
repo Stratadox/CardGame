@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\Test\Match;
 
 use function assert;
 use function end as newest_of_the;
-use Stratadox\CardGame\Match\StartTheMatch;
+use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Proposal\ProposalId;
 use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;

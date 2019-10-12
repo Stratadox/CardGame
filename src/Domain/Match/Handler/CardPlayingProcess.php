@@ -1,10 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\Match\Match;
+use Stratadox\CardGame\Match\Matches;
+use Stratadox\CardGame\Match\NotEnoughMana;
+use Stratadox\CardGame\Match\NotYourTurn;
+use Stratadox\CardGame\Match\Event\PlayerDidNotHaveTheMana;
+use Stratadox\CardGame\Match\Command\PlayTheCard;
+use Stratadox\CardGame\Match\Event\TriedPlayingCardOutOfTurn;
 use Stratadox\Clock\Clock;
 use Stratadox\CommandHandling\Handler;
 

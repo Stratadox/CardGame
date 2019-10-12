@@ -1,10 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Command;
 
-final class EndTheTurn
+use Stratadox\CardGame\Match\MatchId;
+
+final class EndBlocking
 {
+    /** @var MatchId */
     private $match;
+    /** @var int */
     private $player;
 
     public function __construct(MatchId $match, int $player)
@@ -13,7 +17,7 @@ final class EndTheTurn
         $this->player = $player;
     }
 
-    public static function for(MatchId $match, int $player): self
+    public static function phase(MatchId $match, int $player): self
     {
         return new self($match, $player);
     }

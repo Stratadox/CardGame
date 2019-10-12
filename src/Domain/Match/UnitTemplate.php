@@ -4,6 +4,10 @@ namespace Stratadox\CardGame\Match;
 
 // @todo remove reference to foreign context
 use Stratadox\CardGame\Deck\CardId;
+use Stratadox\CardGame\Match\Event\CardWasDrawn;
+use Stratadox\CardGame\Match\Event\UnitDied;
+use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
+use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
 
 final class UnitTemplate implements CardTemplate
 {

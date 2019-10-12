@@ -1,8 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Event;
 
 use Stratadox\CardGame\Deck\CardId;
+use Stratadox\CardGame\Match\MatchEvent;
+use Stratadox\CardGame\Match\MatchId;
 
 final class UnitMovedIntoPlay implements MatchEvent
 {

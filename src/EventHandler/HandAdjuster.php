@@ -3,9 +3,9 @@
 namespace Stratadox\CardGame\EventHandler;
 
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\CardWasDrawn;
-use Stratadox\CardGame\Match\SpellVanishedToTheVoid;
-use Stratadox\CardGame\Match\UnitMovedIntoPlay;
+use Stratadox\CardGame\Match\Event\CardWasDrawn;
+use Stratadox\CardGame\Match\Event\SpellVanishedToTheVoid;
+use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 

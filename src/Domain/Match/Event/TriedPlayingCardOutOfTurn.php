@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Event;
 
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\RefusalEvent;
 
-final class PlayerDidNotHaveTheMana implements RefusalEvent
+final class TriedPlayingCardOutOfTurn implements RefusalEvent
 {
     private $correlationId;
 

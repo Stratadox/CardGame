@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Command;
+
+use Stratadox\CardGame\Match\MatchId;
 
 final class EndCardPlaying
 {

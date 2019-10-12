@@ -3,9 +3,9 @@
 namespace Stratadox\CardGame\EventHandler;
 
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\UnitDied;
-use Stratadox\CardGame\Match\UnitMovedIntoPlay;
-use Stratadox\CardGame\Match\UnitMovedToAttack;
+use Stratadox\CardGame\Match\Event\UnitDied;
+use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
+use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 

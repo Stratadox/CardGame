@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Stratadox\CardGame\Match;
+namespace Stratadox\CardGame\Match\Event;
 
+use Stratadox\CardGame\Match\MatchEvent;
+use Stratadox\CardGame\Match\MatchId;
 use Stratadox\CardGame\Proposal\ProposalId;
 
 final class StartedMatchForProposal implements MatchEvent
