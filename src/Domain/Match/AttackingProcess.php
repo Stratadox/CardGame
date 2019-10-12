@@ -36,8 +36,12 @@ final class AttackingProcess implements Handler
         int $player,
         int $cardNumber
     ): void {
-        $theMatch->attackWithCard($cardNumber, $player, $this->clock->now());
-
+        try {
+            $theMatch->attackWithCard($cardNumber, $player, $this->clock->now());
+        } catch (NoSuchCard $noSuchCard) {
+            //@todo this happened: tried to attack with unknown card
+            return;
+        }
         $this->eventBag->takeFrom($theMatch);
     }
 }

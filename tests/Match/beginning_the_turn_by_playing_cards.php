@@ -42,7 +42,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     /** @test */
     function playing_the_first_card()
     {
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
 
         $this->assertCount(1, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(6, $this->cardsInTheHand->ofPlayer($this->currentPlayer, $this->match->id()));
@@ -54,8 +54,8 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         // we can play "the first card" twice, because after playing the first
         // first card, another card will be the first.
 
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(5, $this->cardsInTheHand->ofPlayer($this->currentPlayer, $this->match->id()));
@@ -68,18 +68,17 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         // setup only gives us enough basic income to play the first two cards
         // of our hand, or to only play the third card, but not three cards.
 
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(5, $this->cardsInTheHand->ofPlayer($this->currentPlayer, $this->match->id()));
 
         $this->assertEquals(
-            'Not enough mana!',
-            $this->illegalMove->latestFor($this->match->id(), $this->currentPlayer)
+            ['Not enough mana!'],
+            $this->refusals->for($this->id)
         );
-        $this->assertCount(1, $this->illegalMove->since(0, $this->match->id(), $this->currentPlayer));
     }
 
     /** @test */
@@ -87,7 +86,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         // the third card in the sample deck is a spell
 
-        $this->handle(PlayTheCard::number(2, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(2, $this->currentPlayer, $this->match->id(), $this->id));
 
         $this->assertCount(0, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(6, $this->cardsInTheHand->ofPlayer($this->currentPlayer, $this->match->id()));
@@ -96,54 +95,36 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     /** @test */
     function not_playing_cards_in_the_other_players_turn()
     {
-        $this->handle(PlayTheCard::number(0, $this->otherPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->otherPlayer, $this->match->id(), $this->id));
 
         $this->assertEmpty($this->battlefield->cardsInPlay($this->match->id()));
 
         $this->assertEquals(
-            'Cannot play cards right now.',
-            $this->illegalMove->latestFor($this->match->id(), $this->otherPlayer)
+            ['Cannot play cards right now'],
+            $this->refusals->for($this->id)
         );
     }
 
     /** @test */
     function not_playing_cards_in_the_other_players_turn_twice()
     {
-        $this->handle(PlayTheCard::number(0, $this->otherPlayer, $this->match->id()));
-        $this->handle(PlayTheCard::number(0, $this->otherPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->otherPlayer, $this->match->id(), $this->id));
+        $this->handle(PlayTheCard::number(0, $this->otherPlayer, $this->match->id(), $this->id));
 
         $this->assertEmpty($this->battlefield->cardsInPlay($this->match->id()));
 
         $this->assertEquals(
-            'Cannot play cards right now.',
-            $this->illegalMove->latestFor($this->match->id(), $this->otherPlayer)
-        );
-        $this->assertCount(2, $this->illegalMove->since(0, $this->match->id(), $this->otherPlayer));
-        $this->assertEquals(
-            'Cannot play cards right now.',
-            $this->illegalMove->since(0, $this->match->id(), $this->otherPlayer)[0]
-        );
-        $this->assertEquals(
-            'Cannot play cards right now.',
-            $this->illegalMove->since(0, $this->match->id(), $this->otherPlayer)[1]
+            ['Cannot play cards right now', 'Cannot play cards right now'],
+            $this->refusals->for($this->id)
         );
     }
 
     /** @test */
     function no_illegal_move_messages_when_all_moves_were_legal()
     {
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
 
-        $this->assertNull($this->illegalMove->latestFor($this->match->id(), $this->currentPlayer));
-        $this->assertEmpty($this->illegalMove->since(0, $this->match->id(), $this->currentPlayer));
-    }
-
-    /** @test */
-    function no_illegal_move_messages_after_the_current_one()
-    {
-        $this->handle(PlayTheCard::number(0, $this->otherPlayer, $this->match->id()));
-
-        $this->assertCount(0, $this->illegalMove->since(1, $this->match->id(), $this->otherPlayer));
+        $this->assertEmpty($this->refusals->for($this->id));
     }
 
     /** @test */
@@ -151,7 +132,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         $this->handle(EndCardPlaying::phase($this->currentPlayer, $this->match->id()));
 
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
 
         $this->assertCount(0, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(7, $this->cardsInTheHand->ofPlayer($this->currentPlayer, $this->match->id()));
@@ -162,7 +143,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         $this->clock->fastForward($this->justOverTheCardPlayingTimeLimit);
 
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
 
         $this->assertCount(0, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(7, $this->cardsInTheHand->ofPlayer($this->currentPlayer, $this->match->id()));
@@ -177,7 +158,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
 
         $theirMatchId = $this->match->id();
 
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $ourMatchId));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $ourMatchId, $this->id));
 
         $this->assertCount(0, $this->battlefield->cardsInPlay($theirMatchId));
         $this->assertCount(1, $this->battlefield->cardsInPlay($ourMatchId));

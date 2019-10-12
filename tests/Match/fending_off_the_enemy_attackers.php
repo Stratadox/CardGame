@@ -4,7 +4,6 @@ namespace Stratadox\CardGame\Test\Match;
 
 use Stratadox\CardGame\Match\AttackWithCard;
 use Stratadox\CardGame\Match\Block;
-use Stratadox\CardGame\Match\BlockTheAttacker;
 use Stratadox\CardGame\Match\EndCardPlaying;
 use Stratadox\CardGame\Match\EndBlocking;
 use Stratadox\CardGame\Match\EndTheTurn;
@@ -32,16 +31,14 @@ class fending_off_the_enemy_attackers extends CardGameTest
                 $this->playerTwo = $thePlayer;
             }
         }
-        $this->handle(PlayTheCard::number(0, $this->playerOne, $this->match->id()));
-        $this->handle(PlayTheCard::number(1, $this->playerOne, $this->match->id()));
+        $this->handle(PlayTheCard::number(0, $this->playerOne, $this->match->id(), $this->id));
+        $this->handle(PlayTheCard::number(1, $this->playerOne, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->playerOne, $this->match->id()));
         $this->handle(EndTheTurn::for($this->match->id(), $this->playerOne));
 
-        $this->handle(PlayTheCard::number(0, $this->playerOne, $this->match->id()));
-        $this->handle(PlayTheCard::number(1, $this->playerTwo, $this->match->id()));
+        $this->handle(PlayTheCard::number(1, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id()));
         $this->handle(AttackWithCard::number(0, $this->playerTwo, $this->match->id()));
-        $this->handle(AttackWithCard::number(1, $this->playerTwo, $this->match->id()));
         $this->handle(EndTheTurn::for($this->match->id(), $this->playerTwo));
     }
 

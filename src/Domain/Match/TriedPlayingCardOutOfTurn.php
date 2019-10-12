@@ -2,29 +2,20 @@
 
 namespace Stratadox\CardGame\Match;
 
-final class TriedPlayingCardOutOfTurn implements MatchEvent
+use Stratadox\CardGame\CorrelationId;
+use Stratadox\CardGame\RefusalEvent;
+
+final class TriedPlayingCardOutOfTurn implements RefusalEvent
 {
-    private $match;
-    private $player;
+    private $correlationId;
 
-    public function __construct(MatchId $match, int $player)
+    public function __construct(CorrelationId $correlationId)
     {
-        $this->match = $match;
-        $this->player = $player;
+        $this->correlationId = $correlationId;
     }
 
-    public function aggregateId(): MatchId
+    public function aggregateId(): CorrelationId
     {
-        return $this->match;
-    }
-
-    public function match(): MatchId
-    {
-        return $this->aggregateId();
-    }
-
-    public function player(): int
-    {
-        return $this->player;
+        return $this->correlationId;
     }
 }

@@ -29,8 +29,8 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
                 $this->otherPlayer = $thePlayer;
             }
         }
-        $this->handle(PlayTheCard::number(1, $this->currentPlayer, $this->match->id()));
-        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id()));
+        $this->handle(PlayTheCard::number(1, $this->currentPlayer, $this->match->id(), $this->id));
+        $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->currentPlayer, $this->match->id()));
     }
 

@@ -4,6 +4,8 @@ namespace Stratadox\CardGame\EventHandler;
 
 use Stratadox\CardGame\Account\TriedOpeningAccountForUnknownEntity;
 use Stratadox\CardGame\DomainEvent;
+use Stratadox\CardGame\Match\PlayerDidNotHaveTheMana;
+use Stratadox\CardGame\Match\TriedPlayingCardOutOfTurn;
 use Stratadox\CardGame\Match\TriedStartingMatchForPendingProposal;
 use Stratadox\CardGame\Proposal\TriedAcceptingExpiredProposal;
 use Stratadox\CardGame\Proposal\TriedAcceptingUnknownProposal;
@@ -43,6 +45,12 @@ final class BringerOfBadNews implements EventHandler
                 $event->aggregateId(),
                 'Proposal not found'
             );
+        }
+        if ($event instanceof PlayerDidNotHaveTheMana) {
+            $this->refusals->addFor($event->aggregateId(), 'Not enough mana!');
+        }
+        if ($event instanceof TriedPlayingCardOutOfTurn) {
+            $this->refusals->addFor($event->aggregateId(), 'Cannot play cards right now');
         }
     }
 }

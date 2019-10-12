@@ -73,6 +73,10 @@ final class Match implements DomainEventRecorder
         return $this->id;
     }
 
+    /**
+     * @throws NotEnoughMana
+     * @throws NotYourTurn
+     */
     public function playTheCard(
         int $cardNumber,
         int $thePlayer,
@@ -82,27 +86,22 @@ final class Match implements DomainEventRecorder
             $this->players[$thePlayer]->cardInHand($cardNumber),
             $when
         )) {
-            $this->happened(
-                new TriedPlayingCardOutOfTurn($this->id, $this->players[$thePlayer]->number())
-            );
-            return;
+            throw NotYourTurn::cannotPlayCards();
         }
 
         $this->play($this->players[$thePlayer]->cardInHand($cardNumber), $this->players[$thePlayer]);
     }
 
+    /** @throws NoSuchCard */
     public function attackWithCard(
         int $cardNumber,
         int $thePlayer,
         DateTimeInterface $when
     ): void {
-        try {
-            $card = $this->players[$thePlayer]->cardInPlay($cardNumber);
-        } catch (NoSuchCard $noSuchCard) {
-            //@todo this happened: tried to attack with unknown card
-            return;
-        }
-        $this->attackWith($card, $this->players[$thePlayer]);
+        $this->attackWith(
+            $this->players[$thePlayer]->cardInPlay($cardNumber),
+            $this->players[$thePlayer]
+        );
     }
 
     public function defendAgainst(
@@ -154,11 +153,11 @@ final class Match implements DomainEventRecorder
         $this->players[$defender]->eraseEvents();
     }
 
+    /** @throws NotEnoughMana */
     private function play(Card $theCard, Player $thePlayer): void
     {
         if ($thePlayer->cannotPay($theCard->cost())) {
-            $this->happened(new PlayerDidNotHaveTheMana($this->id, $thePlayer->number()));
-            return;
+            throw new NotEnoughMana('');
         }
 
         $thePlayer->pay($theCard->cost());
@@ -170,6 +169,7 @@ final class Match implements DomainEventRecorder
 
     private function attackWith(Card $theCard, Player $thePlayer): void
     {
+        // @todo move to player
         $theCard->sendToAttack($this->id, count($thePlayer->attackers()), $thePlayer->number());
 
         $this->happened(...$theCard->domainEvents());

@@ -8,7 +8,6 @@ use Ramsey\Uuid\UuidFactory;
 use function sprintf;
 use Stratadox\CardGame\Account\TriedOpeningAccountForUnknownEntity;
 use Stratadox\CardGame\CorrelationId;
-use Stratadox\CardGame\EventHandler\IllegalMoveNotifier;
 use Stratadox\CardGame\EventHandler\BringerOfBadNews;
 use Stratadox\CardGame\EventHandler\TurnSwitcher;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
@@ -69,7 +68,6 @@ use Stratadox\CardGame\Proposal\TriedAcceptingExpiredProposal;
 use Stratadox\CardGame\Proposal\TriedAcceptingUnknownProposal;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
 use Stratadox\CardGame\ReadModel\Refusals;
-use Stratadox\CardGame\ReadModel\IllegalMoveStream;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 use Stratadox\CardGame\ReadModel\Match\Card;
@@ -131,9 +129,6 @@ abstract class CardGameTest extends TestCase
     /** @var Battlefield */
     protected $battlefield;
 
-    /** @var IllegalMoveStream */
-    protected $illegalMove;
-
     /** @var Refusals */
     protected $refusals;
 
@@ -154,7 +149,6 @@ abstract class CardGameTest extends TestCase
         $this->cardsInTheHand = new CardsInHand();
         $this->ongoingMatches = new OngoingMatches();
         $this->battlefield = new Battlefield();
-        $this->illegalMove = new IllegalMoveStream();
         $this->refusals = new Refusals();
         $this->testCard = [
             new Card('card-type-1'),
@@ -186,7 +180,6 @@ abstract class CardGameTest extends TestCase
         $allCards = new AllCards(...$this->testCard);
         $handAdjuster = new HandAdjuster($this->cardsInTheHand, $allCards);
         $battlefieldUpdater = new BattlefieldUpdater($this->battlefield, $allCards);
-        $illegalMoveNotifier = new IllegalMoveNotifier($this->illegalMove);
         $badNews = new BringerOfBadNews($this->refusals);
         return new Dispatcher([
             BroughtVisitor::class => new StatisticsUpdater($this->statistics),
@@ -214,8 +207,8 @@ abstract class CardGameTest extends TestCase
                 $handAdjuster,
             ],
             UnitMovedToAttack::class => $battlefieldUpdater,
-            PlayerDidNotHaveTheMana::class => $illegalMoveNotifier,
-            TriedPlayingCardOutOfTurn::class => $illegalMoveNotifier,
+            PlayerDidNotHaveTheMana::class => $badNews,
+            TriedPlayingCardOutOfTurn::class => $badNews,
             NextTurnBegan::class => new TurnSwitcher($this->ongoingMatches),
             UnitDied::class => $battlefieldUpdater,
         ]);
