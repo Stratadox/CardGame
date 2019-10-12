@@ -7,6 +7,8 @@ use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\BlockTheAttacker;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
+use Stratadox\CardGame\Match\NoSuchCard;
+use Stratadox\CardGame\Match\NotYourTurn;
 use Stratadox\Clock\Clock;
 use Stratadox\CommandHandling\Handler;
 
@@ -47,12 +49,18 @@ final class BlockingProcess implements Handler
         int $defender,
         int $attacker
     ): void {
-        $theMatch->defendAgainst(
-            $attacker,
-            $defender,
-            $thePlayer,
-            $this->clock->now()
-        );
+        try {
+            $theMatch->defendAgainst(
+                $attacker,
+                $defender,
+                $thePlayer,
+                $this->clock->now()
+            );
+        } catch (NoSuchCard $ohNo) {
+            //@todo this happened: tried to defend with unknown card
+        } catch (NotYourTurn $ohNo) {
+            //@todo this happened: tried to defend out-of-turn
+        }
 
         $this->eventBag->takeFrom($theMatch);
     }

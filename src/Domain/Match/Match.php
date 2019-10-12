@@ -107,21 +107,28 @@ final class Match implements DomainEventRecorder
         );
     }
 
+    /**
+     * @throws NoSuchCard
+     * @throws NotYourTurn
+     */
     public function defendAgainst(
         int $attacker,
         int $defender,
-        int $attackingPlayer,
+        int $defendingPlayer,
         DateTimeInterface $when
     ): void {
-        try {
-            $this->defendWith(
-                $this->players[$attackingPlayer]->cardInPlay($defender),
-                $attacker,
-                $this->players[$attackingPlayer]
-            );
-        } catch (NoSuchCard $noSuchCard) {
-            //@todo this happened: tried to attack with unknown card
+        if ($this->turn->prohibitsDefendingWith(
+            $this->players[$defendingPlayer]->cardInPlay($defender),
+            $when
+        )) {
+            throw NotYourTurn::cannotPlayCards();
         }
+
+        $this->defendWith(
+            $this->players[$defendingPlayer]->cardInPlay($defender),
+            $attacker,
+            $this->players[$defendingPlayer]
+        );
     }
 
     public function drawOpeningHands(): void
@@ -151,6 +158,7 @@ final class Match implements DomainEventRecorder
             $this->id,
             $this->players[$this->playerThatGoesAfter($defender)]->attackers()
         );
+        $this->turn = $this->turn->endCombatPhase();
 
         $this->happened(...$this->players[$defender]->domainEvents());
         $this->players[$defender]->eraseEvents();

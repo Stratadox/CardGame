@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Test\Match;
 
+use DateInterval;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
 use Stratadox\CardGame\Match\Command\Block;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
@@ -19,6 +20,10 @@ class fending_off_the_enemy_attackers extends CardGameTest
     private $playerOne;
     /** @var int */
     private $playerTwo;
+    /** @var DateInterval */
+    private $tooLong;
+    /** @var int */
+    private $defendingTime = 20;
 
     protected function setUp(): void
     {
@@ -31,20 +36,28 @@ class fending_off_the_enemy_attackers extends CardGameTest
                 $this->playerTwo = $thePlayer;
             }
         }
+
+        $this->tooLong = $this->interval($this->defendingTime + 1);
+
+        // Turn 1: Player 1 plays a unit
         $this->handle(PlayTheCard::number(0, $this->playerOne, $this->match->id(), $this->id));
-        $this->handle(PlayTheCard::number(1, $this->playerOne, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->playerOne, $this->match->id()));
         $this->handle(EndTheTurn::for($this->match->id(), $this->playerOne));
 
+        // Turn 1: Player 2 plays a unit and attacks
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
         $this->handle(PlayTheCard::number(1, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id()));
         $this->handle(AttackWithCard::number(0, $this->playerTwo, $this->match->id()));
         $this->handle(EndTheTurn::for($this->match->id(), $this->playerTwo));
+
+        // Turn 3: See test case
     }
 
     /** @test */
     function blocking_the_enemy()
     {
+        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
          $this->handle(Block::attacker(0)
              ->withDefender(0)
              ->as($this->playerOne)
@@ -53,5 +66,33 @@ class fending_off_the_enemy_attackers extends CardGameTest
         $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
 
         $this->assertCount(1, $this->battlefield->cardsInPlay($this->match->id()));
+    }
+
+    /** @test */
+    function not_blocking_the_enemy_after_time_ran_out()
+    {
+        $this->clock->fastForward($this->tooLong);
+
+        $this->handle(Block::attacker(0)
+            ->withDefender(0)
+            ->as($this->playerOne)
+            ->in($this->match->id())
+            ->go());
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
+
+        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
+    }
+
+    /** @test */
+    function not_blocking_in_the_enemy_turn()
+    {
+        $this->handle(Block::attacker(0)
+            ->withDefender(0)
+            ->as($this->playerTwo)
+            ->in($this->match->id())
+            ->go());
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
+
+        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
     }
 }
