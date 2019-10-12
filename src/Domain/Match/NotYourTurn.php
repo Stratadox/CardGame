@@ -15,4 +15,9 @@ final class NotYourTurn extends RuntimeException
     {
         return new self('Cannot send cards to defend anymore.');
     }
+
+    public static function cannotAttack(): self
+    {
+        return new self('Cannot send cards to attack anymore.');
+    }
 }

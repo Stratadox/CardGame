@@ -85,22 +85,26 @@ final class Match implements DomainEventRecorder
         int $thePlayer,
         DateTimeInterface $when
     ): void {
-        if ($this->turn->prohibitsPlaying(
-            $this->players[$thePlayer]->cardInHand($cardNumber),
-            $when
-        )) {
+        if ($this->turn->prohibitsPlaying($thePlayer, $when)) {
             throw NotYourTurn::cannotPlayCards();
         }
 
         $this->play($this->players[$thePlayer]->cardInHand($cardNumber), $this->players[$thePlayer]);
     }
 
-    /** @throws NoSuchCard */
+    /**
+     * @throws NoSuchCard
+     * @throws NotYourTurn
+     */
     public function attackWithCard(
         int $cardNumber,
         int $thePlayer,
         DateTimeInterface $when
     ): void {
+        if ($this->turn->prohibitsAttacking($thePlayer, $when)) {
+            throw NotYourTurn::cannotAttack();
+        }
+
         $this->attackWith(
             $this->players[$thePlayer]->cardInPlay($cardNumber),
             $this->players[$thePlayer]
@@ -117,11 +121,8 @@ final class Match implements DomainEventRecorder
         int $defendingPlayer,
         DateTimeInterface $when
     ): void {
-        if ($this->turn->prohibitsDefendingWith(
-            $this->players[$defendingPlayer]->cardInPlay($defender),
-            $when
-        )) {
-            throw NotYourTurn::cannotPlayCards();
+        if ($this->turn->prohibitsDefending($defendingPlayer, $when)) {
+            throw NotYourTurn::cannotDefend();
         }
 
         $this->defendWith(

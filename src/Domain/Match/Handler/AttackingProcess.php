@@ -6,10 +6,12 @@ use function assert;
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
+use Stratadox\CardGame\Match\Event\TriedAttackingOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedAttackingWithUnknownCard;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\CardGame\Match\NoSuchCard;
+use Stratadox\CardGame\Match\NotYourTurn;
 use Stratadox\Clock\Clock;
 use Stratadox\CommandHandling\Handler;
 
@@ -46,8 +48,11 @@ final class AttackingProcess implements Handler
     ): void {
         try {
             $theMatch->attackWithCard($cardNumber, $player, $this->clock->now());
-        } catch (NoSuchCard $noSuchCard) {
+        } catch (NoSuchCard $ohNo) {
             $this->eventBag->add(new TriedAttackingWithUnknownCard($correlationId));
+            return;
+        } catch (NotYourTurn $ohNo) {
+            $this->eventBag->add(new TriedAttackingOutOfTurn($correlationId));
             return;
         }
         $this->eventBag->takeFrom($theMatch);

@@ -8,6 +8,7 @@ use function get_class;
 use Stratadox\CardGame\Account\TriedOpeningAccountForUnknownEntity;
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\Event\PlayerDidNotHaveTheMana;
+use Stratadox\CardGame\Match\Event\TriedAttackingOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedAttackingWithUnknownCard;
 use Stratadox\CardGame\Match\Event\TriedBlockingOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedPlayingCardOutOfTurn;
@@ -22,16 +23,15 @@ final class BringerOfBadNews implements EventHandler
 {
     private $refusals;
     private static $messages = [
-        TriedOpeningAccountForUnknownEntity::class =>
-            'Cannot open account for unknown entity',
-        TriedStartingMatchForPendingProposal::class =>
-            'The proposal is still pending!',
+        TriedOpeningAccountForUnknownEntity::class => 'Cannot open account for unknown entity',
+        TriedStartingMatchForPendingProposal::class => 'The proposal is still pending!',
         TriedAcceptingExpiredProposal::class => 'The proposal has already expired!',
         TriedAcceptingUnknownProposal::class => 'Proposal not found',
         TriedStartingMatchWithoutProposal::class => 'Proposal not found',
         PlayerDidNotHaveTheMana::class => 'Not enough mana!',
         TriedPlayingCardOutOfTurn::class => 'Cannot play cards right now',
         TriedAttackingWithUnknownCard::class => 'That card does not exist',
+        TriedAttackingOutOfTurn::class => 'Cannot attack at this time',
         TriedBlockingOutOfTurn::class => 'Cannot block at this time',
     ];
 

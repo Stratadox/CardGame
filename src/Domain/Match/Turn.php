@@ -19,21 +19,21 @@ final class Turn
         $this->canDefend = !$play;
     }
 
-    public function allowsPlaying(Card $theCard, DateTimeInterface $when): bool
+    public function prohibitsPlaying(int $player, DateTimeInterface $when): bool
     {
-        return $this->currentPlayer === $theCard->owner() &&
-            $this->canPlay &&
-            $when->getTimestamp() - $this->since->getTimestamp() < 20;
+        return $this->currentPlayer !== $player ||
+            !$this->canPlay ||
+            $when->getTimestamp() - $this->since->getTimestamp() >= 20;
     }
 
-    public function prohibitsPlaying(Card $theCard, DateTimeInterface $when): bool
+    public function prohibitsAttacking(int $player, DateTimeInterface $when): bool
     {
-        return !$this->allowsPlaying($theCard, $when);
+        return $this->currentPlayer !== $player;
     }
 
-    public function prohibitsDefendingWith(Card $theCard, DateTimeInterface $when): bool
+    public function prohibitsDefending(int $player, DateTimeInterface $when): bool
     {
-        return $this->currentPlayer !== $theCard->owner() ||
+        return $this->currentPlayer !== $player ||
             !$this->canDefend ||
             $when->getTimestamp() - $this->since->getTimestamp() >= 20;
     }
