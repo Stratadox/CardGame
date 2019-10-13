@@ -3,14 +3,15 @@
 namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\EndTheTurn;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\Clock\Clock;
-use Stratadox\CommandHandling\Handler;
 
-final class TurnEndingProcess implements Handler
+final class TurnEndingProcess implements CommandHandler
 {
     /** @var Matches */
     private $matches;
@@ -26,7 +27,7 @@ final class TurnEndingProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $command): void
+    public function handle(Command $command): void
     {
         assert($command instanceof EndTheTurn);
 

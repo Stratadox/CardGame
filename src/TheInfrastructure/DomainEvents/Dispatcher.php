@@ -19,15 +19,6 @@ class Dispatcher
                 $this->registerHandler($event, $eventHandler);
             }
         }
-//        foreach ($registry as $eventClass => $handler) {
-//            if (is_array($handler)) {
-//                foreach ($handler as $theHandler) {
-//                    $this->registerHandler($eventClass, $theHandler);
-//                }
-//            } else {
-//                $this->registerHandler($eventClass, $handler);
-//            }
-//        }
     }
 
     public function dispatch(DomainEvent $event): void

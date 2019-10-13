@@ -4,14 +4,9 @@ namespace Stratadox\CardGame\Test;
 
 use DateInterval;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\UuidFactory;
 use Stratadox\CardGame\Account\AccountId;
-use Stratadox\CardGame\Account\AccountOpeningProcess;
 use Stratadox\CardGame\Account\OpenAnAccount;
-use Stratadox\CardGame\Account\TriedOpeningAccountForUnknownEntity;
-use Stratadox\CardGame\Account\VisitorOpenedAnAccount;
 use Stratadox\CardGame\CorrelationId;
-use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\EventHandler\AccountOverviewCreator;
 use Stratadox\CardGame\EventHandler\BattlefieldUpdater;
 use Stratadox\CardGame\EventHandler\BringerOfBadNews;
@@ -22,54 +17,12 @@ use Stratadox\CardGame\EventHandler\ProposalAcceptanceNotifier;
 use Stratadox\CardGame\EventHandler\ProposalSender;
 use Stratadox\CardGame\EventHandler\StatisticsUpdater;
 use Stratadox\CardGame\EventHandler\TurnSwitcher;
-use Stratadox\CardGame\Infrastructure\DomainEvents\CommandToEventGlue;
 use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
 use Stratadox\CardGame\Infrastructure\DomainEvents\EventCollector;
-use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultAccountIdGenerator;
-use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultMatchIdGenerator;
-use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultProposalIdGenerator;
-use Stratadox\CardGame\Infrastructure\Test\InMemoryDecks;
-use Stratadox\CardGame\Infrastructure\Test\InMemoryMatches;
-use Stratadox\CardGame\Infrastructure\Test\InMemoryPlayerBase;
-use Stratadox\CardGame\Infrastructure\Test\InMemoryProposedMatches;
-use Stratadox\CardGame\Infrastructure\Test\InMemoryRedirectSources;
-use Stratadox\CardGame\Infrastructure\Test\InMemoryVisitorRepository;
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
-use Stratadox\CardGame\Match\Command\AttackWithCard;
-use Stratadox\CardGame\Match\Command\BlockTheAttacker;
-use Stratadox\CardGame\Match\Command\EndBlocking;
-use Stratadox\CardGame\Match\Command\EndCardPlaying;
-use Stratadox\CardGame\Match\Command\EndTheTurn;
-use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
-use Stratadox\CardGame\Match\Event\CardWasDrawn;
-use Stratadox\CardGame\Match\Event\MatchHasBegun;
-use Stratadox\CardGame\Match\Event\NextTurnBegan;
-use Stratadox\CardGame\Match\Event\PlayerDidNotHaveTheMana;
-use Stratadox\CardGame\Match\Event\SpellVanishedToTheVoid;
-use Stratadox\CardGame\Match\Event\StartedMatchForProposal;
-use Stratadox\CardGame\Match\Event\TriedAttackingWithUnknownCard;
-use Stratadox\CardGame\Match\Event\TriedBlockingOutOfTurn;
-use Stratadox\CardGame\Match\Event\TriedPlayingCardOutOfTurn;
-use Stratadox\CardGame\Match\Event\TriedStartingMatchForPendingProposal;
-use Stratadox\CardGame\Match\Event\UnitDied;
-use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
-use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
-use Stratadox\CardGame\Match\Handler\AttackingProcess;
-use Stratadox\CardGame\Match\Handler\BlockingProcess;
-use Stratadox\CardGame\Match\Handler\CardPlayingProcess;
-use Stratadox\CardGame\Match\Handler\CombatProcess;
-use Stratadox\CardGame\Match\Handler\EndPlayPhaseProcess;
-use Stratadox\CardGame\Match\Handler\MatchStartingProcess;
-use Stratadox\CardGame\Match\Handler\TurnEndingProcess;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
-use Stratadox\CardGame\Proposal\MatchPropositionProcess;
-use Stratadox\CardGame\Proposal\MatchWasProposed;
-use Stratadox\CardGame\Proposal\ProposalAcceptationProcess;
-use Stratadox\CardGame\Proposal\ProposalWasAccepted;
 use Stratadox\CardGame\Proposal\ProposeMatch;
-use Stratadox\CardGame\Proposal\TriedAcceptingExpiredProposal;
-use Stratadox\CardGame\Proposal\TriedAcceptingUnknownProposal;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
 use Stratadox\CardGame\ReadModel\Match\AllCards;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
@@ -82,14 +35,9 @@ use Stratadox\CardGame\ReadModel\PlayerList;
 use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 use Stratadox\CardGame\ReadModel\Proposal\MatchProposals;
 use Stratadox\CardGame\ReadModel\Refusals;
-use Stratadox\CardGame\Visiting\BroughtVisitor;
 use Stratadox\CardGame\Visiting\Visit;
-use Stratadox\CardGame\Visiting\VisitationProcess;
-use Stratadox\CardGame\Visiting\VisitedPage;
 use Stratadox\CardGame\Visiting\VisitorId;
 use Stratadox\Clock\RewindableClock;
-use Stratadox\CommandHandling\AfterHandling;
-use Stratadox\CommandHandling\CommandBus;
 use Stratadox\CommandHandling\Handler;
 use function sprintf;
 
@@ -97,6 +45,9 @@ abstract class CardGameTest extends TestCase
 {
     /** @var Handler */
     private $input;
+
+    /** @var Configuration[] */
+    private $configuration = [];
 
     /** @var RewindableClock */
     protected $clock;
@@ -165,106 +116,26 @@ abstract class CardGameTest extends TestCase
             new Card('card-type-9'),
         ];
 
-        // @todo: extract TestConfiguration
+        $this->configuration['unit'] = new UnitTestConfiguration();
         $eventBag = new EventCollector();
-        $this->input = AfterHandling::invoke(
-            new CommandToEventGlue(
-                $eventBag,
-                $this->eventDispatcher()
-            ),
-            $this->commandBus($eventBag)
-        );
-    }
-
-    private function eventDispatcher(): Dispatcher
-    {
         $allCards = new AllCards(...$this->testCard);
-        return new Dispatcher(
-            new MatchPublisher($this->ongoingMatches),
-            new HandAdjuster($this->cardsInTheHand, $allCards),
-            new BattlefieldUpdater($this->battlefield, $allCards),
-            new BringerOfBadNews($this->refusals),
-            new StatisticsUpdater($this->statistics),
-            new PlayerListAppender($this->playerList),
-            new PlayerListAppender($this->playerList),
-            new AccountOverviewCreator($this->accountOverviews),
-            new ProposalSender($this->matchProposals),
-            new ProposalAcceptanceNotifier($this->acceptedProposals),
-            new TurnSwitcher($this->ongoingMatches)
+        $this->input = $this->configuration[$_SERVER['configuration'] ?? 'unit']->commandHandler(
+            $eventBag,
+            $this->clock,
+            new Dispatcher(
+                    new MatchPublisher($this->ongoingMatches),
+                    new HandAdjuster($this->cardsInTheHand, $allCards),
+                    new BattlefieldUpdater($this->battlefield, $allCards),
+                    new BringerOfBadNews($this->refusals),
+                    new StatisticsUpdater($this->statistics),
+                    new PlayerListAppender($this->playerList),
+                    new PlayerListAppender($this->playerList),
+                    new AccountOverviewCreator($this->accountOverviews),
+                    new ProposalSender($this->matchProposals),
+                    new ProposalAcceptanceNotifier($this->acceptedProposals),
+                    new TurnSwitcher($this->ongoingMatches)
+                )
         );
-    }
-
-    private function commandBus(EventBag $eventBag): Handler
-    {
-        $visitors = new InMemoryVisitorRepository();
-        $playerBase = new InMemoryPlayerBase();
-        $proposals = new InMemoryProposedMatches();
-        $matches = new InMemoryMatches();
-        $decks = new InMemoryDecks();
-        $uuidFactory = new UuidFactory();
-        return CommandBus::handling([
-            Visit::class => new VisitationProcess(
-                $visitors,
-                new InMemoryRedirectSources(),
-                $this->clock,
-                $eventBag
-            ),
-            OpenAnAccount::class => new AccountOpeningProcess(
-                new DefaultAccountIdGenerator($uuidFactory),
-                $visitors,
-                $playerBase,
-                $eventBag
-            ),
-            ProposeMatch::class => new MatchPropositionProcess(
-                new DefaultProposalIdGenerator($uuidFactory),
-                $this->clock,
-                $proposals,
-                $playerBase,
-                $eventBag
-            ),
-            AcceptTheProposal::class => new ProposalAcceptationProcess(
-                $this->clock,
-                $proposals,
-                $eventBag
-            ),
-            StartTheMatch::class => new MatchStartingProcess(
-                $proposals,
-                new DefaultMatchIdGenerator($uuidFactory),
-                $matches,
-                $decks,
-                $this->clock,
-                $eventBag
-            ),
-            PlayTheCard::class => new CardPlayingProcess(
-                $matches,
-                $this->clock,
-                $eventBag
-            ),
-            EndCardPlaying::class => new EndPlayPhaseProcess(
-                $matches,
-                $eventBag
-            ),
-            AttackWithCard::class => new AttackingProcess(
-                $matches,
-                $this->clock,
-                $eventBag
-            ),
-            EndTheTurn::class => new TurnEndingProcess(
-                $matches,
-                $this->clock,
-                $eventBag
-            ),
-            BlockTheAttacker::class => new BlockingProcess(
-                $matches,
-                $this->clock,
-                $eventBag
-            ),
-            EndBlocking::class => new CombatProcess(
-                $matches,
-                $this->clock,
-                $eventBag
-            ),
-        ]);
     }
 
     protected function handle(object $command): void

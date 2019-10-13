@@ -2,10 +2,11 @@
 
 namespace Stratadox\CardGame\Account;
 
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Visiting\VisitorId;
 
-final class OpenAnAccount
+final class OpenAnAccount implements Command
 {
     private $visitorId;
     private $correlationId;

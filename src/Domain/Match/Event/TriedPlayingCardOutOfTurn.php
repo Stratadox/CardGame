@@ -4,6 +4,6 @@ namespace Stratadox\CardGame\Match\Event;
 
 use Stratadox\CardGame\RefusalEvent;
 
-final class TriedPlayingCardOutOfTurn  extends RefusalEvent
+final class TriedPlayingCardOutOfTurn extends RefusalEvent
 {
 }

@@ -3,11 +3,12 @@
 namespace Stratadox\CardGame\Visiting;
 
 use function assert;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\Clock\Clock;
-use Stratadox\CommandHandling\Handler;
 
-final class VisitationProcess implements Handler
+final class VisitationProcess implements CommandHandler
 {
     private $allVisitors;
     private $redirectSources;
@@ -26,7 +27,7 @@ final class VisitationProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $visit): void
+    public function handle(Command $visit): void
     {
         assert($visit instanceof Visit);
 

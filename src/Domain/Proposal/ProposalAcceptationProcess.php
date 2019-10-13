@@ -3,11 +3,12 @@
 namespace Stratadox\CardGame\Proposal;
 
 use function assert;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\Clock\Clock;
-use Stratadox\CommandHandling\Handler;
 
-final class ProposalAcceptationProcess implements Handler
+final class ProposalAcceptationProcess implements CommandHandler
 {
     private $clock;
     private $proposals;
@@ -23,7 +24,7 @@ final class ProposalAcceptationProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $command): void
+    public function handle(Command $command): void
     {
         assert($command instanceof AcceptTheProposal);
 

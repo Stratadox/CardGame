@@ -3,9 +3,10 @@
 namespace Stratadox\CardGame\Proposal;
 
 use Stratadox\CardGame\Account\AccountId;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\CorrelationId;
 
-final class ProposeMatch
+final class ProposeMatch implements Command
 {
     private $proposedBy;
     private $proposedTo;

@@ -41,15 +41,15 @@ class fending_off_the_enemy_attackers extends CardGameTest
 
         // Turn 1: Player 1 plays a unit
         $this->handle(PlayTheCard::number(0, $this->playerOne, $this->match->id(), $this->id));
-        $this->handle(EndCardPlaying::phase($this->playerOne, $this->match->id()));
-        $this->handle(EndTheTurn::for($this->match->id(), $this->playerOne));
+        $this->handle(EndCardPlaying::phase($this->playerOne, $this->match->id(), $this->id));
+        $this->handle(EndTheTurn::for($this->match->id(), $this->playerOne, $this->id));
 
         // Turn 1: Player 2 plays a unit and attacks
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
         $this->handle(PlayTheCard::number(1, $this->playerTwo, $this->match->id(), $this->id));
-        $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id()));
+        $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id(), $this->id));
         $this->handle(AttackWithCard::number(0, $this->playerTwo, $this->match->id(), $this->id));
-        $this->handle(EndTheTurn::for($this->match->id(), $this->playerTwo));
+        $this->handle(EndTheTurn::for($this->match->id(), $this->playerTwo, $this->id));
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         // Turn 3: See test case
@@ -65,7 +65,7 @@ class fending_off_the_enemy_attackers extends CardGameTest
              ->in($this->match->id())
              ->trackedWith($this->id)
              ->go());
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
 
         $this->assertCount(1, $this->battlefield->cardsInPlay($this->match->id()));
     }
@@ -82,7 +82,7 @@ class fending_off_the_enemy_attackers extends CardGameTest
             ->in($this->match->id())
             ->trackedWith($this->id)
             ->go());
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertEquals(
@@ -101,7 +101,7 @@ class fending_off_the_enemy_attackers extends CardGameTest
             ->in($this->match->id())
             ->trackedWith($this->id)
             ->go());
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne));
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
 
         $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertEquals(

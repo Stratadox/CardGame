@@ -124,7 +124,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     /** @test */
     function not_playing_cards_after_ending_the_card_playing_phase()
     {
-        $this->handle(EndCardPlaying::phase($this->currentPlayer, $this->match->id()));
+        $this->handle(EndCardPlaying::phase($this->currentPlayer, $this->match->id(), $this->id));
 
         $this->handle(PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id));
 

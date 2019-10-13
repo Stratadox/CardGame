@@ -2,10 +2,11 @@
 
 namespace Stratadox\CardGame\Match\Command;
 
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Proposal\ProposalId;
 
-final class StartTheMatch
+final class StartTheMatch implements Command
 {
     private $proposal;
     private $correlationId;

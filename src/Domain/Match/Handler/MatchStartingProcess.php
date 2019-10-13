@@ -2,7 +2,9 @@
 
 namespace Stratadox\CardGame\Match\Handler;
 
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\CardGame\Match\DeckForAccount;
 use Stratadox\CardGame\Match\Decks;
 use Stratadox\CardGame\Match\Event\TriedStartingMatchWithoutProposal;
@@ -13,10 +15,9 @@ use Stratadox\CardGame\Match\Event\TriedStartingMatchForPendingProposal;
 use Stratadox\CardGame\Proposal\ProposalHasNotBeenAccepted;
 use Stratadox\CardGame\Proposal\ProposedMatches;
 use Stratadox\Clock\Clock;
-use Stratadox\CommandHandling\Handler;
 use function assert;
 
-final class MatchStartingProcess implements Handler
+final class MatchStartingProcess implements CommandHandler
 {
     private $proposals;
     private $newMatchId;
@@ -41,7 +42,7 @@ final class MatchStartingProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $command): void
+    public function handle(Command $command): void
     {
         assert($command instanceof StartTheMatch);
 

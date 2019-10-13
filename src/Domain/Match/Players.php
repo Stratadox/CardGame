@@ -19,7 +19,7 @@ final class Players extends ImmutableCollection
 
     public function pickRandom(): int
     {
-        return array_rand($this->items());
+        return (int) array_rand($this->items());
     }
 
     public function drawOpeningHands(MatchId $match): void

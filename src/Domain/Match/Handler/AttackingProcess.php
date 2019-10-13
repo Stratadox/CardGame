@@ -3,9 +3,11 @@
 namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\CardGame\Match\Event\TriedAttackingOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedAttackingWithUnknownCard;
 use Stratadox\CardGame\Match\Match;
@@ -13,9 +15,8 @@ use Stratadox\CardGame\Match\Matches;
 use Stratadox\CardGame\Match\NoSuchCard;
 use Stratadox\CardGame\Match\NotYourTurn;
 use Stratadox\Clock\Clock;
-use Stratadox\CommandHandling\Handler;
 
-final class AttackingProcess implements Handler
+final class AttackingProcess implements CommandHandler
 {
     private $matches;
     private $clock;
@@ -28,7 +29,7 @@ final class AttackingProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $command): void
+    public function handle(Command $command): void
     {
         assert($command instanceof AttackWithCard);
 

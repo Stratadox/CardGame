@@ -2,9 +2,10 @@
 
 namespace Stratadox\CardGame\Visiting;
 
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\CorrelationId;
 
-final class Visit
+final class Visit implements Command
 {
     private $page;
     private $redirectSource;

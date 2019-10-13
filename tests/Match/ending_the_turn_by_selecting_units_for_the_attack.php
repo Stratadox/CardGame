@@ -35,7 +35,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
         $this->handle(
             PlayTheCard::number(0, $this->currentPlayer, $this->match->id(), $this->id)
         );
-        $this->handle(EndCardPlaying::phase($this->currentPlayer, $this->match->id()));
+        $this->handle(EndCardPlaying::phase($this->currentPlayer, $this->match->id(), $this->id));
     }
 
     /** @test */
@@ -81,7 +81,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function ending_the_turn_after_the_attack()
     {
-        $this->handle(EndTheTurn::for($this->match->id(), $this->currentPlayer));
+        $this->handle(EndTheTurn::for($this->match->id(), $this->currentPlayer, $this->id));
 
         $this->assertFalse($this->match->itIsTheTurnOf($this->currentPlayer));
         $this->assertTrue($this->match->itIsTheTurnOf($this->otherPlayer));
@@ -90,7 +90,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function not_attacking_after_ending_the_turn()
     {
-        $this->handle(EndTheTurn::for($this->match->id(), $this->currentPlayer));
+        $this->handle(EndTheTurn::for($this->match->id(), $this->currentPlayer, $this->id));
 
         $this->handle(
             AttackWithCard::number(1, $this->currentPlayer, $this->match->id(), $this->id)

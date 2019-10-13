@@ -4,15 +4,17 @@ namespace Stratadox\CardGame\Proposal;
 
 use function assert;
 use DateInterval;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Account\PlayerAccount;
 use Stratadox\CardGame\Account\PlayerBase;
 use Stratadox\CardGame\Account\AccountId;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\Clock\Clock;
 use Stratadox\Clock\RewindableClock;
 use Stratadox\CommandHandling\Handler;
 
-final class MatchPropositionProcess implements Handler
+final class MatchPropositionProcess implements CommandHandler
 {
     private $newIdentity;
     private $clock;
@@ -34,7 +36,7 @@ final class MatchPropositionProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $proposition): void
+    public function handle(Command $proposition): void
     {
         assert($proposition instanceof ProposeMatch);
 

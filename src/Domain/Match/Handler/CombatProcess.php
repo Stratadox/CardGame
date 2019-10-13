@@ -3,14 +3,15 @@
 namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\EndBlocking;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\Clock\Clock;
-use Stratadox\CommandHandling\Handler;
 
-final class CombatProcess implements Handler
+final class CombatProcess implements CommandHandler
 {
     /** @var Matches */
     private $matches;
@@ -29,7 +30,7 @@ final class CombatProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $command): void
+    public function handle(Command $command): void
     {
         assert($command instanceof EndBlocking);
 

@@ -3,18 +3,19 @@
 namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\BlockTheAttacker;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\CardGame\Match\Event\TriedBlockingOutOfTurn;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
 use Stratadox\CardGame\Match\NoSuchCard;
 use Stratadox\CardGame\Match\NotYourTurn;
 use Stratadox\Clock\Clock;
-use Stratadox\CommandHandling\Handler;
 
-final class BlockingProcess implements Handler
+final class BlockingProcess implements CommandHandler
 {
     /** @var Matches */
     private $matches;
@@ -33,7 +34,7 @@ final class BlockingProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $command): void
+    public function handle(Command $command): void
     {
         assert($command instanceof BlockTheAttacker);
 

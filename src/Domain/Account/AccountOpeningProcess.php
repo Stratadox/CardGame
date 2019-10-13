@@ -2,12 +2,13 @@
 
 namespace Stratadox\CardGame\Account;
 
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\EventBag;
+use Stratadox\CardGame\CommandHandler;
 use Stratadox\CardGame\Visiting\AllVisitors;
-use Stratadox\CommandHandling\Handler;
 use function assert;
 
-final class AccountOpeningProcess implements Handler
+final class AccountOpeningProcess implements CommandHandler
 {
     private $newIdentity;
     private $visitor;
@@ -26,7 +27,7 @@ final class AccountOpeningProcess implements Handler
         $this->eventBag = $eventBag;
     }
 
-    public function handle(object $command): void
+    public function handle(Command $command): void
     {
         assert($command instanceof OpenAnAccount);
 

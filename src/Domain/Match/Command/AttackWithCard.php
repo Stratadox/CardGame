@@ -2,10 +2,11 @@
 
 namespace Stratadox\CardGame\Match\Command;
 
+use Stratadox\CardGame\Command;
 use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Match\MatchId;
 
-final class AttackWithCard
+final class AttackWithCard implements Command
 {
     /** @var int */
     private $offset;
