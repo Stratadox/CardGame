@@ -52,7 +52,7 @@ final class Match implements DomainEventRecorder
     private static function players(Decks $decks, int ...$ids): array
     {
         return array_map(function (int $playerId, int $i) use ($decks): Player {
-            return Player::from($playerId, $decks[$i]->cardsFor($playerId));
+            return Player::from($playerId, $decks[$i]->cards());
         }, $ids, array_keys($ids));
     }
 

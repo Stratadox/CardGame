@@ -15,4 +15,10 @@ final class Decks extends ImmutableCollection
     {
         return parent::offsetGet($position);
     }
+
+    /** @codeCoverageIgnore only used for type hinting */
+    public function current(): Deck
+    {
+        return parent::current();
+    }
 }

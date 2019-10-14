@@ -9,28 +9,18 @@ final class Card implements DomainEventRecorder
 {
     use DomainEventRecording;
 
-    private $owner;
     private $location;
     private $template;
 
-    private function __construct(int $owner, Location $location, CardTemplate $template)
+    private function __construct(Location $location, CardTemplate $template)
     {
-        $this->owner = $owner;
         $this->location = $location;
         $this->template = $template;
     }
 
-    public static function inDeck(
-        int $owner,
-        int $position,
-        CardTemplate $template
-    ): self {
-        return new self($owner, Location::inDeck($position), $template);
-    }
-
-    public function owner(): int
+    public static function inDeck(int $position, CardTemplate $template): self
     {
-        return $this->owner;
+        return new self(Location::inDeck($position), $template);
     }
 
     public function isInDeck(): bool
