@@ -181,7 +181,7 @@ final class Match implements DomainEventRecorder
 
     private function attackWith(Card $theCard, Player $thePlayer): void
     {
-        // @todo move to player
+        // @todo move to player?
         $theCard->sendToAttack($this->id, count($thePlayer->attackers()), $thePlayer->number());
 
         $this->happened(...$theCard->domainEvents());
