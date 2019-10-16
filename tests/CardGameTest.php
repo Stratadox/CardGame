@@ -85,13 +85,16 @@ abstract class CardGameTest extends TestCase
     /** @var Refusals */
     protected $refusals;
 
-    /** @var CorrelationId For brevity's sake, it's one id for all requests */
+    /** @var CorrelationId */
     protected $id;
 
     protected function setUp(): void
     {
         $this->clock = TestClock::make();
 
+        // Normally an identifier is generated for each request, allowing the
+        // client to track what happened.
+        // For brevity's sake, it's one id for all requests in the unit tests.
         $this->id = CorrelationId::from('foo');
 
         $this->statistics = new PageVisitsStatisticsReport();
@@ -117,6 +120,8 @@ abstract class CardGameTest extends TestCase
         ];
 
         $this->configuration['unit'] = new UnitTestConfiguration();
+        // @todo add a test configuration where every command is delayed
+
         $eventBag = new EventCollector();
         $allCards = new AllCards(...$this->testCard);
         $this->input = $this->configuration[$_SERVER['configuration'] ?? 'unit']->commandHandler(

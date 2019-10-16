@@ -109,4 +109,23 @@ class fending_off_the_enemy_attackers extends CardGameTest
             $this->refusals->for($this->id)
         );
     }
+
+    /** @test */
+    function not_blocking_with_non_existing_cards()
+    {
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
+            ->withDefender(5)
+            ->as($this->playerOne)
+            ->in($this->match->id())
+            ->trackedWith($this->id)
+            ->go());
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
+
+        $this->assertCount(2, $this->battlefield->cardsInPlay($this->match->id()));
+        $this->assertEquals(
+            ['No such defender'],
+            $this->refusals->for($this->id)
+        );
+    }
 }
