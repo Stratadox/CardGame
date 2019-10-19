@@ -51,6 +51,7 @@ class fending_off_the_enemy_attackers extends CardGameTest
         $this->handle(PlayTheCard::number(0, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id(), $this->id));
         $this->handle(AttackWithCard::number(0, $this->playerTwo, $this->match->id(), $this->id));
+        $this->handle(AttackWithCard::number(1, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(EndTheTurn::for($this->match->id(), $this->playerTwo, $this->id));
 
         $this->assertCount(4, $this->battlefield->cardsInPlay($this->match->id()));
@@ -72,6 +73,23 @@ class fending_off_the_enemy_attackers extends CardGameTest
         $this->assertCount(3, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertCount(2, $this->battlefield->cardsInPlayFor($this->playerOne, $this->match->id()));
         $this->assertCount(1, $this->battlefield->cardsInPlayFor($this->playerTwo, $this->match->id()));
+    }
+
+    /** @test */
+    function dying_while_defending()
+    {
+         $this->handle(Block::theAttack()
+             ->ofAttacker(1)
+             ->withDefender(0)
+             ->as($this->playerOne)
+             ->in($this->match->id())
+             ->trackedWith($this->id)
+             ->go());
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
+
+        $this->assertCount(3, $this->battlefield->cardsInPlay($this->match->id()));
+        $this->assertCount(1, $this->battlefield->cardsInPlayFor($this->playerOne, $this->match->id()));
+        $this->assertCount(2, $this->battlefield->cardsInPlayFor($this->playerTwo, $this->match->id()));
     }
 
     /** @test */

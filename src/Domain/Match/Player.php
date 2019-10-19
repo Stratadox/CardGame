@@ -93,6 +93,7 @@ final class Player implements DomainEventRecorder
             $theDefender->counterAttack(
                 $match,
                 $attackers->theOneThatAttacksTheAmbushOf($theDefender),
+                $this->playerNumber,
                 $attackingPlayer
             );
             $this->happened(...$theDefender->domainEvents());
