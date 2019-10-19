@@ -42,13 +42,13 @@ final class CardPlayingProcess implements CommandHandler
     }
 
     private function play(
-        Match $theMatch,
+        Match $match,
         int $player,
         int $cardNumber,
         CorrelationId $correlationId
     ): void {
         try {
-            $theMatch->playTheCard($cardNumber, $player, $this->clock->now());
+            $match->playTheCard($cardNumber, $player, $this->clock->now());
         } catch (NotEnoughMana $problem) {
             $this->eventBag->add(new PlayerDidNotHaveTheMana(
                 $correlationId,
@@ -61,6 +61,6 @@ final class CardPlayingProcess implements CommandHandler
             ));
         }
 
-        $this->eventBag->takeFrom($theMatch);
+        $this->eventBag->takeFrom($match);
     }
 }

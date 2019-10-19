@@ -4,6 +4,6 @@ namespace Stratadox\CardGame\Account;
 
 interface PlayerBase
 {
-    public function add(PlayerAccount $thePlayer): void;
+    public function add(PlayerAccount $player): void;
     public function withId(AccountId $id): PlayerAccount;
 }

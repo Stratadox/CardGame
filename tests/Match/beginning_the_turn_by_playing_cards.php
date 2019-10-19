@@ -23,11 +23,11 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        foreach ($this->match->players() as $thePlayer) {
-            if ($this->match->itIsTheTurnOf($thePlayer)) {
-                $this->currentPlayer = $thePlayer;
+        foreach ($this->match->players() as $player) {
+            if ($this->match->itIsTheTurnOf($player)) {
+                $this->currentPlayer = $player;
             } else {
-                $this->otherPlayer = $thePlayer;
+                $this->otherPlayer = $player;
             }
         }
         $this->justOverTheCardPlayingTimeLimit = $this->interval(20);

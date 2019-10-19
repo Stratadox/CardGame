@@ -40,10 +40,10 @@ final class CombatProcess implements CommandHandler
         );
     }
 
-    private function timeForCombat(int $thePlayer, Match $theMatch): void
+    private function timeForCombat(int $defender, Match $match): void
     {
-        $theMatch->letTheCombatBegin($thePlayer, $this->clock->now());
+        $match->letTheCombatBegin($defender, $this->clock->now());
 
-        $this->eventBag->takeFrom($theMatch);
+        $this->eventBag->takeFrom($match);
     }
 }

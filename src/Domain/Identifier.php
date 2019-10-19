@@ -17,9 +17,9 @@ abstract class Identifier
         return new static((string) $id);
     }
 
-    public function is(self $theOther): bool
+    public function is(self $that): bool
     {
-        return (string) $this === (string) $theOther;
+        return (string) $this === (string) $that;
     }
 
     public function id(): string

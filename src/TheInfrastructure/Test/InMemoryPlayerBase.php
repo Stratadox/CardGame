@@ -15,9 +15,9 @@ final class InMemoryPlayerBase implements PlayerBase
 {
     private $overviews;
 
-    public function add(PlayerAccount $thePlayer): void
+    public function add(PlayerAccount $player): void
     {
-        $this->overviews[(string) $thePlayer->id()] = $thePlayer;
+        $this->overviews[(string) $player->id()] = $player;
     }
 
     public function withId(AccountId $id): PlayerAccount

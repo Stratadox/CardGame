@@ -54,13 +54,13 @@ final class MatchPropositionProcess implements CommandHandler
     }
 
     private function proposeMatch(
-        PlayerAccount $thePlayerThatProposesTheMatch,
-        AccountId $theOtherPlayer,
+        PlayerAccount $proposingPlayer,
+        AccountId $otherPlayer,
         Clock $validUntil,
         ProposalId $id
     ): MatchProposal {
-        return $thePlayerThatProposesTheMatch->proposeMatchTo(
-            $theOtherPlayer,
+        return $proposingPlayer->proposeMatchTo(
+            $otherPlayer,
             $validUntil->now(),
             $id
         );

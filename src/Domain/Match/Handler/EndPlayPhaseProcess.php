@@ -31,11 +31,11 @@ final class EndPlayPhaseProcess implements CommandHandler
         );
     }
 
-    private function endPlayPhase(int $thePlayer, Match $theMatch): void
+    private function endPlayPhase(int $playerNumber, Match $match): void
     {
         // @todo add clock
-        $theMatch->endCardPlayingPhaseFor($thePlayer);
+        $match->endCardPlayingPhaseFor($playerNumber);
 
-        $this->eventBag->takeFrom($theMatch);
+        $this->eventBag->takeFrom($match);
     }
 }

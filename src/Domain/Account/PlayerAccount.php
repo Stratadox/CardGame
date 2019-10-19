@@ -32,14 +32,14 @@ final class PlayerAccount implements DomainEventRecorder
     }
 
     public function proposeMatchTo(
-        AccountId $theOtherPlayer,
+        AccountId $player,
         DateTimeInterface $validUntil,
         ProposalId $proposalId
     ): MatchProposal {
         return new MatchProposal(
             $proposalId,
             $this->id,
-            $theOtherPlayer,
+            $player,
             $validUntil
         );
     }

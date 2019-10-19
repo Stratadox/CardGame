@@ -10,8 +10,8 @@ final class InMemoryDecks implements DeckForAccount
 {
     private $deckFor = [];
 
-    public function deckFor(AccountId $theAccount): Deck
+    public function deckFor(AccountId $account): Deck
     {
-        return $this->deckFor[$theAccount->id()] ?? new Deck();
+        return $this->deckFor[$account->id()] ?? new Deck();
     }
 }

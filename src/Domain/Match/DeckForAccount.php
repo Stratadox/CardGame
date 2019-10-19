@@ -6,6 +6,6 @@ use Stratadox\CardGame\Account\AccountId;
 
 interface DeckForAccount
 {
-//    public function addFor(AccountId $theAccount, Deck $theDeck): void;
-    public function deckFor(AccountId $theAccount): Deck;
+//    public function addFor(AccountId $account, Deck $deck): void;
+    public function deckFor(AccountId $account): Deck;
 }

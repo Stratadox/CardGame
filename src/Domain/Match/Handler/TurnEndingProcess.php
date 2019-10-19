@@ -37,9 +37,9 @@ final class TurnEndingProcess implements CommandHandler
         );
     }
 
-    private function endTurn(Match $theMatch, int $player): void
+    private function endTurn(Match $match, int $player): void
     {
-        $theMatch->endTurnOf($player, $this->clock->now());
-        $this->eventBag->takeFrom($theMatch);
+        $match->endTurnOf($player, $this->clock->now());
+        $this->eventBag->takeFrom($match);
     }
 }

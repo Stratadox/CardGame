@@ -43,9 +43,9 @@ final class AccountOpeningProcess implements CommandHandler
         $this->register($visitor->openAccount($this->newIdentity->generate()));
     }
 
-    private function register(PlayerAccount $theAccount): void
+    private function register(PlayerAccount $account): void
     {
-        $this->playerBase->add($theAccount);
-        $this->eventBag->takeFrom($theAccount);
+        $this->playerBase->add($account);
+        $this->eventBag->takeFrom($account);
     }
 }

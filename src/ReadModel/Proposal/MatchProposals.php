@@ -27,9 +27,9 @@ class MatchProposals
     {
         $currently = $currently ?: $this->clock->now();
         $proposals = [];
-        foreach ($this->proposals as $theProposal) {
-            if ($theProposal->canBeAcceptedBy($player, $currently)) {
-                $proposals[] = $theProposal;
+        foreach ($this->proposals as $proposal) {
+            if ($proposal->canBeAcceptedBy($player, $currently)) {
+                $proposals[] = $proposal;
             }
         }
         return $proposals;

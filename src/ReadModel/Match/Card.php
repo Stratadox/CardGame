@@ -17,9 +17,9 @@ final class Card
         return $this->id;
     }
 
-    public function is(Card $theOther): bool
+    public function is(Card $that): bool
     {
-        return $this->id === $theOther->id;
+        return $this->id === $that->id;
     }
 
     public function isAttacking(): bool

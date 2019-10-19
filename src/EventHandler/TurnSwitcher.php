@@ -33,10 +33,8 @@ final class TurnSwitcher implements EventHandler
         );
     }
 
-    private function becameTheTurnOf(
-        int $theNextPlayer,
-        OngoingMatch $inTheMatch
-    ): void {
-        $inTheMatch->beganTheTurnOf($theNextPlayer);
+    private function becameTheTurnOf(int $nextPlayer, OngoingMatch $inTheMatch): void
+    {
+        $inTheMatch->beganTheTurnOf($nextPlayer);
     }
 }

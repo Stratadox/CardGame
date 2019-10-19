@@ -29,11 +29,11 @@ class fending_off_the_enemy_attackers extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        foreach ($this->match->players() as $thePlayer) {
-            if ($this->match->itIsTheTurnOf($thePlayer)) {
-                $this->playerOne = $thePlayer;
+        foreach ($this->match->players() as $player) {
+            if ($this->match->itIsTheTurnOf($player)) {
+                $this->playerOne = $player;
             } else {
-                $this->playerTwo = $thePlayer;
+                $this->playerTwo = $player;
             }
         }
 

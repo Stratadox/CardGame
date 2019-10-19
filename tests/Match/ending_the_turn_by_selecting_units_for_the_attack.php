@@ -22,11 +22,11 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        foreach ($this->match->players() as $thePlayer) {
-            if ($this->match->itIsTheTurnOf($thePlayer)) {
-                $this->currentPlayer = $thePlayer;
+        foreach ($this->match->players() as $player) {
+            if ($this->match->itIsTheTurnOf($player)) {
+                $this->currentPlayer = $player;
             } else {
-                $this->otherPlayer = $thePlayer;
+                $this->otherPlayer = $player;
             }
         }
         $this->handle(

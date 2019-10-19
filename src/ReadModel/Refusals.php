@@ -9,14 +9,14 @@ final class Refusals
     private $errorMessages = [];
 
     /** @return string[] */
-    public function for(CorrelationId $theRequest): array
+    public function for(CorrelationId $request): array
     {
 //        return ['Cannot open account for unknown entity'];
-        return $this->errorMessages[$theRequest->id()] ?? [];
+        return $this->errorMessages[$request->id()] ?? [];
     }
 
-    public function addFor(CorrelationId $theRequest, string $message): void
+    public function addFor(CorrelationId $request, string $message): void
     {
-        $this->errorMessages[$theRequest->id()][] = $message;
+        $this->errorMessages[$request->id()][] = $message;
     }
 }

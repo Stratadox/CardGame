@@ -15,13 +15,13 @@ class AccountOverviews
     }
 
     /** @throws NoAccountForVisitor */
-    public function forVisitor(VisitorId $theVisitor): AccountOverview
+    public function forVisitor(VisitorId $visitor): AccountOverview
     {
-        foreach ($this->accounts as $theAccountOverview) {
-            if ($theVisitor->is($theAccountOverview->visitor())) {
-                return $theAccountOverview;
+        foreach ($this->accounts as $accountOverview) {
+            if ($visitor->is($accountOverview->visitor())) {
+                return $accountOverview;
             }
         }
-        throw NoAccountForVisitor::withId($theVisitor);
+        throw NoAccountForVisitor::withId($visitor);
     }
 }

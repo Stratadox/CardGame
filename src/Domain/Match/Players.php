@@ -24,8 +24,8 @@ final class Players extends ImmutableCollection
 
     public function drawOpeningHands(MatchId $match): void
     {
-        foreach ($this as $thePlayer) {
-            $thePlayer->drawOpeningHand($match);
+        foreach ($this as $player) {
+            $player->drawOpeningHand($match);
         }
     }
 

@@ -48,14 +48,14 @@ final class BlockingProcess implements CommandHandler
     }
 
     private function sendIntoBattle(
-        Match $theMatch,
+        Match $match,
         int $thePlayer,
         int $defender,
         int $attacker,
         CorrelationId $correlationId
     ): void {
         try {
-            $theMatch->defendAgainst(
+            $match->defendAgainst(
                 $attacker,
                 $defender,
                 $thePlayer,
@@ -76,6 +76,6 @@ final class BlockingProcess implements CommandHandler
             return;
         }
 
-        $this->eventBag->takeFrom($theMatch);
+        $this->eventBag->takeFrom($match);
     }
 }

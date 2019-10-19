@@ -42,13 +42,13 @@ final class AttackingProcess implements CommandHandler
     }
 
     public function sendIntoBattle(
-        Match $theMatch,
+        Match $match,
         int $player,
         int $cardNumber,
         CorrelationId $correlationId
     ): void {
         try {
-            $theMatch->attackWithCard($cardNumber, $player, $this->clock->now());
+            $match->attackWithCard($cardNumber, $player, $this->clock->now());
         } catch (NoSuchCard $ohNo) {
             // @todo log?
             $this->eventBag->add(new TriedAttackingWithUnknownCard(
@@ -63,6 +63,6 @@ final class AttackingProcess implements CommandHandler
             ));
             return;
         }
-        $this->eventBag->takeFrom($theMatch);
+        $this->eventBag->takeFrom($match);
     }
 }

@@ -74,14 +74,14 @@ final class Player implements DomainEventRecorder
         }
     }
 
-    public function cannotPay(Mana $theCosts): bool
+    public function cannotPay(Mana $cost): bool
     {
-        return $this->mana->isLessThan($theCosts);
+        return $this->mana->isLessThan($cost);
     }
 
-    public function pay(Mana $theCostOfTheCard): void
+    public function pay(Mana $costOfTheCard): void
     {
-        $this->mana = $this->mana->minus($theCostOfTheCard);
+        $this->mana = $this->mana->minus($costOfTheCard);
     }
 
     public function counterTheAttackersOf(
@@ -89,15 +89,15 @@ final class Player implements DomainEventRecorder
         MatchId $match,
         Cards $attackers
     ): void {
-        foreach ($this->cards->thatDefend() as $theDefender) {
-            $theDefender->counterAttack(
+        foreach ($this->cards->thatDefend() as $defender) {
+            $defender->counterAttack(
                 $match,
-                $attackers->theOneThatAttacksTheAmbushOf($theDefender),
+                $attackers->theOneThatAttacksTheAmbushOf($defender),
                 $this->playerNumber,
                 $attackingPlayer
             );
-            $this->happened(...$theDefender->domainEvents());
-            $theDefender->eraseEvents();
+            $this->happened(...$defender->domainEvents());
+            $defender->eraseEvents();
         }
     }
 }

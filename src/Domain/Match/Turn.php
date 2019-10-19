@@ -38,7 +38,7 @@ final class Turn
             $when->getTimestamp() - $this->since->getTimestamp() >= 20;
     }
 
-    public function endCardPlayingPhaseFor(int $thePlayer): Turn
+    public function endCardPlayingPhaseFor(int $player): Turn
     {
         // @todo
         $this->canPlay = false;
@@ -53,8 +53,8 @@ final class Turn
         return $this;
     }
 
-    public function of(int $thePlayer, DateTimeInterface $since): Turn
+    public function of(int $player, DateTimeInterface $since): Turn
     {
-        return new Turn($thePlayer, $since, false);
+        return new Turn($player, $since, false);
     }
 }

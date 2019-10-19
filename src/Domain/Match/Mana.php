@@ -11,9 +11,9 @@ final class Mana
         $this->amount = $amount;
     }
 
-    public function isLessThan(Mana $theOther): bool
+    public function isLessThan(Mana $that): bool
     {
-        return $this->amount < $theOther->amount;
+        return $this->amount < $that->amount;
     }
 
     public function minus(Mana $reduction): Mana

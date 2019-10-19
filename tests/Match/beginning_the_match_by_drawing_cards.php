@@ -63,14 +63,14 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
         $this->assertCount(7, $this->cardsInTheHand->ofPlayer(1, $match->id()));
 
         // we're cheating here, because we haven't truly shuffled their decks
-        foreach ($this->cardsInTheHand->ofPlayer(0, $match->id()) as $i => $theCardInHand) {
-            $this->assertEquals($this->testCard[$i], $theCardInHand);
-            $this->assertNotEquals($this->bogusCard, $theCardInHand);
+        foreach ($this->cardsInTheHand->ofPlayer(0, $match->id()) as $i => $cardInHand) {
+            $this->assertEquals($this->testCard[$i], $cardInHand);
+            $this->assertNotEquals($this->bogusCard, $cardInHand);
         }
 
-        foreach ($this->cardsInTheHand->ofPlayer(1, $match->id()) as $i => $theCardInHand) {
-            $this->assertEquals($this->testCard[$i], $theCardInHand);
-            $this->assertNotEquals($this->bogusCard, $theCardInHand);
+        foreach ($this->cardsInTheHand->ofPlayer(1, $match->id()) as $i => $cardInHand) {
+            $this->assertEquals($this->testCard[$i], $cardInHand);
+            $this->assertNotEquals($this->bogusCard, $cardInHand);
         }
     }
 
