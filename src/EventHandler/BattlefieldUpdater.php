@@ -34,7 +34,8 @@ final class BattlefieldUpdater implements EventHandler
         if ($event instanceof UnitMovedIntoPlay) {
             $this->battlefield->add(
                 $this->cards->ofType($event->card()),
-                $event->aggregateId()
+                $event->aggregateId(),
+                $event->player()
             );
         }
         if ($event instanceof UnitMovedToAttack) {
@@ -44,7 +45,8 @@ final class BattlefieldUpdater implements EventHandler
         if ($event instanceof UnitDied) {
             $this->battlefield->remove(
                 $this->cards->ofType($event->card()),
-                $event->match()
+                $event->match(),
+                $event->player()
             );
         }
     }

@@ -82,11 +82,11 @@ final class Card implements DomainEventRecorder
         $this->happened(...$this->template->defendingEvents($match, $player));
     }
 
-    public function counterAttack(MatchId $match, Card $attacker): void
+    public function counterAttack(MatchId $match, Card $attacker, int $player): void
     {
         // kill 'm for now... @todo combat mechanics
         $attacker->location = Location::inVoid();
-        $this->happened(...$attacker->template->dyingEvents($match));
+        $this->happened(...$attacker->template->dyingEvents($match, $player));
     }
 
     public function cost(): Mana

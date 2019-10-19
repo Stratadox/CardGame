@@ -3,21 +3,22 @@
 namespace Stratadox\CardGame\ReadModel\Match;
 
 use function array_filter;
+use function array_merge;
 use Stratadox\CardGame\Match\MatchId;
 
 class Battlefield
 {
     private $cards = [];
 
-    public function add(Card $card, MatchId $match): void
+    public function add(Card $card, MatchId $match, int $owner): void
     {
-        $this->cards[$match->id()][] = $card;
+        $this->cards[$match->id()][$owner][] = $card;
     }
 
-    public function remove(Card $cardToRemove, MatchId $match): void
+    public function remove(Card $cardToRemove, MatchId $match, int $owner): void
     {
-        $this->cards[$match->id()] = array_filter(
-            $this->cards[$match->id()],
+        $this->cards[$match->id()][$owner] = array_filter(
+            $this->cards[$match->id()][$owner],
             function (Card $card) use ($cardToRemove): bool {
                 return !$card->is($cardToRemove);
             }
@@ -27,7 +28,13 @@ class Battlefield
     /** @return Card[] */
     public function cardsInPlay(MatchId $match): array
     {
-        return $this->cards[$match->id()] ?? [];
+        return array_merge(...$this->cards[$match->id()] ?? [[]]);
+    }
+
+    /** @return Card[] */
+    public function cardsInPlayFor(int $player, MatchId $match): array
+    {
+        return $this->cards[$match->id()][$player] ?? [];
     }
 
     /** @return Card[] */

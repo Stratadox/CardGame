@@ -84,12 +84,16 @@ final class Player implements DomainEventRecorder
         $this->mana = $this->mana->minus($theCostOfTheCard);
     }
 
-    public function counterTheAttackers(MatchId $match, Cards $attackers): void
-    {
+    public function counterTheAttackersOf(
+        int $attackingPlayer,
+        MatchId $match,
+        Cards $attackers
+    ): void {
         foreach ($this->cards->thatDefend() as $theDefender) {
             $theDefender->counterAttack(
                 $match,
-                $attackers->theOneThatAttacksTheAmbushOf($theDefender)
+                $attackers->theOneThatAttacksTheAmbushOf($theDefender),
+                $attackingPlayer
             );
             $this->happened(...$theDefender->domainEvents());
             $theDefender->eraseEvents();

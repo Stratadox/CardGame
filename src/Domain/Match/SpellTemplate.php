@@ -39,7 +39,7 @@ final class SpellTemplate implements CardTemplate
         return [];
     }
 
-    public function dyingEvents(MatchId $match): array
+    public function dyingEvents(MatchId $match, int $player): array
     {
         return [];
     }

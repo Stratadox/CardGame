@@ -13,7 +13,7 @@ interface CardTemplate
     /** @return MatchEvent[] */
     public function defendingEvents(MatchId $match, int $player): array;
     /** @return MatchEvent[] */
-    public function dyingEvents(MatchId $match): array;
+    public function dyingEvents(MatchId $match, int $player): array;
     public function playingMove(int $position): Location;
     public function attackingMove(int $position): Location;
     public function defendingMove(int $position): Location;

@@ -12,11 +12,14 @@ final class UnitDied implements MatchEvent
     private $match;
     /** @var CardId */
     private $card;
+    /** @var int */
+    private $player;
 
-    public function __construct(MatchId $match, CardId $card)
+    public function __construct(MatchId $match, CardId $card, int $player)
     {
         $this->match = $match;
         $this->card = $card;
+        $this->player = $player;
     }
 
     public function aggregateId(): MatchId
@@ -32,5 +35,10 @@ final class UnitDied implements MatchEvent
     public function card(): CardId
     {
         return $this->card;
+    }
+
+    public function player(): int
+    {
+        return $this->player;
     }
 }

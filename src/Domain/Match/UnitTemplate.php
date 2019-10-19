@@ -41,9 +41,9 @@ final class UnitTemplate implements CardTemplate
         return [];
     }
 
-    public function dyingEvents(MatchId $match): array
+    public function dyingEvents(MatchId $match, int $player): array
     {
-        return [new UnitDied($match, $this->card)];
+        return [new UnitDied($match, $this->card, $player)];
     }
 
     public function playingMove(int $position): Location

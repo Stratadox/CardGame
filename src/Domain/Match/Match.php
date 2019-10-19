@@ -155,7 +155,8 @@ final class Match implements DomainEventRecorder
     public function letTheCombatBegin(int $defender, DateTimeInterface $when): void
     {
         // @todo check with turn if time for combat
-        $this->players[$defender]->counterTheAttackers(
+        $this->players[$defender]->counterTheAttackersOf(
+            $this->playerThatGoesAfter($defender),
             $this->id,
             $this->players[$this->playerThatGoesAfter($defender)]->attackers()
         );
