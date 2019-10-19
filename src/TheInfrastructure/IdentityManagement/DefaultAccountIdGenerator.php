@@ -9,6 +9,6 @@ final class DefaultAccountIdGenerator extends IdGenerator implements AccountIdGe
 {
     public function generate(): AccountId
     {
-        return AccountId::from($this->newIdFor('player account'));
+        return AccountId::from($this->newIdFor('account'));
     }
 }
