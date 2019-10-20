@@ -22,6 +22,7 @@ final class EndCardPlaying implements Command
     ) {
         $this->player = $player;
         $this->match = $match;
+        $this->correlationId = $correlationId;
     }
 
     public static function phase(

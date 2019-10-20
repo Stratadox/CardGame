@@ -3,6 +3,7 @@
 namespace Stratadox\CardGame\Test\Match;
 
 use DateInterval;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Test\CardGameTest;
@@ -275,6 +276,28 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
                 $this->currentPlayer,
                 $this->match->id()
             )
+        );
+    }
+
+    /** @test */
+    function not_ending_the_card_playing_phase_for_another_player()
+    {
+        $this->handle(EndCardPlaying::phase(
+            $this->otherPlayer,
+            $this->match->id(),
+            $this->id
+        ));
+        $this->handle(PlayTheCard::number(
+            0,
+            $this->currentPlayer,
+            $this->match->id(),
+            CorrelationId::from('ok')
+        ));
+
+        $this->assertEmpty($this->refusals->for(CorrelationId::from('ok')));
+        $this->assertEquals(
+            ['Cannot end the card playing phase right now'],
+            $this->refusals->for($this->id)
         );
     }
 

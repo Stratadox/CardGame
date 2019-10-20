@@ -145,8 +145,15 @@ final class Match implements DomainEventRecorder
         }
     }
 
-    public function endCardPlayingPhaseFor(int $playerNumber): void
-    {
+    /** @throws NotYourTurn */
+    public function endCardPlayingPhaseFor(
+        int $playerNumber,
+        DateTimeInterface $when
+    ): void {
+        if ($this->turn->prohibitsEndingCardPlaying($playerNumber, $when)) {
+            throw NotYourTurn::cannotEndCardPlayingPhase();
+        }
+
         $this->turn = $this->turn->endCardPlayingPhaseFor($playerNumber);
     }
 

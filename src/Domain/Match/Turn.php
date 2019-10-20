@@ -28,6 +28,7 @@ final class Turn
 
     public function prohibitsAttacking(int $player, DateTimeInterface $when): bool
     {
+        // @todo check if time ran out
         return $this->currentPlayer !== $player;
     }
 
@@ -43,6 +44,12 @@ final class Turn
         return $this->currentPlayer !== $player ||
             !$this->canDefend ||
             $when->getTimestamp() - $this->since->getTimestamp() >= 20;
+    }
+
+    public function prohibitsEndingCardPlaying(int $player, DateTimeInterface $when): bool
+    {
+        // @todo check if time ran out
+        return $this->currentPlayer !== $player;
     }
 
     public function endCardPlayingPhaseFor(int $player): Turn

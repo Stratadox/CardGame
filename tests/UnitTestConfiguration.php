@@ -102,6 +102,7 @@ class UnitTestConfiguration
                 )),
                 EndCardPlaying::class => $this->adapt(new EndPlayPhaseProcess(
                     $matches,
+                    $clock,
                     $eventBag
                 )),
                 AttackWithCard::class => $this->adapt(new AttackingProcess(
