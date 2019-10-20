@@ -34,16 +34,15 @@ final class Turn
 
     public function prohibitsDefending(int $player, DateTimeInterface $when): bool
     {
+        // @todo check if turn phase allows for starting combat
         return $this->currentPlayer !== $player ||
-            !$this->canDefend ||
             $when->getTimestamp() - $this->since->getTimestamp() >= 20;
     }
 
     public function prohibitsStartingCombat(int $player, DateTimeInterface $when): bool
     {
-        return $this->currentPlayer !== $player ||
-            !$this->canDefend ||
-            $when->getTimestamp() - $this->since->getTimestamp() >= 20;
+        // @todo check if time and turn phase allow for starting combat
+        return $this->currentPlayer !== $player;
     }
 
     public function prohibitsEndingCardPlaying(int $player, DateTimeInterface $when): bool
