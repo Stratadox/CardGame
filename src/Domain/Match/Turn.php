@@ -38,6 +38,13 @@ final class Turn
             $when->getTimestamp() - $this->since->getTimestamp() >= 20;
     }
 
+    public function prohibitsStartingCombat(int $player, DateTimeInterface $when): bool
+    {
+        return $this->currentPlayer !== $player ||
+            !$this->canDefend ||
+            $when->getTimestamp() - $this->since->getTimestamp() >= 20;
+    }
+
     public function endCardPlayingPhaseFor(int $player): Turn
     {
         // @todo

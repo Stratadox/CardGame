@@ -155,9 +155,13 @@ final class Match implements DomainEventRecorder
         $this->beginNextTurnFor($this->players->after($playerNumber), $when);
     }
 
+    /** @throws NotYourTurn */
     public function letTheCombatBegin(int $defender, DateTimeInterface $when): void
     {
-        // @todo check with turn if time for combat
+        if ($this->turn->prohibitsStartingCombat($defender, $when)) {
+            throw NotYourTurn::cannotStartCombat();
+        }
+
         $this->players[$defender]->counterTheAttackersOf(
             $this->playerThatGoesAfter($defender),
             $this->id,

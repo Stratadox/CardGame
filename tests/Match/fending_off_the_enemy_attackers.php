@@ -3,6 +3,7 @@
 namespace Stratadox\CardGame\Test\Match;
 
 use DateInterval;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
 use Stratadox\CardGame\Match\Command\Block;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
@@ -46,7 +47,7 @@ class fending_off_the_enemy_attackers extends CardGameTest
         $this->handle(EndTheTurn::for($this->match->id(), $this->playerOne, $this->id));
 
         // Turn 1: Player 2 plays two units and attacks
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerTwo, $this->id));
         $this->handle(PlayTheCard::number(0, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(PlayTheCard::number(0, $this->playerTwo, $this->match->id(), $this->id));
         $this->handle(EndCardPlaying::phase($this->playerTwo, $this->match->id(), $this->id));
@@ -104,7 +105,6 @@ class fending_off_the_enemy_attackers extends CardGameTest
             ->in($this->match->id())
             ->trackedWith($this->id)
             ->go());
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
 
         $this->assertCount(4, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertEquals(
@@ -123,7 +123,6 @@ class fending_off_the_enemy_attackers extends CardGameTest
             ->in($this->match->id())
             ->trackedWith($this->id)
             ->go());
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
 
         $this->assertCount(4, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertEquals(
@@ -142,11 +141,30 @@ class fending_off_the_enemy_attackers extends CardGameTest
             ->in($this->match->id())
             ->trackedWith($this->id)
             ->go());
-        $this->handle(EndBlocking::phase($this->match->id(), $this->playerOne, $this->id));
 
         $this->assertCount(4, $this->battlefield->cardsInPlay($this->match->id()));
         $this->assertEquals(
             ['No such defender'],
+            $this->refusals->for($this->id)
+        );
+    }
+
+    /** @test */
+    function not_ending_the_blocking_phase_of_the_enemy_turn()
+    {
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
+            ->withDefender(0)
+            ->as($this->playerOne)
+            ->in($this->match->id())
+            ->trackedWith(CorrelationId::from('irrelevant'))
+            ->go());
+
+        $this->handle(EndBlocking::phase($this->match->id(), $this->playerTwo, $this->id));
+
+        $this->assertCount(4, $this->battlefield->cardsInPlay($this->match->id()));
+        $this->assertEquals(
+            ['Cannot start the combat at this time'],
             $this->refusals->for($this->id)
         );
     }

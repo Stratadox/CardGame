@@ -4,11 +4,14 @@ namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
 use Stratadox\CardGame\Command;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\EndBlocking;
 use Stratadox\CardGame\CommandHandler;
+use Stratadox\CardGame\Match\Event\TriedStartingCombatOutOfTurn;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
+use Stratadox\CardGame\Match\NotYourTurn;
 use Stratadox\Clock\Clock;
 
 final class CombatProcess implements CommandHandler
@@ -36,13 +39,25 @@ final class CombatProcess implements CommandHandler
 
         $this->timeForCombat(
             $command->player(),
-            $this->matches->withId($command->match())
+            $this->matches->withId($command->match()),
+            $command->correlationId()
         );
     }
 
-    private function timeForCombat(int $defender, Match $match): void
-    {
-        $match->letTheCombatBegin($defender, $this->clock->now());
+    private function timeForCombat(
+        int $defender,
+        Match $match,
+        CorrelationId $correlationId
+    ): void {
+        try {
+            $match->letTheCombatBegin($defender, $this->clock->now());
+        } catch (NotYourTurn $exception) {
+            $this->eventBag->add(new TriedStartingCombatOutOfTurn(
+                $correlationId,
+                $exception->getMessage()
+            ));
+            return;
+        }
 
         $this->eventBag->takeFrom($match);
     }
