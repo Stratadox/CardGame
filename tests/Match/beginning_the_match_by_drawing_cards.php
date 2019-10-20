@@ -39,7 +39,9 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
 
         $this->prepareMatchBetween($accountOne, $accountTwo);
 
-        $this->proposal = $this->acceptedProposals->since($this->clock->now())[0]->id();
+        $this->proposal = $this->acceptedProposals
+            ->since($this->clock->now())[0]
+            ->id();
 
         $this->bogusCard = new Card('bogus');
     }
@@ -49,7 +51,9 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     {
         $this->expectException(NoSuchMatch::class);
 
-        $this->ongoingMatches->forProposal(ProposalId::from('non-existing-id'));
+        $this->ongoingMatches->forProposal(
+            ProposalId::from('non-existing-id')
+        );
     }
 
     /** @test */
@@ -59,16 +63,28 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
 
         $match = $this->ongoingMatches->forProposal($this->proposal);
 
-        $this->assertCount(7, $this->cardsInTheHand->ofPlayer(0, $match->id()));
-        $this->assertCount(7, $this->cardsInTheHand->ofPlayer(1, $match->id()));
+        $this->assertCount(
+            7,
+            $this->cardsInTheHand->ofPlayer(0, $match->id())
+        );
+        $this->assertCount(
+            7,
+            $this->cardsInTheHand->ofPlayer(1, $match->id())
+        );
 
         // we're cheating here, because we haven't truly shuffled their decks
-        foreach ($this->cardsInTheHand->ofPlayer(0, $match->id()) as $i => $cardInHand) {
+        foreach (
+            $this->cardsInTheHand->ofPlayer(0, $match->id())
+            as $i => $cardInHand
+        ) {
             $this->assertEquals($this->testCard[$i], $cardInHand);
             $this->assertNotEquals($this->bogusCard, $cardInHand);
         }
 
-        foreach ($this->cardsInTheHand->ofPlayer(1, $match->id()) as $i => $cardInHand) {
+        foreach (
+            $this->cardsInTheHand->ofPlayer(1, $match->id())
+            as $i => $cardInHand
+        ) {
             $this->assertEquals($this->testCard[$i], $cardInHand);
             $this->assertNotEquals($this->bogusCard, $cardInHand);
         }
@@ -77,12 +93,23 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     /** @test */
     function not_starting_matches_for_proposals_that_are_still_pending()
     {
-        $accountOne = $this->accountOverviews->forVisitor(VisitorId::from('id-1'))->id();
-        $accountTwo = $this->accountOverviews->forVisitor(VisitorId::from('id-2'))->id();
-        $this->handle(ProposeMatch::between($accountOne, $accountTwo, $this->id));
+        $accountOne = $this->accountOverviews
+            ->forVisitor(VisitorId::from('id-1'))
+            ->id();
+
+        $accountTwo = $this->accountOverviews
+            ->forVisitor(VisitorId::from('id-2'))
+            ->id();
+
+        $this->handle(ProposeMatch::between(
+            $accountOne,
+            $accountTwo,
+            $this->id
+        ));
+
         $proposals = $this->matchProposals->for($accountTwo);
         $proposal = newest_of_the($proposals);
-        assert($proposal instanceof MatchProposal);
+
         $this->handle(StartTheMatch::forProposal($proposal->id(), $this->id));
 
         $this->assertEquals(
