@@ -67,12 +67,11 @@ final class MatchProposal implements DomainEventRecorder
     public function start(
         MatchId $match,
         Decks $decks,
-        DateTimeInterface $when,
-        int ...$players
+        DateTimeInterface $when
     ): Match {
         if (!$this->isAccepted) {
             throw ProposalHasNotBeenAccepted::cannotStartMatch();
         }
-        return Match::fromProposal($match, $this->id, $decks, $when, ...$players);
+        return Match::fromProposal($match, $this->id, $decks, $when);
     }
 }

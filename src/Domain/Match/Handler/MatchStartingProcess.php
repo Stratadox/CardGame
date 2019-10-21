@@ -64,9 +64,7 @@ final class MatchStartingProcess implements CommandHandler
                     $this->decks->deckFor($proposal->proposedBy()),
                     $this->decks->deckFor($proposal->proposedBy())
                 ),
-                $this->clock->now(),
-                0,
-                1
+                $this->clock->now()
             );
         } catch (ProposalHasNotBeenAccepted $cannotStartYet) {
             $this->eventBag->add(

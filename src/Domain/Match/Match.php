@@ -2,8 +2,6 @@
 
 namespace Stratadox\CardGame\Match;
 
-use function array_keys;
-use function array_map;
 use function count;
 use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
@@ -33,27 +31,22 @@ final class Match implements DomainEventRecorder
         $this->events = $events;
     }
 
-    // @todo simplify match construction / move to factory
+    // @todo further simplify match construction / move to factory
     public static function fromProposal(
         MatchId $id,
         ProposalId $proposal,
         Decks $decks,
-        DateTimeInterface $startTime,
-        int ...$players
+        DateTimeInterface $startTime
     ): self {
         return Match::begin(
             $id,
-            new StartedMatchForProposal($id, $proposal, ...$players),
-            new Players(...self::players($decks, ...$players)),
+            new StartedMatchForProposal($id, $proposal),
+            new Players(
+                Player::from(0, $decks[0]->cards()),
+                Player::from(1, $decks[1]->cards())
+            ),
             $startTime
         );
-    }
-
-    private static function players(Decks $decks, int ...$ids): array
-    {
-        return array_map(function (int $playerId, int $i) use ($decks): Player {
-            return Player::from($playerId, $decks[$i]->cards());
-        }, $ids, array_keys($ids));
     }
 
     private static function begin(

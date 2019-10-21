@@ -12,7 +12,6 @@ use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
 final class MatchPublisher implements EventHandler
 {
     private $proposalFor = [];
-    private $playersFor = [];
     private $matches;
 
     public function __construct(OngoingMatches $matches)
@@ -41,7 +40,6 @@ final class MatchPublisher implements EventHandler
     private function setupMatch(StartedMatchForProposal $event): void
     {
         $this->proposalFor[(string) $event->aggregateId()] = $event->proposal();
-        $this->playersFor[(string) $event->aggregateId()] = $event->players();
     }
 
     private function startMatch(MatchHasBegun $event): void
@@ -50,8 +48,7 @@ final class MatchPublisher implements EventHandler
             $this->proposalFor[(string) $event->aggregateId()],
             new OngoingMatch(
                 $event->aggregateId(),
-                $event->whoBegins(),
-                ...$this->playersFor[(string) $event->aggregateId()]
+                $event->whoBegins()
             )
         );
     }

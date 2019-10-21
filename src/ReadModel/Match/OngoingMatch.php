@@ -8,13 +8,11 @@ final class OngoingMatch
 {
     private $id;
     private $turn;
-    private $players;
 
-    public function __construct(MatchId $match, int $whoStarts, int ...$players)
+    public function __construct(MatchId $match, int $whoStarts)
     {
         $this->id = $match;
         $this->turn = $whoStarts;
-        $this->players = $players;
     }
 
     public function id(): MatchId
@@ -25,7 +23,7 @@ final class OngoingMatch
     /** @return int[] */
     public function players(): array
     {
-        return $this->players;
+        return [0, 1];
     }
 
     public function beganTheTurnOf(int $player): void

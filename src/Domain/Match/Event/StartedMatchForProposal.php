@@ -10,16 +10,11 @@ final class StartedMatchForProposal implements MatchEvent
 {
     private $matchId;
     private $proposalId;
-    private $players;
 
-    public function __construct(
-        MatchId $matchId,
-        ProposalId $proposalId,
-        int ...$players
-    ) {
+    public function __construct(MatchId $matchId, ProposalId $proposalId)
+    {
         $this->matchId = $matchId;
         $this->proposalId = $proposalId;
-        $this->players = $players;
     }
 
     public function aggregateId(): MatchId
@@ -30,11 +25,5 @@ final class StartedMatchForProposal implements MatchEvent
     public function proposal(): ProposalId
     {
         return $this->proposalId;
-    }
-
-    /** @return int[] */
-    public function players(): array
-    {
-        return $this->players;
     }
 }
