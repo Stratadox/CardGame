@@ -38,7 +38,7 @@ class fending_off_the_enemy_attackers extends CardGameTest
             }
         }
 
-        $this->tooLong = $this->interval($this->defendingTime + 1);
+        $this->tooLong = $this->interval($this->defendingTime);
 
         // Turn 1: Player 1 plays two units
         $this->handle(PlayTheCard::number(
@@ -129,18 +129,15 @@ class fending_off_the_enemy_attackers extends CardGameTest
             $this->id
         ));
 
-        $this->assertCount(
-            3,
-            $this->battlefield->cardsInPlay($this->match->id())
-        );
-        $this->assertCount(
-            2,
-            $this->battlefield->cardsInPlayFor($this->playerOne, $this->match->id())
-        );
-        $this->assertCount(
-            1,
-            $this->battlefield->cardsInPlayFor($this->playerTwo, $this->match->id())
-        );
+        $this->assertCount(3, $this->battlefield->cardsInPlay($this->match->id()));
+        $this->assertCount(2, $this->battlefield->cardsInPlayFor(
+            $this->playerOne,
+            $this->match->id()
+        ));
+        $this->assertCount(1, $this->battlefield->cardsInPlayFor(
+            $this->playerTwo,
+            $this->match->id()
+        ));
     }
 
     /** @test */
@@ -259,6 +256,23 @@ class fending_off_the_enemy_attackers extends CardGameTest
             4,
             $this->battlefield->cardsInPlay($this->match->id())
         );
+        $this->assertEquals(
+            ['Cannot start the combat at this time'],
+            $this->refusals->for($this->id)
+        );
+    }
+
+    /** @test */
+    function not_manually_ending_the_combat_phase_after_the_combat_phase_expired()
+    {
+        $this->clock->fastForward($this->tooLong);
+
+        $this->handle(EndBlocking::phase(
+            $this->match->id(),
+            $this->playerOne,
+            $this->id
+        ));
+
         $this->assertEquals(
             ['Cannot start the combat at this time'],
             $this->refusals->for($this->id)

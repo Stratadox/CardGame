@@ -148,10 +148,26 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
             $this->id
         ));
 
-        $this->assertCount(
-            0,
-            $this->battlefield->attackers($this->match->id())
+        $this->assertEmpty($this->battlefield->attackers($this->match->id()));
+        $this->assertEquals(
+            ['Cannot attack at this time'],
+            $this->refusals->for($this->id)
         );
+    }
+
+    /** @test */
+    function not_attacking_after_the_attacking_phase_expired()
+    {
+        $this->clock->fastForward($this->interval(10));
+
+        $this->handle(AttackWithCard::number(
+            1,
+            $this->currentPlayer,
+            $this->match->id(),
+            $this->id
+        ));
+
+        $this->assertEmpty($this->battlefield->attackers($this->match->id()));
         $this->assertEquals(
             ['Cannot attack at this time'],
             $this->refusals->for($this->id)

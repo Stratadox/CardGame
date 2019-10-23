@@ -77,8 +77,8 @@ final class Location
     public function isAttackingThe(Location $defenderLocation): bool
     {
         return $this->isAttacking()
-            && $defenderLocation->isDefending()
-            && $this->position === $defenderLocation->position;
+            && $defenderLocation->isDefending();
+        // @todo && $this->position === $defenderLocation->position;
     }
 
     public function isInDeck(): bool
