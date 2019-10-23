@@ -30,4 +30,9 @@ final class NotYourTurn extends RuntimeException
     {
         return new self('Cannot start the combat at this time');
     }
+
+    public static function cannotEndTurn(): self
+    {
+        return new self('Cannot end the turn at this time');
+    }
 }

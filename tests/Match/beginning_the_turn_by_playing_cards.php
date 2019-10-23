@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\Test\Match;
 
 use DateInterval;
 use Stratadox\CardGame\CorrelationId;
+use Stratadox\CardGame\Match\Command\AttackWithCard;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Test\CardGameTest;
@@ -331,6 +332,29 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
                 $this->currentPlayer,
                 $ourMatchId
             )
+        );
+    }
+
+    /** @test */
+    function not_attacking_in_the_card_playing_phase()
+    {
+        $this->handle(PlayTheCard::number(
+            0,
+            $this->currentPlayer,
+            $this->match->id(),
+            $this->id
+        ));
+        $this->handle(AttackWithCard::number(
+            0,
+            $this->currentPlayer,
+            $this->match->id(),
+            $this->id
+        ));
+
+        $this->assertEmpty($this->battlefield->attackers($this->match->id()));
+        $this->assertEquals(
+            ['Cannot attack at this time'],
+            $this->refusals->for($this->id)
         );
     }
 }

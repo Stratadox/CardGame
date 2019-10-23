@@ -10,6 +10,7 @@ use Stratadox\CardGame\Match\Event\TriedAttackingOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedAttackingWithUnknownCard;
 use Stratadox\CardGame\Match\Event\TriedBlockingOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedBlockingWithUnknownCard;
+use Stratadox\CardGame\Match\Event\TriedEndingAlreadyEndedTurn;
 use Stratadox\CardGame\Match\Event\TriedEndingPlayPhaseOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedPlayingCardOutOfTurn;
 use Stratadox\CardGame\Match\Event\TriedStartingCombatOutOfTurn;
@@ -45,6 +46,7 @@ final class BringerOfBadNews implements EventHandler
             TriedBlockingWithUnknownCard::class,
             TriedBlockingOutOfTurn::class,
             TriedStartingCombatOutOfTurn::class,
+            TriedEndingAlreadyEndedTurn::class,
         ];
     }
 

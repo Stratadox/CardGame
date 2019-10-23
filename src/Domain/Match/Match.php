@@ -150,9 +150,10 @@ final class Match implements DomainEventRecorder
         $this->turn = $this->turn->endCardPlayingPhaseFor($playerNumber);
     }
 
+    /** @throws NotYourTurn */
     public function endTurnOf(int $playerNumber, DateTimeInterface $when): void
     {
-        $this->beginNextTurnFor($this->players->after($playerNumber), $when);
+        $this->beginNextTurnFor($this->players->after($playerNumber), $playerNumber, $when);
     }
 
     /** @throws NotYourTurn */
@@ -211,11 +212,13 @@ final class Match implements DomainEventRecorder
         return $this->players->after($player);
     }
 
+    /** @throws NotYourTurn */
     private function beginNextTurnFor(
         int $nextPlayer,
+        int $previousPlayer,
         DateTimeInterface $sinceNow
     ): void {
-        $this->turn = $this->turn->of($nextPlayer, $sinceNow);
+        $this->turn = $this->turn->of($nextPlayer, $sinceNow, $previousPlayer);
         $this->happened(new NextTurnBegan($this->id, $nextPlayer));
     }
 }

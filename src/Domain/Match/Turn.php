@@ -29,6 +29,7 @@ final class Turn
     public function prohibitsAttacking(int $player, DateTimeInterface $when): bool
     {
         return $this->currentPlayer !== $player ||
+            $this->canPlay ||
             $when->getTimestamp() - $this->since->getTimestamp() >= 10;
     }
 
@@ -66,8 +67,15 @@ final class Turn
         return $this;
     }
 
-    public function of(int $player, DateTimeInterface $since): Turn
+    /** @throws NotYourTurn */
+    public function of(int $player, DateTimeInterface $since, int $previousPlayer): Turn
     {
+        if (
+            $this->currentPlayer !== $previousPlayer ||
+            $since->getTimestamp() - $this->since->getTimestamp() >= 10
+        ) {
+            throw NotYourTurn::cannotEndTurn();
+        }
         return new Turn($player, $since, false);
     }
 }

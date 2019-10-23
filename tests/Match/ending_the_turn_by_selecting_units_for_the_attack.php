@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Test\Match;
 
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
 use Stratadox\CardGame\Match\Command\EndTheTurn;
@@ -56,10 +57,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function no_attacking_units_before_making_a_selection()
     {
-        $this->assertCount(
-            0,
-            $this->battlefield->attackers($this->match->id())
-        );
+        $this->assertEmpty($this->battlefield->attackers($this->match->id()));
     }
 
     /** @test */
@@ -109,10 +107,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
             $this->id
         ));
 
-        $this->assertCount(
-            0,
-            $this->battlefield->attackers($this->match->id())
-        );
+        $this->assertEmpty($this->battlefield->attackers($this->match->id()));
         $this->assertEquals(
             ['That card does not exist'],
             $this->refusals->for($this->id)
@@ -170,6 +165,43 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
         $this->assertEmpty($this->battlefield->attackers($this->match->id()));
         $this->assertEquals(
             ['Cannot attack at this time'],
+            $this->refusals->for($this->id)
+        );
+    }
+
+    /** @test */
+    function not_ending_the_other_players_turns()
+    {
+        $this->handle(EndTheTurn::for(
+            $this->match->id(),
+            $this->currentPlayer,
+            CorrelationId::from('ok')
+        ));
+        $this->handle(EndTheTurn::for(
+            $this->match->id(),
+            $this->currentPlayer,
+            $this->id
+        ));
+
+        $this->assertEquals(
+            ['Cannot end the turn at this time'],
+            $this->refusals->for($this->id)
+        );
+    }
+
+    /** @test */
+    function not_manually_ending_the_turn_after_the_attacking_phase_expired()
+    {
+        $this->clock->fastForward($this->interval(10));
+
+        $this->handle(EndTheTurn::for(
+            $this->match->id(),
+            $this->currentPlayer,
+            $this->id
+        ));
+
+        $this->assertEquals(
+            ['Cannot end the turn at this time'],
             $this->refusals->for($this->id)
         );
     }

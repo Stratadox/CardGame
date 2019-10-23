@@ -4,11 +4,14 @@ namespace Stratadox\CardGame\Match\Handler;
 
 use function assert;
 use Stratadox\CardGame\Command;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Match\Command\EndTheTurn;
 use Stratadox\CardGame\CommandHandler;
+use Stratadox\CardGame\Match\Event\TriedEndingAlreadyEndedTurn;
 use Stratadox\CardGame\Match\Match;
 use Stratadox\CardGame\Match\Matches;
+use Stratadox\CardGame\Match\NotYourTurn;
 use Stratadox\Clock\Clock;
 
 final class TurnEndingProcess implements CommandHandler
@@ -33,13 +36,24 @@ final class TurnEndingProcess implements CommandHandler
 
         $this->endTurn(
             $this->matches->withId($command->match()),
-            $command->player()
+            $command->player(),
+            $command->correlationId()
         );
     }
 
-    private function endTurn(Match $match, int $player): void
+    private function endTurn(Match $match, int $player, CorrelationId $id): void
     {
-        $match->endTurnOf($player, $this->clock->now());
+        try {
+            $match->endTurnOf($player, $this->clock->now());
+        } catch (NotYourTurn $cannotEndAnything) {
+            $this->eventBag->add(
+                new TriedEndingAlreadyEndedTurn(
+                    $id,
+                    $cannotEndAnything->getMessage()
+                )
+            );
+            return;
+        }
         $this->eventBag->takeFrom($match);
     }
 }

@@ -278,4 +278,31 @@ class fending_off_the_enemy_attackers extends CardGameTest
             $this->refusals->for($this->id)
         );
     }
+
+    /** @test */
+    function automatically_ending_the_combat_phase_after_the_combat_phase_expired()
+    {
+        // @todo How to implement this??
+        $this->markTestSkipped('Do the more important time-related tests first');
+
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
+            ->withDefender(1)
+            ->as($this->playerOne)
+            ->in($this->match->id())
+            ->trackedWith($this->id)
+            ->go());
+
+        $this->clock->fastForward($this->tooLong);
+
+        $this->assertCount(3, $this->battlefield->cardsInPlay($this->match->id()));
+        $this->assertCount(2, $this->battlefield->cardsInPlayFor(
+            $this->playerOne,
+            $this->match->id()
+        ));
+        $this->assertCount(1, $this->battlefield->cardsInPlayFor(
+            $this->playerTwo,
+            $this->match->id()
+        ));
+    }
 }
