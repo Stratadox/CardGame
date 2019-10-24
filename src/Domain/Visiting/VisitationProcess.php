@@ -43,9 +43,7 @@ final class VisitationProcess implements CommandHandler
 
         $visitor->visit($visit->whichPage(), $this->clock->now(), $source->id());
 
-        $this->eventBag->add(...$source->domainEvents());
-        $source->eraseEvents();
-        $this->eventBag->add(...$visitor->domainEvents());
-        $visitor->eraseEvents();
+        $this->eventBag->takeFrom($source);
+        $this->eventBag->takeFrom($visitor);
     }
 }

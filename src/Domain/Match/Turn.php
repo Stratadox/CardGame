@@ -46,15 +46,14 @@ final class Turn
             $when->getTimestamp() - $this->since->getTimestamp() >= 20;
     }
 
-    public function prohibitsEndingCardPlaying(int $player, DateTimeInterface $when): bool
+    /** @throws NotYourTurn */
+    public function endCardPlayingPhaseFor(int $player, DateTimeInterface $when): Turn
     {
         // @todo check if time ran out
-        return $this->currentPlayer !== $player;
-    }
-
-    public function endCardPlayingPhaseFor(int $player): Turn
-    {
-        // @todo
+        if ($this->currentPlayer !== $player) {
+            throw NotYourTurn::cannotEndCardPlayingPhase();
+        }
+        // @todo make immutable
         $this->canPlay = false;
         return $this;
     }
@@ -62,13 +61,14 @@ final class Turn
     public function endCombatPhase(): Turn
     {
         // @todo add time
+        // @todo make immutable
         $this->canDefend = false;
         $this->canPlay = true;
         return $this;
     }
 
     /** @throws NotYourTurn */
-    public function of(int $player, DateTimeInterface $since, int $previousPlayer): Turn
+    public function beginTheTurnOf(int $player, DateTimeInterface $since, int $previousPlayer): Turn
     {
         if (
             $this->currentPlayer !== $previousPlayer ||

@@ -33,16 +33,6 @@ final class Player implements DomainEventRecorder
         return new self($playerId, $cards, 7, new Mana(4));
     }
 
-    public function number(): int
-    {
-        return $this->playerNumber;
-    }
-
-    public function cardInHand(int $number): Card
-    {
-        return $this->cards->inHand()[$number];
-    }
-
     /** @throws NoSuchCard */
     public function cardInPlay(int $number): Card
     {
@@ -53,9 +43,43 @@ final class Player implements DomainEventRecorder
         }
     }
 
-    public function cardsInPlay(): int
+    /** @throws NotEnoughMana */
+    public function playTheCard(int $cardNumber, MatchId $match): void
     {
-        return count($this->cards->inPlay());
+        $card = $this->cards->inHand()[$cardNumber];
+
+        if ($this->mana->isLessThan($card->cost())) {
+            throw NotEnoughMana::toPlayThatCard();
+        }
+
+        $this->mana = $this->mana->minus($card->cost());
+        $card->play($match, count($this->cards->inPlay()), $this->playerNumber);
+
+        $this->happened(...$card->domainEvents());
+        $card->eraseEvents();
+    }
+
+    /** @throws NoSuchCard */
+    public function attackWith(int $cardNumber, MatchId $match): void
+    {
+        $card = $this->cardInPlay($cardNumber);
+        $card->sendToAttack($match, count($this->attackers()), $this->playerNumber);
+
+        $this->happened(...$card->domainEvents());
+        $card->eraseEvents();
+    }
+
+    /** @throws NoSuchCard */
+    public function defendAgainst(
+        int $attacker,
+        int $defender,
+        MatchId $match
+    ): void {
+        $card = $this->cardInPlay($defender);
+        $card->sendToDefendAgainst($match, $attacker, $this->playerNumber);
+
+        $this->happened(...$card->domainEvents());
+        $card->eraseEvents();
     }
 
     public function attackers(): Cards
@@ -72,16 +96,6 @@ final class Player implements DomainEventRecorder
             $this->happened(...$card->domainEvents());
             $card->eraseEvents();
         }
-    }
-
-    public function cannotPay(Mana $cost): bool
-    {
-        return $this->mana->isLessThan($cost);
-    }
-
-    public function pay(Mana $costOfTheCard): void
-    {
-        $this->mana = $this->mana->minus($costOfTheCard);
     }
 
     public function counterTheAttackersOf(

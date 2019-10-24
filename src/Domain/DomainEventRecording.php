@@ -4,6 +4,7 @@ namespace Stratadox\CardGame;
 
 trait DomainEventRecording
 {
+    /** @var iterable|DomainEvent[] */
     protected $events = [];
 
     private function happened(DomainEvent ...$newEvents): void
@@ -13,6 +14,7 @@ trait DomainEventRecording
         }
     }
 
+    /** @return DomainEvent[] */
     public function domainEvents(): iterable
     {
         return $this->events;
