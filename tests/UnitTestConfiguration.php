@@ -44,7 +44,7 @@ use Stratadox\CommandHandling\AfterHandling;
 use Stratadox\CommandHandling\CommandBus;
 use Stratadox\CommandHandling\Handler;
 
-class UnitTestConfiguration
+class UnitTestConfiguration implements Configuration
 {
     public function commandHandler(
         EventBag $eventBag,

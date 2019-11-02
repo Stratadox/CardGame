@@ -14,24 +14,16 @@ use Stratadox\CardGame\Test\CardGameTest;
  */
 class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
 {
-    /** @var int */
-    private $currentPlayer;
-    /** @var int */
-    private $otherPlayer;
+    private $tooLong;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->setUpNewMatch();
+        $this->determineStartingPlayer();
 
-        foreach ($this->match->players() as $player) {
-            if ($this->match->itIsTheTurnOf($player)) {
-                $this->currentPlayer = $player;
-            } else {
-                $this->otherPlayer = $player;
-            }
-        }
+        $this->tooLong = $this->interval(10);
 
         $this->handle(PlayTheCard::number(
             1,
@@ -153,7 +145,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function not_attacking_after_the_attacking_phase_expired()
     {
-        $this->clock->fastForward($this->interval(10));
+        $this->clock->fastForward($this->tooLong);
 
         $this->handle(AttackWithCard::number(
             1,
@@ -192,7 +184,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
     /** @test */
     function not_manually_ending_the_turn_after_the_attacking_phase_expired()
     {
-        $this->clock->fastForward($this->interval(10));
+        $this->clock->fastForward($this->tooLong);
 
         $this->handle(EndTheTurn::for(
             $this->match->id(),

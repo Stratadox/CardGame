@@ -88,6 +88,12 @@ abstract class CardGameTest extends TestCase
     /** @var CorrelationId */
     protected $id;
 
+    /** @var int|null */
+    protected $currentPlayer;
+
+    /** @var int|null */
+    protected $otherPlayer;
+
     protected function setUp(): void
     {
         $this->clock = TestClock::make();
@@ -186,6 +192,17 @@ abstract class CardGameTest extends TestCase
         $this->handle(StartTheMatch::forProposal($proposal->id(), $this->id));
 
         $this->match = $this->ongoingMatches->forProposal($proposal->id());
+    }
+
+    protected function determineStartingPlayer(): void
+    {
+        foreach ($this->match->players() as $player) {
+            if ($this->match->itIsTheTurnOf($player)) {
+                $this->currentPlayer = $player;
+            } else {
+                $this->otherPlayer = $player;
+            }
+        }
     }
 
     protected function interval(int $seconds): DateInterval

@@ -14,10 +14,6 @@ use Stratadox\CardGame\Test\CardGameTest;
  */
 class beginning_the_turn_by_playing_cards extends CardGameTest
 {
-    /** @var int */
-    private $currentPlayer;
-    /** @var int */
-    private $otherPlayer;
     /** @var DateInterval */
     private $justOverTheCardPlayingTimeLimit;
 
@@ -25,13 +21,8 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        foreach ($this->match->players() as $player) {
-            if ($this->match->itIsTheTurnOf($player)) {
-                $this->currentPlayer = $player;
-            } else {
-                $this->otherPlayer = $player;
-            }
-        }
+        $this->determineStartingPlayer();
+
         $this->justOverTheCardPlayingTimeLimit = $this->interval(20);
     }
 
