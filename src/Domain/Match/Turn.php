@@ -49,12 +49,13 @@ final class Turn
     /** @throws NotYourTurn */
     public function endCardPlayingPhaseFor(int $player, DateTimeInterface $when): Turn
     {
-        // @todo check if time ran out
+        // @todo check if time ran out? (or not?)
         if ($this->currentPlayer !== $player) {
             throw NotYourTurn::cannotEndCardPlayingPhase();
         }
         // @todo make immutable
         $this->canPlay = false;
+        $this->since = $when;
         return $this;
     }
 
