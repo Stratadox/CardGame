@@ -16,74 +16,74 @@ final class Location
     private $realm;
     private $position;
 
-    private function __construct(int $realm, int $position)
+    private function __construct(int $realm, ?int $position)
     {
         $this->realm = $realm;
         $this->position = $position;
     }
 
-    public static function inDeck(int $position): self
+    public static function inDeck(int $position): Location
     {
-        return new self(self::IN_DECK, $position);
+        return new self(Location::IN_DECK, $position);
     }
 
-    public static function inHand(int $position): self
+    private static function inHand(int $position): Location
     {
-        return new self(self::IN_HAND, $position);
+        return new self(Location::IN_HAND, $position);
     }
 
-    public static function inPlay(int $position): self
+    public static function inPlay(int $position): Location
     {
-        return new self(self::IN_PLAY, $position);
+        return new self(Location::IN_PLAY, $position);
     }
 
-    public static function attackingAt(int $position): self
+    public static function attackingAt(int $position): Location
     {
-        return new self(self::IN_ATTACK, $position);
+        return new self(Location::IN_ATTACK, $position);
     }
 
-    public static function defendingAgainst(int $position): self
+    public static function defendingAgainst(int $position): Location
     {
-        return new self(self::IN_DEFENCE, $position);
+        return new self(Location::IN_DEFENCE, $position);
     }
 
-    public static function inVoid(): self
+    public static function inVoid(): Location
     {
-        return new self(self::IN_VOID, 0);
+        return new self(Location::IN_VOID, null);
     }
 
     public function isInHand(): bool
     {
-        return $this->realm === self::IN_HAND;
+        return $this->realm === Location::IN_HAND;
     }
 
     public function isInPlay(): bool
     {
-        return $this->realm === self::IN_PLAY
-            || $this->realm === self::IN_ATTACK;
+        return $this->realm === Location::IN_PLAY
+            || $this->realm === Location::IN_ATTACK;
         // @todo or defending
     }
 
     public function isAttacking(): bool
     {
-        return $this->realm === self::IN_ATTACK;
+        return $this->realm === Location::IN_ATTACK;
     }
 
     public function isDefending(): bool
     {
-        return $this->realm === self::IN_DEFENCE;
+        return $this->realm === Location::IN_DEFENCE;
     }
 
     public function isAttackingThe(Location $defenderLocation): bool
     {
-        return $this->isAttacking()
-            && $defenderLocation->isDefending();
+        return $defenderLocation->isDefending();
+        // @todo && $this->isAttacking()
         // @todo && $this->position === $defenderLocation->position;
     }
 
     public function isInDeck(): bool
     {
-        return $this->realm === self::IN_DECK;
+        return $this->realm === Location::IN_DECK;
     }
 
     public function hasHigherPositionThan(Location $other): bool
@@ -92,8 +92,8 @@ final class Location
         return $this->position > $other->position;
     }
 
-    public function toHand(int $position): self
+    public function toHand(int $position): Location
     {
-        return self::inHand($position);
+        return Location::inHand($position);
     }
 }

@@ -22,35 +22,35 @@ final class Cards extends ImmutableCollection
 
     public function inHand(): Cards
     {
-        return $this->filterBy(function (Card $card): bool {
+        return $this->filterBy(static function (Card $card): bool {
             return $card->isInHand();
         });
     }
 
     public function inPlay(): Cards
     {
-        return $this->filterBy(function (Card $card): bool {
+        return $this->filterBy(static function (Card $card): bool {
             return $card->isInPlay();
         });
     }
 
     public function thatAttack(): Cards
     {
-        return $this->filterBy(function (Card $card): bool {
+        return $this->filterBy(static function (Card $card): bool {
             return $card->isAttacking();
         });
     }
 
     public function thatDefend(): Cards
     {
-        return $this->filterBy(function (Card $card): bool {
+        return $this->filterBy(static function (Card $card): bool {
             return $card->isDefending();
         });
     }
 
-    public function inDeck(): Cards
+    private function inDeck(): Cards
     {
-        return $this->filterBy(function (Card $card): bool {
+        return $this->filterBy(static function (Card $card): bool {
             return $card->isInDeck();
         });
     }
@@ -62,7 +62,7 @@ final class Cards extends ImmutableCollection
 
     public function theOneThatAttacksTheAmbushOf(Card $defender): Card
     {
-        return $this->filterBy(function (Card $card) use ($defender): bool {
+        return $this->filterBy(static function (Card $card) use ($defender): bool {
             return $card->isAttackingThe($defender);
         })[0];
     }
@@ -71,7 +71,7 @@ final class Cards extends ImmutableCollection
     {
         return array_reduce(
             $this->items(),
-            function (?Card $topmost, Card $card): ?Card {
+            static function (?Card $topmost, Card $card): ?Card {
                 if ($topmost === null || $card->hasHigherPositionThan($topmost)) {
                     return $card;
                 }

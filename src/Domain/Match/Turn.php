@@ -9,14 +9,12 @@ final class Turn
     private $currentPlayer;
     private $since;
     private $canPlay;
-    private $canDefend;
 
     public function __construct(int $player, DateTimeInterface $since, bool $play = true)
     {
         $this->currentPlayer = $player;
         $this->since = $since;
         $this->canPlay = $play;
-        $this->canDefend = !$play;
     }
 
     public function prohibitsPlaying(int $player, DateTimeInterface $when): bool
@@ -49,7 +47,7 @@ final class Turn
     /** @throws NotYourTurn */
     public function endCardPlayingPhaseFor(int $player, DateTimeInterface $when): Turn
     {
-        // @todo check if time ran out? (or not?)
+        // @todo check if time ran out? (should we?)
         if ($this->currentPlayer !== $player) {
             throw NotYourTurn::cannotEndCardPlayingPhase();
         }
@@ -63,7 +61,6 @@ final class Turn
     {
         // @todo add time
         // @todo make immutable
-        $this->canDefend = false;
         $this->canPlay = true;
         return $this;
     }

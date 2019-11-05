@@ -41,7 +41,7 @@ final class AttackingProcess implements CommandHandler
         );
     }
 
-    public function sendIntoBattle(
+    private function sendIntoBattle(
         Match $match,
         int $player,
         int $cardNumber,

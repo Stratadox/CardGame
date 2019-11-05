@@ -33,16 +33,6 @@ final class Player implements DomainEventRecorder
         return new self($playerId, $cards, 7, new Mana(4));
     }
 
-    /** @throws NoSuchCard */
-    public function cardInPlay(int $number): Card
-    {
-        try {
-            return $this->cards->inPlay()[$number];
-        } catch (Throwable $notFound) {
-            throw NoSuchCard::atPosition($number, $notFound);
-        }
-    }
-
     /** @throws NotEnoughMana */
     public function playTheCard(int $cardNumber, MatchId $match): void
     {
@@ -112,6 +102,16 @@ final class Player implements DomainEventRecorder
             );
             $this->happened(...$defender->domainEvents());
             $defender->eraseEvents();
+        }
+    }
+
+    /** @throws NoSuchCard */
+    private function cardInPlay(int $number): Card
+    {
+        try {
+            return $this->cards->inPlay()[$number];
+        } catch (Throwable $notFound) {
+            throw NoSuchCard::atPosition($number, $notFound);
         }
     }
 }
