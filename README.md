@@ -130,3 +130,8 @@ In bullet points, that makes:
 - "Base invaders": get bonus strength when not defended against
 ### Upgrade ideas
 - "Better gear": bonus strength
+- "Noble steed": become quick
+
+## Technical notes
+For information about the architectural choices and considerations, see the 
+[notes on architecture](notes/Architecture.md).
