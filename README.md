@@ -134,4 +134,4 @@ In bullet points, that makes:
 
 ## Technical notes
 For information about the architectural choices and considerations, see the 
-[notes on architecture](notes/Architecture.md).
+[notes on architecture](notes/README.md).

@@ -1,4 +1,4 @@
-# Architecture
+# Architecture Notes
 This section describes the architecture of the software, and attempts to 
 clarify some of the reasoning behind the architectural choices in the project 
 and the process that has been used to come to it.
