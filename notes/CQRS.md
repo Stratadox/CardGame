@@ -76,7 +76,8 @@ Correlation ids are assigned to each command. If the command is refused, or
 fails for any other reason, details of the problem are published to the client 
 through a refusal event, linked to the correlation id.
 
-By querying the refusals for the (client-side generated) correlation id, 
+By querying the refusals for the (client-side generated) correlation id, clients 
+can find out the status of their requests.
 
 ## Events
 As opposed to commands, events cannot be refused: they indicate the things that 

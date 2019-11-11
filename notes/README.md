@@ -10,6 +10,4 @@ and the process that has been used to come to it.
     bottlenecks and to simplify the overall structure of the code.
 - [REST](REST.md) is supported, so that client- and server can evolve 
     independently.
-- [TDD](TDD.md) is applied to work faster and more deliberate. It isn't really 
-    part of the architecture, but it's my document and I'll include it in this 
-    section anyway.
+- [TDD](TDD.md) is applied to work faster and more deliberate.

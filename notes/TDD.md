@@ -5,7 +5,7 @@ working just fine the other day, a test-driven approach is maintained.
 
 ## The value of tests
 Many authors have written and spoken about the negative value of bad tests. 
-Bad tests are so common that many confuse bad tests with unit tests in general, 
+Bad tests are so common that some confuse bad tests with unit tests in general, 
 and mistakenly criticise the entire concept of unit testing or TDD.
 
 While the criticism of unit testing are often valid when applied to bad tests, 
@@ -243,8 +243,9 @@ Given the above, the only way of reaching and keeping a 100% mutation score is
 by artificially limiting the mutators.
 Although mutators that will only produce false positives can safely be disabled 
 (currently the mutators that change `===` into `==` and `!==` into `!=` are 
-turned off) it damages the value of the metric by removing valuable mutators for 
-the sake of increasing the MSI.
+turned off) removing mutators that can produce valuable feedback, damages the 
+value of the metric by removing valuable mutators for the sake of increasing the 
+MSI.
 
 #### PHPStan is a goal
 [PHPStan](https://github.com/phpstan/phpstan), being a static code analyser with 

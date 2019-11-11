@@ -30,7 +30,7 @@ kind of data the client receives. In a scenario where one data-rich provider
 supplies any number of third-party clients with the data they need, GraphQL can 
 be a perfect fit.
 
-### "Rest"
+### Semi-Rest
 The "regular" web API's that are often called Rest API's, but that are not 
 [restful](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm), 
 generally suffer from similar data model lock-ins as GraphQL. Most "Rest" API's 
@@ -345,7 +345,7 @@ and a widespread misuse of the name, finding information about REST can often be
 difficult and misleading.
 
 The architecture is more restrictive, and thus more difficult to apply, than 
-[semi-REST](#"rest"). 
+[semi-REST](#semi-rest). 
 For the simplest of "CRUD-API's", that serve as back-ends for clients who GET 
 and PUT data of a stable format without many context-sensitive restrictions, a 
 fully fledged [level 3 REST API](https://martinfowler.com/articles/richardsonMaturityModel.html) 
