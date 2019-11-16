@@ -146,10 +146,14 @@ final class Match implements DomainEventRecorder
     /** @throws NotYourTurn */
     public function endTurnOf(int $playerNumber, DateTimeInterface $when): void
     {
+        if ($this->turn->hasNotHadCombatYet()) {
+            $this->letTheCombatBegin($playerNumber, $when);
+        }
         $this->turn = $this->turn->beginTheTurnOf(
             $this->players->after($playerNumber),
             $when,
-            $playerNumber
+            $playerNumber,
+            $this->players[$playerNumber]->hasAttackingUnits()
         );
         $this->happened(
             new NextTurnBegan($this->id, $this->players->after($playerNumber))
@@ -168,9 +172,14 @@ final class Match implements DomainEventRecorder
             $this->id,
             $this->players[$this->players->after($defender)]->attackers()
         );
-        $this->turn = $this->turn->endCombatPhase();
 
-        $this->happened(...$this->players[$defender]->domainEvents());
-        $this->players[$defender]->eraseEvents();
+        // @todo let non-countered units damage defender
+
+        foreach ($this->players as $player) {
+            $player->endCombatPhase($this->id);
+            $this->happened(...$player->domainEvents());
+            $player->eraseEvents();
+        }
+        $this->turn = $this->turn->endCombatPhase($when);
     }
 }

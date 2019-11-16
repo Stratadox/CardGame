@@ -6,18 +6,21 @@ use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\Event\UnitDied;
 use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
-use Stratadox\CardGame\ReadModel\Match\AllCards;
+use Stratadox\CardGame\Match\Event\UnitRegrouped;
+use Stratadox\CardGame\ReadModel\Match\CardTemplates;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 
 final class BattlefieldUpdater implements EventHandler
 {
     private $battlefield;
-    private $cards;
+    private $cardTemplate;
 
-    public function __construct(Battlefield $battlefield, AllCards $allCards)
-    {
+    public function __construct(
+        Battlefield $battlefield,
+        CardTemplates $templates
+    ) {
         $this->battlefield = $battlefield;
-        $this->cards = $allCards;
+        $this->cardTemplate = $templates;
     }
 
     public function events(): iterable
@@ -25,7 +28,8 @@ final class BattlefieldUpdater implements EventHandler
         return [
             UnitMovedIntoPlay::class,
             UnitMovedToAttack::class,
-            UnitDied::class
+            UnitRegrouped::class,
+            UnitDied::class,
         ];
     }
 
@@ -33,18 +37,22 @@ final class BattlefieldUpdater implements EventHandler
     {
         if ($event instanceof UnitMovedIntoPlay) {
             $this->battlefield->add(
-                $this->cards->ofType($event->card()),
-                $event->aggregateId(),
+                $this->cardTemplate->ofType($event->card()),
+                $event->match(),
                 $event->player()
             );
         }
         if ($event instanceof UnitMovedToAttack) {
-            // @todo wont work with doubles..
-            $this->cards->ofType($event->card())->attack();
+            // @todo apply actions to cards, not templates
+            $this->cardTemplate->ofType($event->card())->attack();
+        }
+        if ($event instanceof UnitRegrouped) {
+            // @todo apply actions to cards, not templates
+            $this->cardTemplate->ofType($event->card())->regroup();
         }
         if ($event instanceof UnitDied) {
             $this->battlefield->remove(
-                $this->cards->ofType($event->card()),
+                $this->cardTemplate->ofType($event->card()),
                 $event->match(),
                 $event->player()
             );

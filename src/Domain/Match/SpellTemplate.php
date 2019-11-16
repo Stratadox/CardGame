@@ -44,6 +44,11 @@ final class SpellTemplate implements CardTemplate
         return [];
     }
 
+    public function regroupingEvents(MatchId $match, int $player): array
+    {
+        return [];
+    }
+
     public function playingMove(int $position): Location
     {
         return Location::inVoid();
@@ -57,6 +62,11 @@ final class SpellTemplate implements CardTemplate
     public function defendingMove(int $position): Location
     {
         throw new BadMethodCallException('Spells cannot defend.');
+    }
+
+    public function regroupingMove(int $position): Location
+    {
+        throw new BadMethodCallException('Spells cannot regroup.');
     }
 
     public function cost(): Mana

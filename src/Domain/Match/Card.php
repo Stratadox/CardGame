@@ -88,6 +88,7 @@ final class Card implements DomainEventRecorder
         int $blockingPlayer,
         int $attackingPlayer
     ): void {
+        // @todo better combat mechanics
         if ($this->cost() > $attacker->cost()) {
             $attacker->location = Location::inVoid();
             $this->happened(...$attacker->template->dyingEvents($match, $attackingPlayer));
@@ -95,6 +96,12 @@ final class Card implements DomainEventRecorder
             $this->location = Location::inVoid();
             $this->happened(...$this->template->dyingEvents($match, $blockingPlayer));
         }
+    }
+
+    public function regroup(MatchId $match, int $position, int $player): void
+    {
+        $this->location = $this->template->regroupingMove($position);
+        $this->happened(...$this->template->regroupingEvents($match, $player));
     }
 
     public function cost(): Mana

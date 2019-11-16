@@ -6,7 +6,7 @@ use Stratadox\CardGame\Deck\CardId;
 use Stratadox\CardGame\Match\MatchEvent;
 use Stratadox\CardGame\Match\MatchId;
 
-final class UnitMovedToAttack implements MatchEvent
+final class UnitRegrouped implements MatchEvent
 {
     /** @var MatchId */
     private $match;

@@ -77,6 +77,11 @@ final class Player implements DomainEventRecorder
         return $this->cards->thatAttack();
     }
 
+    public function hasAttackingUnits(): bool
+    {
+        return count($this->attackers()) > 0;
+    }
+
     public function drawOpeningHand(MatchId $match): void
     {
         for ($i = 0; $i < $this->maxHandSize; $i++) {
@@ -102,6 +107,16 @@ final class Player implements DomainEventRecorder
             );
             $this->happened(...$defender->domainEvents());
             $defender->eraseEvents();
+        }
+    }
+
+    public function endCombatPhase(MatchId $match): void
+    {
+        $cards = $this->cards->inPlay();
+        foreach ($cards as $position => $card) {
+            $card->regroup($match, $position, $this->playerNumber);
+            $this->happened(...$card->domainEvents());
+            $card->eraseEvents();
         }
     }
 

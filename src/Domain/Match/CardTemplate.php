@@ -13,9 +13,12 @@ interface CardTemplate
     /** @return MatchEvent[] */
     public function defendingEvents(MatchId $match, int $player): array;
     /** @return MatchEvent[] */
+    public function regroupingEvents(MatchId $match, int $player): array;
+    /** @return MatchEvent[] */
     public function dyingEvents(MatchId $match, int $player): array;
     public function playingMove(int $position): Location;
     public function attackingMove(int $position): Location;
     public function defendingMove(int $position): Location;
+    public function regroupingMove(int $position): Location;
     public function cost(): Mana;
 }

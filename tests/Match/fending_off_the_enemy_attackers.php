@@ -226,6 +226,35 @@ class fending_off_the_enemy_attackers extends CardGameTest
     }
 
     /** @test */
+    function not_blocking_if_there_are_no_attackers()
+    {
+        $this->handle(EndTheTurn::for(
+            $this->match->id(),
+            $this->currentPlayer,
+            $this->id
+        ));
+
+        $this->handle(EndTheTurn::for(
+            $this->match->id(),
+            $this->otherPlayer,
+            $this->id
+        ));
+
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
+            ->withDefender(0)
+            ->as($this->currentPlayer)
+            ->in($this->match->id())
+            ->trackedWith($this->id)
+            ->go());
+
+        $this->assertEquals(
+            ['Cannot block at this time'],
+            $this->refusals->for($this->id)
+        );
+    }
+
+    /** @test */
     function not_ending_the_blocking_phase_of_the_enemy_turn()
     {
         $this->handle(Block::theAttack()

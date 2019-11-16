@@ -8,6 +8,7 @@ use Stratadox\CardGame\Match\Event\CardWasDrawn;
 use Stratadox\CardGame\Match\Event\UnitDied;
 use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
+use Stratadox\CardGame\Match\Event\UnitRegrouped;
 
 final class UnitTemplate implements CardTemplate
 {
@@ -32,7 +33,7 @@ final class UnitTemplate implements CardTemplate
 
     public function attackingEvents(MatchId $match, int $player): array
     {
-        return [new UnitMovedToAttack($match, $this->card)];
+        return [new UnitMovedToAttack($match, $this->card, $player)];
     }
 
     public function defendingEvents(MatchId $match, int $player): array
@@ -44,6 +45,11 @@ final class UnitTemplate implements CardTemplate
     public function dyingEvents(MatchId $match, int $player): array
     {
         return [new UnitDied($match, $this->card, $player)];
+    }
+
+    public function regroupingEvents(MatchId $match, int $player): array
+    {
+        return [new UnitRegrouped($match, $this->card, $player)];
     }
 
     public function playingMove(int $position): Location
@@ -59,6 +65,11 @@ final class UnitTemplate implements CardTemplate
     public function defendingMove(int $position): Location
     {
         return Location::defendingAgainst($position);
+    }
+
+    public function regroupingMove(int $position): Location
+    {
+        return Location::inPlay($position);
     }
 
     public function cost(): Mana

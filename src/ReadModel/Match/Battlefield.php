@@ -19,7 +19,7 @@ class Battlefield
     {
         $this->cards[$match->id()][$owner] = array_filter(
             $this->cards[$match->id()][$owner],
-            function (Card $card) use ($cardToRemove): bool {
+            static function (Card $card) use ($cardToRemove): bool {
                 return !$card->is($cardToRemove);
             }
         );
@@ -42,9 +42,15 @@ class Battlefield
     {
         return array_filter(
             $this->cardsInPlay($match),
-            function (Card $card): bool {
+            static function (Card $card): bool {
                 return $card->isAttacking();
             }
         );
+    }
+
+    public function replace(Card $old, Card $new, int $player, MatchId $match): void
+    {
+        $this->remove($old, $match, $player);
+        $this->add($new, $match, $player);
     }
 }

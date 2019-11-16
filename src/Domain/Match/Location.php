@@ -61,7 +61,7 @@ final class Location
     {
         return $this->realm === Location::IN_PLAY
             || $this->realm === Location::IN_ATTACK;
-        // @todo or defending
+//            || $this->realm === Location::IN_DEFENCE;
     }
 
     public function isAttacking(): bool

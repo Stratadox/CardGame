@@ -24,7 +24,7 @@ use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
-use Stratadox\CardGame\ReadModel\Match\AllCards;
+use Stratadox\CardGame\ReadModel\Match\CardTemplates;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
@@ -129,7 +129,7 @@ abstract class CardGameTest extends TestCase
         // @todo add a test configuration where every command is delayed
 
         $eventBag = new EventCollector();
-        $allCards = new AllCards(...$this->testCard);
+        $allCards = new CardTemplates(...$this->testCard);
         $this->input = $this->configuration[$_SERVER['configuration'] ?? 'unit']->commandHandler(
             $eventBag,
             $this->clock,

@@ -2,14 +2,16 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
+// @todo split into Card and CardTemplate
 final class Card
 {
     private $id;
-    private $attacking = false;
+    private $attacking;
 
-    public function __construct(string $id)
+    public function __construct(string $id, bool $attacking = false)
     {
         $this->id = $id;
+        $this->attacking = $attacking;
     }
 
     public function type(): string
@@ -19,7 +21,8 @@ final class Card
 
     public function is(Card $that): bool
     {
-        return $this->id === $that->id;
+        return $this->id === $that->id
+            && $this->attacking === $that->attacking;
     }
 
     public function isAttacking(): bool
@@ -30,5 +33,10 @@ final class Card
     public function attack(): void
     {
         $this->attacking = true;
+    }
+
+    public function regroup(): void
+    {
+        $this->attacking = false;
     }
 }

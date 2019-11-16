@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\ReadModel\Match;
 
 use Stratadox\CardGame\Deck\CardId;
 
-class AllCards
+class CardTemplates
 {
     /** @var Card[] */
     private $cards;
@@ -16,7 +16,6 @@ class AllCards
         }
     }
 
-    // @todo remove in favour of... what? (match, player, realm, position)? :S
     public function ofType(CardId $card): Card
     {
         return $this->cards[$card->id()];

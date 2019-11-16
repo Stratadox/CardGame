@@ -190,7 +190,7 @@ Both of these potential downsides are no immediate concerns; in practice, many
 match elements might have an effect when the match is altered in any way.
 If any unit may activate some kind of ability when a card is played, drawn or 
 destroyed, it's probably preferable to have all units of the match available 
-when a played, drawn or destroyed.
+when cards are played, drawn or destroyed.
 After all, even though the *players* are not allowed to perform actions outside 
 of their turn, the *cards* in play definitely are.
 
