@@ -7,6 +7,7 @@ use Stratadox\CardGame\Match\Event\UnitDied;
 use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
 use Stratadox\CardGame\Match\Event\UnitRegrouped;
+use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardTemplates;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
 
@@ -37,22 +38,31 @@ final class BattlefieldUpdater implements EventHandler
     {
         if ($event instanceof UnitMovedIntoPlay) {
             $this->battlefield->add(
-                $this->cardTemplate->ofType($event->card()),
+                new Card(
+                    $event->offset(),
+                    $this->cardTemplate->ofType($event->card())
+                ),
                 $event->match(),
                 $event->player()
             );
         }
         if ($event instanceof UnitMovedToAttack) {
-            // @todo apply actions to cards, not templates
-            $this->cardTemplate->ofType($event->card())->attack();
+            $this->battlefield->sendIntoBattle(
+                $event->offset(),
+                $event->match(),
+                $event->player()
+            );
         }
         if ($event instanceof UnitRegrouped) {
-            // @todo apply actions to cards, not templates
-            $this->cardTemplate->ofType($event->card())->regroup();
+            $this->battlefield->regroup(
+                $event->offset(),
+                $event->match(),
+                $event->player()
+            );
         }
         if ($event instanceof UnitDied) {
             $this->battlefield->remove(
-                $this->cardTemplate->ofType($event->card()),
+                $event->offset(),
                 $event->match(),
                 $event->player()
             );

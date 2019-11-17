@@ -11,12 +11,18 @@ final class CardWasDrawn implements MatchEvent
     private $match;
     private $player;
     private $card;
+    private $offset;
 
-    public function __construct(MatchId $match, CardId $card, int $player)
-    {
+    public function __construct(
+        MatchId $match,
+        CardId $card,
+        int $player,
+        int $offset
+    ) {
         $this->match = $match;
         $this->card = $card;
         $this->player = $player;
+        $this->offset = $offset;
     }
 
     public function aggregateId(): MatchId
@@ -37,5 +43,10 @@ final class CardWasDrawn implements MatchEvent
     public function card(): CardId
     {
         return $this->card;
+    }
+
+    public function offset(): int
+    {
+        return $this->offset;
     }
 }

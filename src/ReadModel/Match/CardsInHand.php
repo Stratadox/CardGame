@@ -19,11 +19,10 @@ class CardsInHand
         );
     }
 
-    // @todo use position over card template id!
-    public function played(string $card, MatchId $match, int $player): void
+    public function played(int $offset, MatchId $match, int $player): void
     {
         foreach ($this->cards[$match->id()][$player] as $cardNumber => $cardInHand) {
-            if ($card === $cardInHand->type()) {
+            if ($cardInHand->offset() === $offset) {
                 unset($this->cards[$match->id()][$player][$cardNumber]);
             }
         }

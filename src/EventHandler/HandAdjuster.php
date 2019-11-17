@@ -6,18 +6,21 @@ use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\Event\CardWasDrawn;
 use Stratadox\CardGame\Match\Event\SpellVanishedToTheVoid;
 use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
+use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardTemplates;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 
 final class HandAdjuster implements EventHandler
 {
     private $cardsInHand;
-    private $cards;
+    private $cardTemplates;
 
-    public function __construct(CardsInHand $cardsInHand, CardTemplates $allCards)
-    {
+    public function __construct(
+        CardsInHand $cardsInHand,
+        CardTemplates $cardTemplates
+    ) {
         $this->cardsInHand = $cardsInHand;
-        $this->cards = $allCards;
+        $this->cardTemplates = $cardTemplates;
     }
 
     public function events(): iterable
@@ -36,7 +39,7 @@ final class HandAdjuster implements EventHandler
             $event instanceof SpellVanishedToTheVoid
         ) {
             $this->cardsInHand->played(
-                (string) $event->card(),
+                $event->offset(),
                 $event->match(),
                 $event->player()
             );
@@ -44,7 +47,10 @@ final class HandAdjuster implements EventHandler
             $this->cardsInHand->draw(
                 $event->match(),
                 $event->player(),
-                $this->cards->ofType($event->card())
+                new Card(
+                    $event->offset(),
+                    $this->cardTemplates->ofType($event->card())
+                )
             );
         }
     }

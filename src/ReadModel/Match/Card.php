@@ -2,41 +2,43 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
-// @todo split into Card and CardTemplate
 final class Card
 {
-    private $id;
-    private $attacking;
+    /** @var int */
+    private $offset;
+    /** @var CardTemplate */
+    private $template;
+    /** @var bool */
+    private $isAttacking = false;
 
-    public function __construct(string $id, bool $attacking = false)
+    public function __construct(int $offset, CardTemplate $template)
     {
-        $this->id = $id;
-        $this->attacking = $attacking;
-    }
-
-    public function type(): string
-    {
-        return $this->id;
-    }
-
-    public function is(Card $that): bool
-    {
-        return $this->id === $that->id
-            && $this->attacking === $that->attacking;
+        $this->offset = $offset;
+        $this->template = $template;
     }
 
     public function isAttacking(): bool
     {
-        return $this->attacking;
+        return $this->isAttacking;
+    }
+
+    public function template(): CardTemplate
+    {
+        return $this->template;
+    }
+
+    public function offset(): int
+    {
+        return $this->offset;
     }
 
     public function attack(): void
     {
-        $this->attacking = true;
+        $this->isAttacking = true;
     }
 
     public function regroup(): void
     {
-        $this->attacking = false;
+        $this->isAttacking = false;
     }
 }

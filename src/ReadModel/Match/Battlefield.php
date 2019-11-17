@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\ReadModel\Match;
 
 use function array_filter;
 use function array_merge;
+use function current;
 use Stratadox\CardGame\Match\MatchId;
 
 class Battlefield
@@ -15,12 +16,12 @@ class Battlefield
         $this->cards[$match->id()][$owner][] = $card;
     }
 
-    public function remove(Card $cardToRemove, MatchId $match, int $owner): void
+    public function remove(int $cardToRemove, MatchId $match, int $owner): void
     {
         $this->cards[$match->id()][$owner] = array_filter(
             $this->cards[$match->id()][$owner],
             static function (Card $card) use ($cardToRemove): bool {
-                return !$card->is($cardToRemove);
+                return $card->offset() !== $cardToRemove;
             }
         );
     }
@@ -37,6 +38,22 @@ class Battlefield
         return $this->cards[$match->id()][$player] ?? [];
     }
 
+    public function sendIntoBattle(
+        int $offset,
+        MatchId $match,
+        int $player
+    ): void {
+        $this->card($offset, $match, $player)->attack();
+    }
+
+    public function regroup(
+        int $offset,
+        MatchId $match,
+        int $player
+    ): void {
+        $this->card($offset, $match, $player)->regroup();
+    }
+
     /** @return Card[] */
     public function attackers(MatchId $match): array
     {
@@ -48,9 +65,13 @@ class Battlefield
         );
     }
 
-    public function replace(Card $old, Card $new, int $player, MatchId $match): void
+    private function card(int $offset, MatchId $match, int $player): Card
     {
-        $this->remove($old, $match, $player);
-        $this->add($new, $match, $player);
+        return current(array_filter(
+            $this->cardsInPlayFor($player, $match),
+            static function (Card $card) use ($offset): bool {
+                return $card->offset() === $offset;
+            }
+        ));
     }
 }

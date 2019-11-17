@@ -21,19 +21,19 @@ final class UnitTemplate implements CardTemplate
         $this->cost = $cost;
     }
 
-    public function playingEvents(MatchId $match, int $player): array
+    public function playingEvents(MatchId $match, int $player, int $offset): array
     {
-        return [new UnitMovedIntoPlay($match, $this->card, $player)];
+        return [new UnitMovedIntoPlay($match, $this->card, $player, $offset)];
     }
 
-    public function drawingEvents(MatchId $match, int $player): array
+    public function drawingEvents(MatchId $match, int $player, int $offset): array
     {
-        return [new CardWasDrawn($match, $this->card, $player)];
+        return [new CardWasDrawn($match, $this->card, $player, $offset)];
     }
 
-    public function attackingEvents(MatchId $match, int $player): array
+    public function attackingEvents(MatchId $match, int $player, int $offset): array
     {
-        return [new UnitMovedToAttack($match, $this->card, $player)];
+        return [new UnitMovedToAttack($match, $player, $offset)];
     }
 
     public function defendingEvents(MatchId $match, int $player): array
@@ -42,14 +42,14 @@ final class UnitTemplate implements CardTemplate
         return [];
     }
 
-    public function dyingEvents(MatchId $match, int $player): array
+    public function dyingEvents(MatchId $match, int $player, int $offset): array
     {
-        return [new UnitDied($match, $this->card, $player)];
+        return [new UnitDied($match, $player, $offset)];
     }
 
-    public function regroupingEvents(MatchId $match, int $player): array
+    public function regroupingEvents(MatchId $match, int $player, int $offset): array
     {
-        return [new UnitRegrouped($match, $this->card, $player)];
+        return [new UnitRegrouped($match, $player, $offset)];
     }
 
     public function playingMove(int $position): Location

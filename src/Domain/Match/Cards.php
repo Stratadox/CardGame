@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\Match;
 
 use function array_filter;
 use function array_reduce;
+use function array_search;
 use Closure;
 use function count;
 use Stratadox\ImmutableCollection\ImmutableCollection;
@@ -48,16 +49,9 @@ final class Cards extends ImmutableCollection
         });
     }
 
-    private function inDeck(): Cards
-    {
-        return $this->filterBy(static function (Card $card): bool {
-            return $card->isInDeck();
-        });
-    }
-
     public function drawFromTopOfDeck(MatchId $match, int $player): void
     {
-        $this->inDeck()->topMost()->draw($match, count($this->inHand()), $player);
+        $this->draw($this->topMostCardInDeck(), $match, $player);
     }
 
     public function theOneThatAttacksTheAmbushOf(Card $defender): Card
@@ -67,10 +61,12 @@ final class Cards extends ImmutableCollection
         })[0];
     }
 
-    private function topMost(): Card
+    private function topMostCardInDeck(): Card
     {
         return array_reduce(
-            $this->items(),
+            array_filter($this->items(), static function (Card $card): bool {
+                return $card->isInDeck();
+            }),
             static function (?Card $topmost, Card $card): ?Card {
                 if ($topmost === null || $card->hasHigherPositionThan($topmost)) {
                     return $card;
@@ -78,6 +74,21 @@ final class Cards extends ImmutableCollection
                 return $topmost;
             }
         );
+    }
+
+    private function draw(Card $card, MatchId $match, int $player): void
+    {
+        $card->draw(
+            $match,
+            count($this->inHand()),
+            $player,
+            $this->offsetOf($card)
+        );
+    }
+
+    private function offsetOf(Card $target): int
+    {
+        return (int) array_search($target, $this->items(), true);
     }
 
     private function filterBy(Closure $function): Cards

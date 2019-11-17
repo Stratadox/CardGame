@@ -7,7 +7,7 @@ use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Proposal\ProposalId;
 use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;
-use Stratadox\CardGame\ReadModel\Match\Card;
+use Stratadox\CardGame\ReadModel\Match\CardTemplate;
 use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\Visiting\VisitorId;
 
@@ -19,7 +19,7 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     /** @var ProposalId */
     private $proposal;
 
-    /** @var Card */
+    /** @var CardTemplate */
     private $bogusCard;
 
     protected function setUp(): void
@@ -41,7 +41,7 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
             ->since($this->clock->now())[0]
             ->id();
 
-        $this->bogusCard = new Card('bogus');
+        $this->bogusCard = new CardTemplate('bogus');
     }
 
     /** @test */
@@ -75,16 +75,16 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
             $this->cardsInTheHand->ofPlayer(0, $match->id())
             as $i => $cardInHand
         ) {
-            $this->assertEquals($this->testCard[$i], $cardInHand);
-            $this->assertNotEquals($this->bogusCard, $cardInHand);
+            $this->assertEquals($this->testCard[$i], $cardInHand->template());
+            $this->assertNotEquals($this->bogusCard, $cardInHand->template());
         }
 
         foreach (
             $this->cardsInTheHand->ofPlayer(1, $match->id())
             as $i => $cardInHand
         ) {
-            $this->assertEquals($this->testCard[$i], $cardInHand);
-            $this->assertNotEquals($this->bogusCard, $cardInHand);
+            $this->assertEquals($this->testCard[$i], $cardInHand->template());
+            $this->assertNotEquals($this->bogusCard, $cardInHand->template());
         }
     }
 

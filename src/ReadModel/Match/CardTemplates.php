@@ -6,17 +6,17 @@ use Stratadox\CardGame\Deck\CardId;
 
 class CardTemplates
 {
-    /** @var Card[] */
+    /** @var CardTemplate[] */
     private $cards;
 
-    public function __construct(Card ...$cards)
+    public function __construct(CardTemplate ...$cards)
     {
         foreach ($cards as $card) {
             $this->cards[$card->type()] = $card;
         }
     }
 
-    public function ofType(CardId $card): Card
+    public function ofType(CardId $card): CardTemplate
     {
         return $this->cards[$card->id()];
     }

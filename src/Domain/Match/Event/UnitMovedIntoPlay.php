@@ -8,18 +8,25 @@ use Stratadox\CardGame\Match\MatchId;
 
 final class UnitMovedIntoPlay implements MatchEvent
 {
-    private $card;
+    /** @var MatchId */
     private $match;
+    /** @var CardId */
+    private $card;
+    /** @var int */
     private $player;
+    /** @var int */
+    private $offset;
 
     public function __construct(
         MatchId $match,
         CardId $card,
-        int $player
+        int $player,
+        int $offset
     ) {
-        $this->card = $card;
         $this->match = $match;
+        $this->card = $card;
         $this->player = $player;
+        $this->offset = $offset;
     }
 
     public function aggregateId(): MatchId
@@ -40,5 +47,10 @@ final class UnitMovedIntoPlay implements MatchEvent
     public function player(): int
     {
         return $this->player;
+    }
+
+    public function offset(): int
+    {
+        return $this->offset;
     }
 }

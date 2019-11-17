@@ -26,7 +26,7 @@ use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
 use Stratadox\CardGame\ReadModel\Match\CardTemplates;
 use Stratadox\CardGame\ReadModel\Match\Battlefield;
-use Stratadox\CardGame\ReadModel\Match\Card;
+use Stratadox\CardGame\ReadModel\Match\CardTemplate;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
@@ -70,7 +70,7 @@ abstract class CardGameTest extends TestCase
     /** @var CardsInHand */
     protected $cardsInTheHand;
 
-    /** @var Card[] */
+    /** @var CardTemplate[] */
     protected $testCard = [];
 
     /** @var OngoingMatches */
@@ -113,16 +113,16 @@ abstract class CardGameTest extends TestCase
         $this->battlefield = new Battlefield();
         $this->refusals = new Refusals();
         $this->testCard = [
-            new Card('card-type-1'),
-            new Card('card-type-2'),
-            new Card('card-type-3'),
-            new Card('card-type-4'),
-            new Card('card-type-5'),
-            new Card('card-type-6'),
-            new Card('card-type-7'),
-            new Card('card-type-3'), // 3 again !
-            new Card('card-type-8'),
-            new Card('card-type-9'),
+            new CardTemplate('card-type-1'),
+            new CardTemplate('card-type-2'),
+            new CardTemplate('card-type-3'),
+            new CardTemplate('card-type-4'),
+            new CardTemplate('card-type-5'),
+            new CardTemplate('card-type-6'),
+            new CardTemplate('card-type-7'),
+            new CardTemplate('card-type-3'), // 3 again !
+            new CardTemplate('card-type-8'),
+            new CardTemplate('card-type-9'),
         ];
 
         $this->configuration['unit'] = new UnitTestConfiguration();

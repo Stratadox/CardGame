@@ -37,9 +37,8 @@ class taking_some_time_between_actions extends CardGameTest
     {
         return [
             'In the first turn' => [0],
-            // @todo:
-//            'In the second turn' => [1],
-//            'In the third turn' => [2],
+            'In the second turn' => [1],
+            'In the third turn' => [2],
         ];
     }
 

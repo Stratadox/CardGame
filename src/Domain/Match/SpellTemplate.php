@@ -3,7 +3,6 @@
 namespace Stratadox\CardGame\Match;
 
 use BadMethodCallException;
-// @todo remove reference to foreign context?
 use Stratadox\CardGame\Deck\CardId;
 use Stratadox\CardGame\Match\Event\CardWasDrawn;
 use Stratadox\CardGame\Match\Event\SpellVanishedToTheVoid;
@@ -19,17 +18,17 @@ final class SpellTemplate implements CardTemplate
         $this->cost = $cost;
     }
 
-    public function playingEvents(MatchId $match, int $player): array
+    public function playingEvents(MatchId $match, int $player, int $offset): array
     {
-        return [new SpellVanishedToTheVoid($match, $this->card, $player)];
+        return [new SpellVanishedToTheVoid($match, $player, $offset)];
     }
 
-    public function drawingEvents(MatchId $match, int $player): array
+    public function drawingEvents(MatchId $match, int $player, int $offset): array
     {
-        return [new CardWasDrawn($match, $this->card, $player)];
+        return [new CardWasDrawn($match, $this->card, $player, $offset)];
     }
 
-    public function attackingEvents(MatchId $match, int $player): array
+    public function attackingEvents(MatchId $match, int $player, int $offset): array
     {
         return [];
     }
@@ -39,12 +38,12 @@ final class SpellTemplate implements CardTemplate
         return [];
     }
 
-    public function dyingEvents(MatchId $match, int $player): array
+    public function dyingEvents(MatchId $match, int $player, int $offset): array
     {
         return [];
     }
 
-    public function regroupingEvents(MatchId $match, int $player): array
+    public function regroupingEvents(MatchId $match, int $player, int $offset): array
     {
         return [];
     }
