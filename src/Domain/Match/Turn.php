@@ -20,53 +20,85 @@ final class Turn
         $this->phase = $phase ?: TurnPhase::play();
     }
 
-    public function prohibitsPlaying(int $player, DateTimeInterface $when): bool
-    {
-        return $this->currentPlayer !== $player ||
+    /** @throws NotYourTurn */
+    public function mustAllowCardPlaying(
+        int $player,
+        DateTimeInterface $when
+    ): void {
+        if (
+            $this->currentPlayer !== $player ||
             $this->phase->prohibitsPlaying() ||
-            $when->getTimestamp() - $this->since->getTimestamp() >= 20;
-    }
-
-    public function prohibitsAttacking(int $player, DateTimeInterface $when): bool
-    {
-        return $this->currentPlayer !== $player ||
-            $this->phase->prohibitsAttacking() ||
-            $when->getTimestamp() - $this->since->getTimestamp() >= 10;
-    }
-
-    public function prohibitsDefending(int $player, DateTimeInterface $when): bool
-    {
-        return $this->currentPlayer !== $player ||
-            $this->phase->prohibitsDefending() ||
-            $when->getTimestamp() - $this->since->getTimestamp() >= 20;
-    }
-
-    public function prohibitsStartingCombat(int $player, DateTimeInterface $when): bool
-    {
-        // @todo check if turn phase allows for starting combat
-        return $this->currentPlayer !== $player ||
-            $when->getTimestamp() - $this->since->getTimestamp() >= 20;
+            $when->getTimestamp() - $this->since->getTimestamp() >= 20
+        ) {
+            throw NotYourTurn::cannotPlayCards();
+        }
     }
 
     /** @throws NotYourTurn */
-    public function endCardPlayingPhaseFor(int $player, DateTimeInterface $when): Turn
-    {
+    public function mustAllowAttacking(
+        int $player,
+        DateTimeInterface $when
+    ): void {
+        if (
+            $this->currentPlayer !== $player ||
+            $this->phase->prohibitsAttacking() ||
+            $when->getTimestamp() - $this->since->getTimestamp() >= 10
+        ) {
+            throw NotYourTurn::cannotAttack();
+        }
+    }
+
+    /** @throws NotYourTurn */
+    public function mustAllowDefending(
+        int $player,
+        DateTimeInterface $when
+    ): void {
+        if (
+            $this->currentPlayer !== $player ||
+            $this->phase->prohibitsDefending() ||
+            $when->getTimestamp() - $this->since->getTimestamp() >= 20
+        ) {
+            throw NotYourTurn::cannotDefend();
+        }
+    }
+
+    /** @throws NotYourTurn */
+    public function mustAllowStartingCombat(
+        int $player,
+        DateTimeInterface $when
+    ): void {
+        // @todo check if turn phase allows for starting combat
+        if (
+            $this->currentPlayer !== $player ||
+            $when->getTimestamp() - $this->since->getTimestamp() >= 20
+        ) {
+            throw NotYourTurn::cannotStartCombat();
+        }
+    }
+
+    /** @throws NotYourTurn */
+    public function endCardPlayingPhaseFor(
+        int $player,
+        DateTimeInterface $when
+    ): Turn {
         // @todo check if time ran out? (should we?)
         if ($this->currentPlayer !== $player) {
             throw NotYourTurn::cannotEndCardPlayingPhase();
         }
-        // @todo make immutable
-        $this->phase = $this->phase->endCardPlaying();
-        $this->since = $when;
-        return $this;
+        return new Turn(
+            $this->currentPlayer,
+            $when,
+            $this->phase->endCardPlaying()
+        );
     }
 
     public function endCombatPhase(DateTimeInterface $when): Turn
     {
-        // @todo make immutable
-        $this->since = $when;
-        $this->phase = $this->phase->endCombat();
-        return $this;
+        return new Turn(
+            $this->currentPlayer,
+            $when,
+            $this->phase->endCombat()
+        );
     }
 
     public function hasNotHadCombatYet(): bool

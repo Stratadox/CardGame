@@ -76,9 +76,7 @@ final class Match implements DomainEventRecorder
         int $player,
         DateTimeInterface $when
     ): void {
-        if ($this->turn->prohibitsPlaying($player, $when)) {
-            throw NotYourTurn::cannotPlayCards();
-        }
+        $this->turn->mustAllowCardPlaying($player, $when);
 
         $this->players[$player]->playTheCard($cardNumber, $this->id);
 
@@ -95,9 +93,7 @@ final class Match implements DomainEventRecorder
         int $playerNumber,
         DateTimeInterface $when
     ): void {
-        if ($this->turn->prohibitsAttacking($playerNumber, $when)) {
-            throw NotYourTurn::cannotAttack();
-        }
+        $this->turn->mustAllowAttacking($playerNumber, $when);
 
         $this->players[$playerNumber]->attackWith($cardNumber, $this->id);
 
@@ -115,9 +111,7 @@ final class Match implements DomainEventRecorder
         int $defendingPlayer,
         DateTimeInterface $when
     ): void {
-        if ($this->turn->prohibitsDefending($defendingPlayer, $when)) {
-            throw NotYourTurn::cannotDefend();
-        }
+        $this->turn->mustAllowDefending($defendingPlayer, $when);
 
         $this->players[$defendingPlayer]->defendAgainst($attacker, $defender, $this->id);
 
@@ -163,9 +157,7 @@ final class Match implements DomainEventRecorder
     /** @throws NotYourTurn */
     public function letTheCombatBegin(int $defender, DateTimeInterface $when): void
     {
-        if ($this->turn->prohibitsStartingCombat($defender, $when)) {
-            throw NotYourTurn::cannotStartCombat();
-        }
+        $this->turn->mustAllowStartingCombat($defender, $when);
 
         $this->players[$defender]->counterTheAttackersOf(
             $this->players->after($defender),

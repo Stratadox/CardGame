@@ -50,7 +50,6 @@ final class AttackingProcess implements CommandHandler
         try {
             $match->attackWithCard($cardNumber, $player, $this->clock->now());
         } catch (NoSuchCard $ohNo) {
-            // @todo log?
             $this->eventBag->add(new TriedAttackingWithUnknownCard(
                 $correlationId,
                 'That card does not exist'

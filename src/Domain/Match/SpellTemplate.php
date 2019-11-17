@@ -18,33 +18,51 @@ final class SpellTemplate implements CardTemplate
         $this->cost = $cost;
     }
 
-    public function playingEvents(MatchId $match, int $player, int $offset): array
-    {
+    public function playingEvents(
+        MatchId $match,
+        int $player,
+        int $offset
+    ): array {
         return [new SpellVanishedToTheVoid($match, $player, $offset)];
     }
 
-    public function drawingEvents(MatchId $match, int $player, int $offset): array
-    {
+    public function drawingEvents(
+        MatchId $match,
+        int $player,
+        int $offset
+    ): array {
         return [new CardWasDrawn($match, $this->card, $player, $offset)];
     }
 
-    public function attackingEvents(MatchId $match, int $player, int $offset): array
-    {
+    public function attackingEvents(
+        MatchId $match,
+        int $player,
+        int $offset
+    ): array {
         return [];
     }
 
-    public function defendingEvents(MatchId $match, int $player): array
-    {
+    public function defendingEvents(
+        MatchId $match,
+        int $player,
+        int $offset
+    ): array {
         return [];
     }
 
-    public function dyingEvents(MatchId $match, int $player, int $offset): array
-    {
+    public function dyingEvents(
+        MatchId $match,
+        int $player,
+        int $offset
+    ): array {
         return [];
     }
 
-    public function regroupingEvents(MatchId $match, int $player, int $offset): array
-    {
+    public function regroupingEvents(
+        MatchId $match,
+        int $player,
+        int $offset
+    ): array {
         return [];
     }
 

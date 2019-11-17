@@ -57,8 +57,6 @@ class taking_some_time_between_actions extends CardGameTest
         $id = CorrelationId::from('SUT');
         $this->slowlyPlay($id, true);
 
-
-
         $this->assertCount(
             0,
             $this->battlefield->attackers($this->match->id()),

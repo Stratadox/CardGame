@@ -2,7 +2,6 @@
 
 namespace Stratadox\CardGame\Match\Event;
 
-use Stratadox\CardGame\Deck\CardId;
 use Stratadox\CardGame\Match\MatchEvent;
 use Stratadox\CardGame\Match\MatchId;
 

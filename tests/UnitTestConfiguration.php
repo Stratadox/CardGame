@@ -40,6 +40,7 @@ use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Visiting\Visit;
 use Stratadox\CardGame\Visiting\VisitationProcess;
 use Stratadox\Clock\RewindableClock;
+use Stratadox\Clock\RewindableDateTimeClock;
 use Stratadox\CommandHandling\AfterHandling;
 use Stratadox\CommandHandling\CommandBus;
 use Stratadox\CommandHandling\Handler;
@@ -77,7 +78,7 @@ class UnitTestConfiguration implements Configuration
                 )),
                 ProposeMatch::class => $this->adapt(new MatchPropositionProcess(
                     new DefaultProposalIdGenerator($uuidFactory),
-                    $clock,
+                    RewindableDateTimeClock::using($clock),
                     $proposals,
                     $playerBase,
                     $eventBag

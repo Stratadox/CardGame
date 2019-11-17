@@ -56,11 +56,6 @@ class fending_off_the_enemy_attackers extends CardGameTest
         ));
 
         // Turn 1: Player 2 plays two units and attacks
-        $this->handle(EndBlocking::phase( // @todo do we need to? No attackers.
-            $this->match->id(),
-            $this->otherPlayer,
-            $this->id
-        ));
         $this->handle(PlayTheCard::number(
             0,
             $this->otherPlayer,

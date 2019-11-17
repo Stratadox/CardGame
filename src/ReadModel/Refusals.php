@@ -11,7 +11,6 @@ final class Refusals
     /** @return string[] */
     public function for(CorrelationId $request): array
     {
-//        return ['Cannot open account for unknown entity'];
         return $this->errorMessages[$request->id()] ?? [];
     }
 

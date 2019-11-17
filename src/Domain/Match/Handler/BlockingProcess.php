@@ -62,7 +62,6 @@ final class BlockingProcess implements CommandHandler
                 $this->clock->now()
             );
         } catch (NoSuchCard $ohNo) {
-            // @todo log? might indicate a broken client or exploitation attempt
             $this->eventBag->add(new TriedBlockingOutOfTurn(
                 $correlationId,
                 'No such defender'

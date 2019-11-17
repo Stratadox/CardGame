@@ -12,7 +12,6 @@ use Stratadox\CardGame\Account\AccountId;
 use Stratadox\CardGame\CommandHandler;
 use Stratadox\Clock\Clock;
 use Stratadox\Clock\RewindableClock;
-use Stratadox\CommandHandling\Handler;
 
 final class MatchPropositionProcess implements CommandHandler
 {
@@ -43,8 +42,7 @@ final class MatchPropositionProcess implements CommandHandler
         $proposal = $this->proposeMatch(
             $this->players->withId($proposition->proposedBy()),
             $proposition->proposedTo(),
-            // @todo cloning the clock is leaky abstraction, fix in right place
-            (clone $this->clock)->fastForward(new DateInterval('PT30S')),
+            $this->clock->fastForward(new DateInterval('PT30S')),
             $this->newIdentity->generate()
         );
 

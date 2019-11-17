@@ -96,7 +96,9 @@ final class Card implements DomainEventRecorder
         int $player
     ): void {
         $this->location = $this->template->defendingMove($position);
-        $this->happened(...$this->template->defendingEvents($match, $player));
+        $this->happened(
+            ...$this->template->defendingEvents($match, $player, $this->offset)
+        );
     }
 
     public function counterAttack(
