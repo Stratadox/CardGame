@@ -81,14 +81,8 @@ final class Cards extends ImmutableCollection
         $card->draw(
             $match,
             count($this->inHand()),
-            $player,
-            $this->offsetOf($card)
+            $player
         );
-    }
-
-    private function offsetOf(Card $target): int
-    {
-        return (int) array_search($target, $this->items(), true);
     }
 
     private function filterBy(Closure $function): Cards

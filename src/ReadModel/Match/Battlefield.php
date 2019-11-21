@@ -35,7 +35,7 @@ class Battlefield
     /** @return Card[] */
     public function cardsInPlayFor(int $player, MatchId $match): array
     {
-        return $this->cards[$match->id()][$player] ?? [];
+        return $this->cards[$match->id()][$player];
     }
 
     public function sendIntoBattle(

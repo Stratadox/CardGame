@@ -134,18 +134,17 @@ abstract class CardGameTest extends TestCase
             $eventBag,
             $this->clock,
             new Dispatcher(
-                    new MatchPublisher($this->ongoingMatches),
-                    new HandAdjuster($this->cardsInTheHand, $allCards),
-                    new BattlefieldUpdater($this->battlefield, $allCards),
-                    new BringerOfBadNews($this->refusals),
-                    new StatisticsUpdater($this->statistics),
-                    new PlayerListAppender($this->playerList),
-                    new PlayerListAppender($this->playerList),
-                    new AccountOverviewCreator($this->accountOverviews),
-                    new ProposalSender($this->matchProposals),
-                    new ProposalAcceptanceNotifier($this->acceptedProposals),
-                    new TurnSwitcher($this->ongoingMatches)
-                )
+                new MatchPublisher($this->ongoingMatches),
+                new HandAdjuster($this->cardsInTheHand, $allCards),
+                new BattlefieldUpdater($this->battlefield, $allCards),
+                new BringerOfBadNews($this->refusals),
+                new StatisticsUpdater($this->statistics),
+                new PlayerListAppender($this->playerList),
+                new AccountOverviewCreator($this->accountOverviews),
+                new ProposalSender($this->matchProposals),
+                new ProposalAcceptanceNotifier($this->acceptedProposals),
+                new TurnSwitcher($this->ongoingMatches)
+            )
         );
     }
 

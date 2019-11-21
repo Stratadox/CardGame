@@ -3,7 +3,6 @@
 namespace Stratadox\CardGame\Infrastructure\DomainEvents;
 
 use function get_class;
-use function is_array;
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\EventHandler\EventHandler;
 
