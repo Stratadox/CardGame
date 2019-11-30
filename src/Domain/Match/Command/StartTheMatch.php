@@ -11,7 +11,7 @@ final class StartTheMatch implements Command
     private $proposal;
     private $correlationId;
 
-    public function __construct(ProposalId $proposal, CorrelationId $correlationId)
+    private function __construct(ProposalId $proposal, CorrelationId $correlationId)
     {
         $this->proposal = $proposal;
         $this->correlationId = $correlationId;

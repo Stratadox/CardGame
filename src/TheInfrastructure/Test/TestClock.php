@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Infrastructure\Test;
 
+use Closure;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -11,9 +12,12 @@ use Stratadox\Clock\UnmovingClock;
 
 final class TestClock implements RewindableClock
 {
+    /** @var RewindableClock */
     private $clock;
+    /** @var Closure|null */
+    private $method;
 
-    public function __construct(RewindableClock $clock)
+    private function __construct(RewindableClock $clock)
     {
         $this->clock = $clock;
     }
@@ -23,6 +27,11 @@ final class TestClock implements RewindableClock
         return new self(RewindableDateTimeClock::using(
             UnmovingClock::standingStillAt(new DateTimeImmutable())
         ));
+    }
+
+    public function eachPassingSecondApply(Closure $method): void
+    {
+        $this->method = $method;
     }
 
     public function now(): DateTimeInterface
@@ -38,7 +47,15 @@ final class TestClock implements RewindableClock
 
     public function fastForward(DateInterval $interval): RewindableClock
     {
+        $before = $this->clock->now();
         $this->clock = $this->clock->fastForward($interval);
+
+        $since = $this->clock->now()->getTimestamp() - $before->getTimestamp();
+        if ($this->method !== null) {
+            for ($i = 0; $i < $since; $i++) {
+                ($this->method)($i);
+            }
+        }
         return $this;
     }
 }

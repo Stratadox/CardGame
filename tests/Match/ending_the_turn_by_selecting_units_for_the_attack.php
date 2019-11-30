@@ -21,7 +21,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
         parent::setUp();
 
         $this->setUpNewMatch();
-        $this->determineStartingPlayer();
+        $this->determineCurrentPlayer();
 
         $this->tooLong = $this->interval(10);
 
@@ -196,5 +196,15 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
             ['Cannot end the turn at this time'],
             $this->refusals->for($this->id)
         );
+    }
+
+    /** @test */
+    function not_the_current_player_anymore_after_the_attacking_phase_expired()
+    {
+        $player = $this->currentPlayer;
+
+        $this->clock->fastForward($this->tooLong);
+
+        $this->assertFalse($this->match->itIsTheTurnOf($player));
     }
 }

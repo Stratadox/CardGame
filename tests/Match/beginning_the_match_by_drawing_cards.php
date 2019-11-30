@@ -8,6 +8,7 @@ use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\Proposal\ProposalId;
 use Stratadox\CardGame\ReadModel\Match\NoSuchMatch;
 use Stratadox\CardGame\ReadModel\Match\CardTemplate;
+use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 use Stratadox\CardGame\Visiting\VisitorId;
 
@@ -86,6 +87,16 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
             $this->assertEquals($this->testCard[$i], $cardInHand->template());
             $this->assertNotEquals($this->bogusCard, $cardInHand->template());
         }
+    }
+
+    /** @test */
+    function starting_in_the_play_phase()
+    {
+        $this->handle(StartTheMatch::forProposal($this->proposal, $this->id));
+
+        $match = $this->ongoingMatches->forProposal($this->proposal);
+
+        $this->assertEquals(OngoingMatch::PHASE_PLAY, $match->phase());
     }
 
     /** @test */

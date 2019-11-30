@@ -10,6 +10,7 @@ use Stratadox\CardGame\Match\Command\EndCardPlaying;
 use Stratadox\CardGame\Match\Command\EndBlocking;
 use Stratadox\CardGame\Match\Command\EndTheTurn;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
+use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 
 /**
@@ -26,7 +27,7 @@ class fending_off_the_enemy_attackers extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        $this->determineStartingPlayer();
+        $this->determineCurrentPlayer();
 
         $this->tooLong = $this->interval($this->defendingTime);
 
@@ -96,6 +97,12 @@ class fending_off_the_enemy_attackers extends CardGameTest
             $this->battlefield->cardsInPlay($this->match->id())
         );
         // Turn 3: See test case
+    }
+
+    /** @test */
+    function starting_in_the_defend_phase()
+    {
+        $this->assertEquals(OngoingMatch::PHASE_DEFEND, $this->match->phase());
     }
 
     /** @test */
@@ -296,9 +303,6 @@ class fending_off_the_enemy_attackers extends CardGameTest
     /** @test */
     function automatically_ending_the_combat_phase_after_the_combat_phase_expired()
     {
-        // @todo How to implement this??
-        $this->markTestSkipped('Do the more important time-related tests first');
-
         $this->handle(Block::theAttack()
             ->ofAttacker(0)
             ->withDefender(1)

@@ -12,6 +12,7 @@ use Stratadox\CardGame\Infrastructure\IdentityManagement\DefaultProposalIdGenera
 
 /**
  * @testdox server configuration test
+ * @todo do we really need these?
  */
 class ServerConfigurationTest extends TestCase
 {

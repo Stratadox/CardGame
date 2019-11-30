@@ -15,7 +15,7 @@ final class EndBlocking implements Command
     /** @var CorrelationId */
     private $correlationId;
 
-    public function __construct(
+    private function __construct(
         MatchId $match,
         int $player,
         CorrelationId $correlationId

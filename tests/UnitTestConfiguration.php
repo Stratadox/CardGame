@@ -3,9 +3,11 @@
 namespace Stratadox\CardGame\Test;
 
 use Ramsey\Uuid\UuidFactory;
+use RuntimeException;
 use Stratadox\CardGame\Account\AccountOpeningProcess;
 use Stratadox\CardGame\Account\OpenAnAccount;
 use Stratadox\CardGame\CommandHandler;
+use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Infrastructure\CommandHandlerAdapter;
 use Stratadox\CardGame\Infrastructure\DomainEvents\CommandToEventGlue;
@@ -19,8 +21,10 @@ use Stratadox\CardGame\Infrastructure\Test\InMemoryPlayerBase;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryProposedMatches;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryRedirectSources;
 use Stratadox\CardGame\Infrastructure\Test\InMemoryVisitorRepository;
+use Stratadox\CardGame\Infrastructure\Test\TestClock;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
 use Stratadox\CardGame\Match\Command\BlockTheAttacker;
+use Stratadox\CardGame\Match\Command\CheckIfTurnPhaseExpired;
 use Stratadox\CardGame\Match\Command\EndBlocking;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
 use Stratadox\CardGame\Match\Command\EndTheTurn;
@@ -33,6 +37,7 @@ use Stratadox\CardGame\Match\Handler\CombatProcess;
 use Stratadox\CardGame\Match\Handler\EndPlayPhaseProcess;
 use Stratadox\CardGame\Match\Handler\MatchStartingProcess;
 use Stratadox\CardGame\Match\Handler\TurnEndingProcess;
+use Stratadox\CardGame\Match\Handler\TurnPhaseExpirationProcess;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
 use Stratadox\CardGame\Proposal\MatchPropositionProcess;
 use Stratadox\CardGame\Proposal\ProposalAcceptationProcess;
@@ -96,6 +101,11 @@ class UnitTestConfiguration implements Configuration
                     $clock,
                     $eventBag
                 )),
+                CheckIfTurnPhaseExpired::class => $this->adapt(new TurnPhaseExpirationProcess(
+                    $matches,
+                    $clock,
+                    $eventBag
+                )),
                 PlayTheCard::class => $this->adapt(new CardPlayingProcess(
                     $matches,
                     $clock,
@@ -128,6 +138,15 @@ class UnitTestConfiguration implements Configuration
                 )),
             ])
         );
+    }
+
+    public function configureClock(TestClock $clock, Handler $bus): void
+    {
+        $clock->eachPassingSecondApply(static function () use ($bus): void {
+            $bus->handle(
+                CheckIfTurnPhaseExpired::with(CorrelationId::from('some id'))
+            );
+        });
     }
 
     private function adapt(CommandHandler $handler): Handler

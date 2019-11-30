@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\Test;
 
 use Stratadox\CardGame\EventBag;
 use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
+use Stratadox\CardGame\Infrastructure\Test\TestClock;
 use Stratadox\Clock\RewindableClock;
 use Stratadox\CommandHandling\Handler;
 
@@ -14,4 +15,6 @@ interface Configuration
         RewindableClock $clock,
         Dispatcher $dispatcher
     ): Handler;
+
+    public function configureClock(TestClock $clock, Handler $commandBus): void;
 }

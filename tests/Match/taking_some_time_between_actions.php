@@ -27,7 +27,7 @@ class taking_some_time_between_actions extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        $this->determineStartingPlayer();
+        $this->determineCurrentPlayer();
 
         $this->underThePlayingTimeLimit = $this->interval(19);
         $this->underTheAttackingTimeLimit = $this->interval(9);

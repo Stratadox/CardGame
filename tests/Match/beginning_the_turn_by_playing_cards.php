@@ -7,6 +7,7 @@ use Stratadox\CardGame\CorrelationId;
 use Stratadox\CardGame\Match\Command\AttackWithCard;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
+use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 
 /**
@@ -21,7 +22,7 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     {
         parent::setUp();
         $this->setUpNewMatch();
-        $this->determineStartingPlayer();
+        $this->determineCurrentPlayer();
 
         $this->justOverTheCardPlayingTimeLimit = $this->interval(20);
     }
@@ -32,6 +33,12 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
         $this->assertEmpty(
             $this->battlefield->cardsInPlay($this->match->id())
         );
+    }
+
+    /** @test */
+    function starting_in_the_play_phase()
+    {
+        $this->assertEquals(OngoingMatch::PHASE_PLAY, $this->match->phase());
     }
 
     /** @test */

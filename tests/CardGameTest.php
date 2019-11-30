@@ -49,6 +49,9 @@ abstract class CardGameTest extends TestCase
     /** @var Configuration[] */
     private $configuration = [];
 
+    /** @var Configuration */
+    private $currentConfiguration;
+
     /** @var RewindableClock */
     protected $clock;
 
@@ -130,7 +133,11 @@ abstract class CardGameTest extends TestCase
 
         $eventBag = new EventCollector();
         $allCards = new CardTemplates(...$this->testCard);
-        $this->input = $this->configuration[$_SERVER['configuration'] ?? 'unit']->commandHandler(
+
+        $this->currentConfiguration =
+            $this->configuration[$_SERVER['configuration'] ?? 'unit'];
+
+        $this->input = $this->currentConfiguration->commandHandler(
             $eventBag,
             $this->clock,
             new Dispatcher(
@@ -146,6 +153,8 @@ abstract class CardGameTest extends TestCase
                 new TurnSwitcher($this->ongoingMatches)
             )
         );
+
+        $this->currentConfiguration->configureClock($this->clock, $this->input);
     }
 
     protected function handle(object $command): void
@@ -193,7 +202,7 @@ abstract class CardGameTest extends TestCase
         $this->match = $this->ongoingMatches->forProposal($proposal->id());
     }
 
-    protected function determineStartingPlayer(): void
+    protected function determineCurrentPlayer(): void
     {
         foreach ($this->match->players() as $player) {
             if ($this->match->itIsTheTurnOf($player)) {

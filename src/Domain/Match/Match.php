@@ -5,8 +5,6 @@ namespace Stratadox\CardGame\Match;
 use DateTimeInterface;
 use Stratadox\CardGame\DomainEventRecorder;
 use Stratadox\CardGame\DomainEventRecording;
-use Stratadox\CardGame\Match\Event\MatchHasBegun;
-use Stratadox\CardGame\Match\Event\NextTurnBegan;
 use Stratadox\CardGame\Match\Event\StartedMatchForProposal;
 use Stratadox\CardGame\Proposal\ProposalId;
 
@@ -22,7 +20,7 @@ final class Match implements DomainEventRecorder
         MatchId $id,
         Turn $turn,
         Players $players,
-        array $events
+        MatchEvent ...$events
     ) {
         $this->id = $id;
         $this->turn = $turn;
@@ -54,12 +52,8 @@ final class Match implements DomainEventRecorder
         DateTimeInterface $startTime
     ): Match {
         $whoBegins = $players->pickRandom();
-        return new Match(
-            $id,
-            new Turn($whoBegins, $startTime),
-            $players,
-            [$creationEvent, new MatchHasBegun($id, $whoBegins)]
-        );
+        $turn = Turn::first($whoBegins, $startTime, $id);
+        return new Match($id, $turn, $players, $creationEvent, ...$turn->events());
     }
 
     public function id(): MatchId
@@ -147,17 +141,16 @@ final class Match implements DomainEventRecorder
             $this->players->after($playerNumber),
             $when,
             $playerNumber,
-            $this->players[$playerNumber]->hasAttackingUnits()
+            $this->players[$playerNumber]->hasAttackingUnits(),
+            $this->id
         );
-        $this->happened(
-            new NextTurnBegan($this->id, $this->players->after($playerNumber))
-        );
+        $this->happened(...$this->turn->events());
     }
 
     /** @throws NotYourTurn */
     public function letTheCombatBegin(int $defender, DateTimeInterface $when): void
     {
-        $this->turn->mustAllowStartingCombat($defender, $when);
+        $this->turn->mustAllowStartingCombat($defender);
 
         $this->players[$defender]->counterTheAttackersOf(
             $this->players->after($defender),
@@ -173,5 +166,17 @@ final class Match implements DomainEventRecorder
             $player->eraseEvents();
         }
         $this->turn = $this->turn->endCombatPhase($when);
+    }
+
+    public function endExpiredTurnOrPhase(DateTimeInterface $already): void
+    {
+        if ($this->turn->hasExpired($already)) {
+            try {
+                $this->turn = $this->turn->endExpiredPhase($already);
+            } catch (NoNextPhase $available) {
+                $this->endTurnOf($this->turn->currentPlayer(), $already);
+            }
+            $this->happened(...$this->turn->events());
+        }
     }
 }

@@ -6,8 +6,13 @@ use Stratadox\CardGame\Match\MatchId;
 
 final class OngoingMatch
 {
+    public const PHASE_DEFEND = 'defend';
+    public const PHASE_PLAY = 'play';
+    public const PHASE_ATTACK = 'attack';
+
     private $id;
     private $turn;
+    private $phase = self::PHASE_PLAY;
 
     public function __construct(MatchId $match, int $whoStarts)
     {
@@ -29,10 +34,21 @@ final class OngoingMatch
     public function beganTheTurnOf(int $player): void
     {
         $this->turn = $player;
+        $this->phase = self::PHASE_DEFEND;
     }
 
     public function itIsTheTurnOf(int $player): bool
     {
         return $this->turn === $player;
+    }
+
+    public function startAttackPhase(): void
+    {
+        $this->phase = self::PHASE_ATTACK;
+    }
+
+    public function phase(): string
+    {
+        return $this->phase;
     }
 }
