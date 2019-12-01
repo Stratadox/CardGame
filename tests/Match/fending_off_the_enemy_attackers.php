@@ -106,6 +106,17 @@ class fending_off_the_enemy_attackers extends CardGameTest
     }
 
     /** @test */
+    function moving_to_play_phase_after_defending()
+    {
+        $this->handle(EndBlocking::phase(
+            $this->match->id(),
+            $this->currentPlayer,
+            $this->id
+        ));
+        $this->assertEquals(OngoingMatch::PHASE_PLAY, $this->match->phase());
+    }
+
+    /** @test */
     function blocking_the_enemy()
     {
          $this->handle(Block::theAttack()

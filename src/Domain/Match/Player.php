@@ -110,7 +110,7 @@ final class Player implements DomainEventRecorder
         }
     }
 
-    public function endCombatPhase(MatchId $match): void
+    public function regroupSurvivingUnits(MatchId $match): void
     {
         $cards = $this->cards->inPlay();
         foreach ($cards as $position => $card) {

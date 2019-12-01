@@ -128,7 +128,12 @@ final class Match implements DomainEventRecorder
         int $playerNumber,
         DateTimeInterface $when
     ): void {
-        $this->turn = $this->turn->endCardPlayingPhaseFor($playerNumber, $when);
+        $this->turn = $this->turn->endCardPlayingPhaseFor(
+            $playerNumber,
+            $when,
+            $this->id
+        );
+        $this->happened(...$this->turn->events());
     }
 
     /** @throws NotYourTurn */
@@ -161,18 +166,21 @@ final class Match implements DomainEventRecorder
         // @todo let non-countered units damage defender
 
         foreach ($this->players as $player) {
-            $player->endCombatPhase($this->id);
+            $player->regroupSurvivingUnits($this->id);
             $this->happened(...$player->domainEvents());
             $player->eraseEvents();
         }
-        $this->turn = $this->turn->endCombatPhase($when);
+        $this->turn = $this->turn->startPlayPhase($when, $this->id);
+        $this->happened(...$this->turn->events());
     }
 
     public function endExpiredTurnOrPhase(DateTimeInterface $already): void
     {
         if ($this->turn->hasExpired($already)) {
             try {
-                $this->turn = $this->turn->endExpiredPhase($already);
+                $this->turn = $this->turn->endExpiredPhase($already, $this->id);
+            } catch (NeedCombatFirst $cannotJustSwitch) {
+                $this->letTheCombatBegin($this->turn->currentPlayer(), $already);
             } catch (NoNextPhase $available) {
                 $this->endTurnOf($this->turn->currentPlayer(), $already);
             }

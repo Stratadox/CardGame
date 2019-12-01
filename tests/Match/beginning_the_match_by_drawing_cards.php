@@ -90,16 +90,6 @@ class beginning_the_match_by_drawing_cards extends CardGameTest
     }
 
     /** @test */
-    function starting_in_the_play_phase()
-    {
-        $this->handle(StartTheMatch::forProposal($this->proposal, $this->id));
-
-        $match = $this->ongoingMatches->forProposal($this->proposal);
-
-        $this->assertEquals(OngoingMatch::PHASE_PLAY, $match->phase());
-    }
-
-    /** @test */
     function not_starting_matches_for_proposals_that_are_still_pending()
     {
         $accountOne = $this->accountOverviews

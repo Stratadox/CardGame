@@ -47,6 +47,9 @@ final class TestClock implements RewindableClock
 
     public function fastForward(DateInterval $interval): RewindableClock
     {
+        // @todo
+        // use expiry dates instead, and apply expiration actions when handling
+        // the next command
         $before = $this->clock->now();
         $this->clock = $this->clock->fastForward($interval);
 

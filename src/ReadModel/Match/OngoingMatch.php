@@ -31,7 +31,7 @@ final class OngoingMatch
         return [0, 1];
     }
 
-    public function beganTheTurnOf(int $player): void
+    public function startTurnOf(int $player): void
     {
         $this->turn = $player;
         $this->phase = self::PHASE_DEFEND;
@@ -40,6 +40,16 @@ final class OngoingMatch
     public function itIsTheTurnOf(int $player): bool
     {
         return $this->turn === $player;
+    }
+
+    public function startDefendPhase(): void
+    {
+        $this->phase = self::PHASE_DEFEND;
+    }
+
+    public function startPlayPhase(): void
+    {
+        $this->phase = self::PHASE_PLAY;
     }
 
     public function startAttackPhase(): void

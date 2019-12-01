@@ -3,6 +3,10 @@
 namespace Stratadox\CardGame\Match;
 
 use DateTimeInterface;
+use Stratadox\CardGame\DomainEvent;
+use Stratadox\CardGame\Match\Event\AttackPhaseStarted;
+use Stratadox\CardGame\Match\Event\DefendPhaseStarted;
+use Stratadox\CardGame\Match\Event\PlayPhaseStarted;
 
 final class TurnPhase
 {
@@ -19,23 +23,37 @@ final class TurnPhase
     private $phase;
     /** @var DateTimeInterface */
     private $since;
+    /** @var DomainEvent[] */
+    private $events;
 
-    private function __construct(int $phase, DateTimeInterface $since)
-    {
+    private function __construct(
+        int $phase,
+        DateTimeInterface $since,
+        DomainEvent ...$events
+    ) {
         $this->phase = $phase;
         $this->since = $since;
-    }
-
-    public static function play(DateTimeInterface $now): self
-    {
-        return new self(TurnPhase::PLAY, $now);
+        $this->events = $events;
     }
 
     public static function defendOrPlay(
         bool $shouldWeDefend,
-        DateTimeInterface $since
+        DateTimeInterface $now,
+        MatchId $match
     ): self {
-        return new self($shouldWeDefend ? self::DEFEND : self::PLAY, $since);
+        return $shouldWeDefend ?
+            self::defend($now, $match) :
+            self::play($now, $match);
+    }
+
+    public static function play(DateTimeInterface $now, MatchId $match): self
+    {
+        return new self(TurnPhase::PLAY, $now, new PlayPhaseStarted($match));
+    }
+
+    private static function defend(DateTimeInterface $now, MatchId $match): self
+    {
+        return new self(TurnPhase::DEFEND, $now, new DefendPhaseStarted($match));
     }
 
 
@@ -54,6 +72,11 @@ final class TurnPhase
         return $this->phase !== TurnPhase::ATTACK || $this->hasExpired($now);
     }
 
+    public function prohibitsCombat(): bool
+    {
+        return $this->phase !== TurnPhase::DEFEND;
+    }
+
     public function isAfterCombat(): bool
     {
         return $this->phase === TurnPhase::PLAY
@@ -68,24 +91,29 @@ final class TurnPhase
         );
     }
 
-    public function endCombat(DateTimeInterface $now): TurnPhase
+    public function startPlay(DateTimeInterface $now, MatchId $match): TurnPhase
     {
-        return new self(TurnPhase::PLAY, $now);
+        return new self(TurnPhase::PLAY, $now, new PlayPhaseStarted($match));
     }
 
-    public function endCardPlaying(DateTimeInterface $now): TurnPhase
+    public function startAttack(DateTimeInterface $now, MatchId $match): TurnPhase
     {
-        return new self(TurnPhase::ATTACK, $now);
+        return new self(TurnPhase::ATTACK, $now, new AttackPhaseStarted($match));
     }
 
-    /** @throws NoNextPhase */
-    public function next(DateTimeInterface $now): TurnPhase
+    /** @throws NoNextPhase|NeedCombatFirst */
+    public function next(DateTimeInterface $now, MatchId $match): TurnPhase
     {
         switch ($this->phase) {
-//            @todo case self::DEFEND
-            case self::PLAY: return $this->endCardPlaying($now);
+            case self::DEFEND:  throw NeedCombatFirst::cannotJustSwitchPhase();
+            case self::PLAY: return $this->startAttack($now, $match);
             default: throw NoNextPhase::available();
         }
+    }
+
+    public function events(): array
+    {
+        return $this->events;
     }
 
     private function isTooFarApart(int $nowTime, int $backThenTime): bool

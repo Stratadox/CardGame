@@ -279,6 +279,26 @@ class beginning_the_turn_by_playing_cards extends CardGameTest
     }
 
     /** @test */
+    function entering_the_attack_phase_after_ending_the_play_phase()
+    {
+        $this->handle(EndCardPlaying::phase(
+            $this->currentPlayer,
+            $this->match->id(),
+            $this->id
+        ));
+
+        $this->assertEquals(OngoingMatch::PHASE_ATTACK, $this->match->phase());
+    }
+
+    /** @test */
+    function entering_the_attack_phase_after_the_play_phase_expired()
+    {
+        $this->clock->fastForward($this->justOverTheCardPlayingTimeLimit);
+
+        $this->assertEquals(OngoingMatch::PHASE_ATTACK, $this->match->phase());
+    }
+
+    /** @test */
     function not_ending_the_card_playing_phase_for_another_player()
     {
         $this->handle(EndCardPlaying::phase(

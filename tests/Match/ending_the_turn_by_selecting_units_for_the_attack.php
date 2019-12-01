@@ -7,6 +7,7 @@ use Stratadox\CardGame\Match\Command\AttackWithCard;
 use Stratadox\CardGame\Match\Command\EndCardPlaying;
 use Stratadox\CardGame\Match\Command\EndTheTurn;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
+use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\Test\CardGameTest;
 
 /**
@@ -148,7 +149,7 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
         $this->clock->fastForward($this->tooLong);
 
         $this->handle(AttackWithCard::number(
-            1,
+            0,
             $this->currentPlayer,
             $this->match->id(),
             $this->id
@@ -206,5 +207,36 @@ class ending_the_turn_by_selecting_units_for_the_attack extends CardGameTest
         $this->clock->fastForward($this->tooLong);
 
         $this->assertFalse($this->match->itIsTheTurnOf($player));
+    }
+
+    /** @test */
+    function beginning_in_defend_phase_if_there_are_attackers()
+    {
+        $this->handle(AttackWithCard::number(
+            0,
+            $this->currentPlayer,
+            $this->match->id(),
+            $this->id
+        ));
+
+        $this->handle(EndTheTurn::for(
+            $this->match->id(),
+            $this->currentPlayer,
+            $this->id
+        ));
+
+        $this->assertEquals(OngoingMatch::PHASE_DEFEND, $this->match->phase());
+    }
+
+    /** @test */
+    function beginning_in_play_phase_if_there_are_no_attackers()
+    {
+        $this->handle(EndTheTurn::for(
+            $this->match->id(),
+            $this->currentPlayer,
+            $this->id
+        ));
+
+        $this->assertEquals(OngoingMatch::PHASE_PLAY, $this->match->phase());
     }
 }

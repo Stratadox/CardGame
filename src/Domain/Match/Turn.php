@@ -2,6 +2,7 @@
 
 namespace Stratadox\CardGame\Match;
 
+use function array_merge;
 use function assert;
 use DateTimeInterface;
 use Stratadox\CardGame\Match\Event\MatchHasBegun;
@@ -31,7 +32,11 @@ final class Turn
         DateTimeInterface $since,
         MatchId $match
     ): Turn {
-        return new Turn($player, TurnPhase::play($since), new MatchHasBegun($match, $player));
+        return new Turn(
+            $player,
+            TurnPhase::play($since, $match),
+            new MatchHasBegun($match, $player)
+        );
     }
 
     /** @throws NotYourTurn */
@@ -67,14 +72,14 @@ final class Turn
     /** @throws NotYourTurn */
     public function mustAllowStartingCombat(int $player): void
     {
-        if ($this->isNotOf($player)) {
+        if ($this->isNotOf($player) || $this->phase->prohibitsCombat()) {
             throw NotYourTurn::cannotStartCombat();
         }
     }
 
     public function events(): array
     {
-        return $this->events;
+        return array_merge($this->events, $this->phase->events());
     }
 
     public function hasNotHadCombatYet(): bool
@@ -95,18 +100,18 @@ final class Turn
     /** @throws NotYourTurn */
     public function endCardPlayingPhaseFor(
         int $player,
-        DateTimeInterface $now
+        DateTimeInterface $now,
+        MatchId $match
     ): Turn {
-        // @todo assert current phase is card play phase
         if ($this->isNotOf($player)) {
             throw NotYourTurn::cannotEndCardPlayingPhase();
         }
-        return new Turn($this->currentPlayer, $this->phase->endCardPlaying($now));
+        return new Turn($this->currentPlayer, $this->phase->startAttack($now, $match));
     }
 
-    public function endCombatPhase(DateTimeInterface $now): Turn
+    public function startPlayPhase(DateTimeInterface $now, MatchId $match): Turn
     {
-        return new Turn($this->currentPlayer, $this->phase->endCombat($now));
+        return new Turn($this->currentPlayer, $this->phase->startPlay($now, $match));
     }
 
     /** @throws NotYourTurn */
@@ -120,32 +125,23 @@ final class Turn
         if ($this->isNotOf($previousPlayer)) {
             throw NotYourTurn::cannotEndTurn();
         }
-        return $this->nextTurn($player, $now, $shouldDefendFirst, $match);
+        return new Turn(
+            $player,
+            TurnPhase::defendOrPlay($shouldDefendFirst, $now, $match),
+            new NextTurnBegan($match, $player)
+        );
     }
 
-    /** @throws NoNextPhase */
-    public function endExpiredPhase(DateTimeInterface $now): Turn
+    /** @throws NoNextPhase|NeedCombatFirst */
+    public function endExpiredPhase(DateTimeInterface $now, MatchId $match): Turn
     {
         assert($this->hasExpired($now));
 
-        return new self($this->currentPlayer, $this->phase->next($now));
+        return new self($this->currentPlayer, $this->phase->next($now, $match));
     }
 
     private function isNotOf(int $player): bool
     {
         return $this->currentPlayer !== $player;
-    }
-
-    private function nextTurn(
-        int $player,
-        DateTimeInterface $now,
-        bool $defend,
-        MatchId $match
-    ): Turn {
-        return new Turn(
-            $player,
-            TurnPhase::defendOrPlay($defend, $now),
-            new NextTurnBegan($match, $player)
-        );
     }
 }
