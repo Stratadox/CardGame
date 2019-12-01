@@ -5,8 +5,8 @@ namespace Stratadox\CardGame\Match;
 use function array_merge;
 use function assert;
 use DateTimeInterface;
-use Stratadox\CardGame\Match\Event\MatchHasBegun;
-use Stratadox\CardGame\Match\Event\NextTurnBegan;
+use Stratadox\CardGame\Match\Event\MatchStarted;
+use Stratadox\CardGame\Match\Event\NextTurnStarted;
 
 final class Turn
 {
@@ -35,7 +35,7 @@ final class Turn
         return new Turn(
             $player,
             TurnPhase::play($since, $match),
-            new MatchHasBegun($match, $player)
+            new MatchStarted($match, $player)
         );
     }
 
@@ -128,7 +128,7 @@ final class Turn
         return new Turn(
             $player,
             TurnPhase::defendOrPlay($shouldDefendFirst, $now, $match),
-            new NextTurnBegan($match, $player)
+            new NextTurnStarted($match, $player)
         );
     }
 

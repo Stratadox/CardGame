@@ -6,7 +6,7 @@ use function assert;
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\Event\AttackPhaseStarted;
 use Stratadox\CardGame\Match\Event\DefendPhaseStarted;
-use Stratadox\CardGame\Match\Event\NextTurnBegan;
+use Stratadox\CardGame\Match\Event\NextTurnStarted;
 use Stratadox\CardGame\Match\Event\PlayPhaseStarted;
 use Stratadox\CardGame\Match\MatchEvent;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
@@ -24,7 +24,7 @@ final class TurnSwitcher implements EventHandler
     public function events(): iterable
     {
         return [
-            NextTurnBegan::class,
+            NextTurnStarted::class,
             DefendPhaseStarted::class,
             PlayPhaseStarted::class,
             AttackPhaseStarted::class,
@@ -36,7 +36,7 @@ final class TurnSwitcher implements EventHandler
         assert($turn instanceof MatchEvent);
         $match = $this->ongoingMatches->withId($turn->aggregateId());
 
-        if ($turn instanceof NextTurnBegan) {
+        if ($turn instanceof NextTurnStarted) {
             $match->startTurnOf($turn->player());
         } elseif ($turn instanceof DefendPhaseStarted) {
             $match->startDefendPhase();

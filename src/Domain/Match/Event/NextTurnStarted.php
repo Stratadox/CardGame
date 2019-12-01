@@ -5,7 +5,7 @@ namespace Stratadox\CardGame\Match\Event;
 use Stratadox\CardGame\Match\MatchEvent;
 use Stratadox\CardGame\Match\MatchId;
 
-final class NextTurnBegan implements MatchEvent
+final class NextTurnStarted implements MatchEvent
 {
     /** @var MatchId */
     private $match;

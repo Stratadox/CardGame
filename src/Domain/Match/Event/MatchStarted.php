@@ -5,7 +5,7 @@ namespace Stratadox\CardGame\Match\Event;
 use Stratadox\CardGame\Match\MatchEvent;
 use Stratadox\CardGame\Match\MatchId;
 
-final class MatchHasBegun implements MatchEvent
+final class MatchStarted implements MatchEvent
 {
     private $match;
     private $whoBegins;

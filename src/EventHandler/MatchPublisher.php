@@ -4,7 +4,7 @@ namespace Stratadox\CardGame\EventHandler;
 
 use function assert;
 use Stratadox\CardGame\DomainEvent;
-use Stratadox\CardGame\Match\Event\MatchHasBegun;
+use Stratadox\CardGame\Match\Event\MatchStarted;
 use Stratadox\CardGame\Match\Event\StartedMatchForProposal;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
@@ -23,7 +23,7 @@ final class MatchPublisher implements EventHandler
     {
         return [
             StartedMatchForProposal::class,
-            MatchHasBegun::class,
+            MatchStarted::class,
         ];
     }
 
@@ -32,7 +32,7 @@ final class MatchPublisher implements EventHandler
         if ($event instanceof StartedMatchForProposal) {
             $this->setupMatch($event);
         } else {
-            assert($event instanceof MatchHasBegun);
+            assert($event instanceof MatchStarted);
             $this->startMatch($event);
         }
     }
@@ -42,7 +42,7 @@ final class MatchPublisher implements EventHandler
         $this->proposalFor[(string) $event->aggregateId()] = $event->proposal();
     }
 
-    private function startMatch(MatchHasBegun $event): void
+    private function startMatch(MatchStarted $event): void
     {
         $this->matches->addFromProposal(
             $this->proposalFor[(string) $event->aggregateId()],
