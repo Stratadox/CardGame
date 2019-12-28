@@ -6,6 +6,7 @@ use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Match\Event\UnitDied;
 use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
+use Stratadox\CardGame\Match\Event\UnitMovedToDefend;
 use Stratadox\CardGame\Match\Event\UnitRegrouped;
 use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardTemplates;
@@ -29,6 +30,7 @@ final class BattlefieldUpdater implements EventHandler
         return [
             UnitMovedIntoPlay::class,
             UnitMovedToAttack::class,
+            UnitMovedToDefend::class,
             UnitRegrouped::class,
             UnitDied::class,
         ];
@@ -48,6 +50,13 @@ final class BattlefieldUpdater implements EventHandler
         }
         if ($event instanceof UnitMovedToAttack) {
             $this->battlefield->sendIntoBattle(
+                $event->offset(),
+                $event->match(),
+                $event->player()
+            );
+        }
+        if ($event instanceof UnitMovedToDefend) {
+            $this->battlefield->sendToDefend(
                 $event->offset(),
                 $event->match(),
                 $event->player()

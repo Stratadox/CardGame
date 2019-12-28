@@ -46,6 +46,14 @@ class Battlefield
         $this->card($offset, $match, $player)->attack();
     }
 
+    public function sendToDefend(
+        int $offset,
+        MatchId $match,
+        int $player
+    ): void {
+        $this->card($offset, $match, $player)->defend();
+    }
+
     public function regroup(
         int $offset,
         MatchId $match,
@@ -61,6 +69,17 @@ class Battlefield
             $this->cardsInPlay($match),
             static function (Card $card): bool {
                 return $card->isAttacking();
+            }
+        );
+    }
+
+    /** @return Card[] */
+    public function defenders(MatchId $match): array
+    {
+        return array_filter(
+            $this->cardsInPlay($match),
+            static function (Card $card): bool {
+                return $card->isDefending();
             }
         );
     }

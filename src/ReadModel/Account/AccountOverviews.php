@@ -9,6 +9,11 @@ class AccountOverviews
     /** @var AccountOverview[] */
     private $accounts = [];
 
+    public static function startEmpty(): self
+    {
+        return new self();
+    }
+
     public function add(AccountOverview $accountOverview): void
     {
         $this->accounts[] = $accountOverview;

@@ -2,13 +2,15 @@
 
 namespace Stratadox\CardGame\ReadModel\Match;
 
+use Countable;
 use Stratadox\CardGame\Match\MatchId;
 use Stratadox\CardGame\Proposal\ProposalId;
+use function count;
 
-class OngoingMatches
+class OngoingMatches implements Countable
 {
     /** @var OngoingMatch[] */
-    private $matches;
+    private $matches = [];
 
     public function addFromProposal(ProposalId $proposal, OngoingMatch $match): void
     {
@@ -32,5 +34,10 @@ class OngoingMatches
             }
         }
         // @todo throw
+    }
+
+    public function count(): int
+    {
+        return count($this->matches);
     }
 }

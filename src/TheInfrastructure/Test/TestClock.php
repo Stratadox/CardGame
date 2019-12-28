@@ -29,6 +29,11 @@ final class TestClock implements RewindableClock
         ));
     }
 
+    public static function from(RewindableClock $clock): self
+    {
+        return new self($clock);
+    }
+
     public function eachPassingSecondApply(Closure $method): void
     {
         $this->method = $method;
@@ -50,6 +55,7 @@ final class TestClock implements RewindableClock
         // @todo
         // use expiry dates instead, and apply expiration actions when handling
         // the next command
+        // ..can we do that? How to update read models after auto-combat, then?
         $before = $this->clock->now();
         $this->clock = $this->clock->fastForward($interval);
 

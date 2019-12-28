@@ -15,7 +15,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Stratadox\\CardGame\\Test\\": "tests"
+      "Stratadox\\CardGame\\Test\\": ["tests\\Unit", "tests\\Configuration"],
+      "Stratadox\\CardGame\\Context\\": "tests\\Scenario\\Context"
     }
   },
   "require": {
@@ -29,6 +30,7 @@
     "roave/security-advisories": "dev-master",
     "phpunit/phpunit": "^8.2",
     "phpstan/phpstan": "^0.11.12",
-    "php-coveralls/php-coveralls": "^2.1"
+    "php-coveralls/php-coveralls": "^2.1",
+    "behat/behat": "^3.5"
   }
 }

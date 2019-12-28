@@ -18,7 +18,6 @@ use Stratadox\CardGame\EventHandler\ProposalSender;
 use Stratadox\CardGame\EventHandler\StatisticsUpdater;
 use Stratadox\CardGame\EventHandler\TurnSwitcher;
 use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
-use Stratadox\CardGame\Infrastructure\DomainEvents\EventCollector;
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
@@ -128,18 +127,15 @@ abstract class CardGameTest extends TestCase
             new CardTemplate('card-type-9'),
         ];
 
-        $this->configuration['unit'] = new UnitTestConfiguration();
+        $this->configuration['unit'] = UnitTestConfiguration::withClock($this->clock);
         // @todo add a test configuration where every command is delayed
 
-        $eventBag = new EventCollector();
         $allCards = new CardTemplates(...$this->testCard);
 
         $this->currentConfiguration =
             $this->configuration[$_SERVER['configuration'] ?? 'unit'];
 
-        $this->input = $this->currentConfiguration->commandHandler(
-            $eventBag,
-            $this->clock,
+        $this->input = $this->currentConfiguration->handler(
             new Dispatcher(
                 new MatchPublisher($this->ongoingMatches),
                 new HandAdjuster($this->cardsInTheHand, $allCards),
@@ -153,8 +149,6 @@ abstract class CardGameTest extends TestCase
                 new TurnSwitcher($this->ongoingMatches)
             )
         );
-
-        $this->currentConfiguration->configureClock($this->clock, $this->input);
     }
 
     protected function handle(object $command): void

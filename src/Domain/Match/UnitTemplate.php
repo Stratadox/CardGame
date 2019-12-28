@@ -8,6 +8,7 @@ use Stratadox\CardGame\Match\Event\CardWasDrawn;
 use Stratadox\CardGame\Match\Event\UnitDied;
 use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
+use Stratadox\CardGame\Match\Event\UnitMovedToDefend;
 use Stratadox\CardGame\Match\Event\UnitRegrouped;
 
 final class UnitTemplate implements CardTemplate
@@ -50,8 +51,7 @@ final class UnitTemplate implements CardTemplate
         int $player,
         int $offset
     ): array {
-        // @todo add UnitMovedToDefend?
-        return [];
+        return [new UnitMovedToDefend($match, $player, $offset)];
     }
 
     public function dyingEvents(

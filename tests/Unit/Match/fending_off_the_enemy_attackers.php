@@ -117,7 +117,51 @@ class fending_off_the_enemy_attackers extends CardGameTest
     }
 
     /** @test */
-    function blocking_the_enemy()
+    function no_defenders_before_defending()
+    {
+        $this->assertEmpty($this->battlefield->defenders($this->match->id()));
+    }
+
+    /** @test */
+    function sending_a_unit_to_defend()
+    {
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
+            ->withDefender(0)
+            ->as($this->currentPlayer)
+            ->in($this->match->id())
+            ->trackedWith($this->id)
+            ->go());
+        $defenders = $this->battlefield->defenders($this->match->id());
+        $this->assertCount(1, $defenders);
+        $this->assertTrue($defenders[0]->hasTemplate($this->testCard[0]));
+    }
+
+    /** @test */
+    function sending_two_units_to_defend()
+    {
+        $this->handle(Block::theAttack()
+            ->ofAttacker(0)
+            ->withDefender(0)
+            ->as($this->currentPlayer)
+            ->in($this->match->id())
+            ->trackedWith($this->id)
+            ->go());
+        $this->handle(Block::theAttack()
+            ->ofAttacker(1)
+            ->withDefender(1)
+            ->as($this->currentPlayer)
+            ->in($this->match->id())
+            ->trackedWith($this->id)
+            ->go());
+        $defenders = $this->battlefield->defenders($this->match->id());
+        $this->assertCount(2, $defenders);
+        $this->assertTrue($defenders[0]->hasTemplate($this->testCard[0]));
+        $this->assertTrue($defenders[1]->hasTemplate($this->testCard[1]));
+    }
+
+    /** @test */
+    function killing_an_attacker()
     {
          $this->handle(Block::theAttack()
              ->ofAttacker(0)
@@ -270,14 +314,6 @@ class fending_off_the_enemy_attackers extends CardGameTest
     /** @test */
     function not_ending_the_blocking_phase_of_the_enemy_turn()
     {
-        $this->handle(Block::theAttack()
-            ->ofAttacker(0)
-            ->withDefender(0)
-            ->as($this->currentPlayer)
-            ->in($this->match->id())
-            ->trackedWith(CorrelationId::from('irrelevant'))
-            ->go());
-
         $this->handle(EndBlocking::phase(
             $this->match->id(),
             $this->otherPlayer,

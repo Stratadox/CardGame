@@ -10,6 +10,8 @@ final class Card
     private $template;
     /** @var bool */
     private $isAttacking = false;
+    /** @var bool */
+    private $isDefending = false;
 
     public function __construct(int $offset, CardTemplate $template)
     {
@@ -22,9 +24,14 @@ final class Card
         return $this->isAttacking;
     }
 
-    public function template(): CardTemplate
+    public function isDefending(): bool
     {
-        return $this->template;
+        return $this->isDefending;
+    }
+
+    public function hasTemplate(CardTemplate $template): bool
+    {
+        return $this->template->is($template);
     }
 
     public function offset(): int
@@ -35,6 +42,11 @@ final class Card
     public function attack(): void
     {
         $this->isAttacking = true;
+    }
+
+    public function defend(): void
+    {
+        $this->isDefending = true;
     }
 
     public function regroup(): void

@@ -15,4 +15,9 @@ final class CardTemplate
     {
         return $this->id;
     }
+
+    public function is(CardTemplate $other): bool
+    {
+        return $this->id === $other->id;
+    }
 }
