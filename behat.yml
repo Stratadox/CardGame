@@ -1,20 +1,28 @@
 default:
   suites:
 
-    Account-Unit:
+    Account:
       paths:
         - tests/Scenario/1_Account
       contexts:
         - Stratadox\CardGame\Context\AccountUnitContext
 
-    Proposal-Unit:
+    Proposal:
       paths:
         - tests/Scenario/2_Proposal
       contexts:
         - Stratadox\CardGame\Context\ProposalUnitContext
 
-    Match-Unit:
+    Match:
       paths:
         - tests/Scenario/3_Match
       contexts:
         - Stratadox\CardGame\Context\MatchUnitContext
+
+    ReST:
+      paths:
+        - tests/Scenario/1_Account
+        - tests/Scenario/2_Proposal
+        - tests/Scenario/3_Match
+      contexts:
+        - Stratadox\CardGame\Context\RestContext
