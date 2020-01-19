@@ -145,7 +145,10 @@ abstract class CardGameTest extends TestCase
                 new PlayerListAppender($this->playerList),
                 new AccountOverviewCreator($this->accountOverviews),
                 new ProposalSender($this->matchProposals),
-                new ProposalAcceptanceNotifier($this->acceptedProposals),
+                new ProposalAcceptanceNotifier(
+                    $this->acceptedProposals,
+                    $this->matchProposals
+                ),
                 new TurnSwitcher($this->ongoingMatches)
             )
         );

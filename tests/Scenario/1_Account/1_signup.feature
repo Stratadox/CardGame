@@ -8,6 +8,7 @@ Feature: Signing up for the game
     When I open an account
     Then my account will be a guest account
 
+  @unreachable
   Scenario: Not opening an account without visiting a page first
     When I open an account
     Then that is not possible, because "cannot open account for unknown entity"

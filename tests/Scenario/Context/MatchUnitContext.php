@@ -108,7 +108,10 @@ final class MatchUnitContext implements Context
             new Dispatcher(
                 new AccountOverviewCreator($this->accountOverviews),
                 new ProposalSender($this->matchProposals),
-                new ProposalAcceptanceNotifier($this->acceptedProposals),
+                new ProposalAcceptanceNotifier(
+                    $this->acceptedProposals,
+                    $this->matchProposals
+                ),
                 new MatchPublisher($this->ongoingMatches),
                 new HandAdjuster($this->cardsInTheHand, $allCards),
                 new BattlefieldUpdater($this->battlefield, $allCards),
@@ -132,8 +135,8 @@ final class MatchUnitContext implements Context
      */
     public function beginsInTheirMatchAgainst(
         string $player1,
-        string $matchLabel = self::DEFAULT_MATCH_LABEL,
-        string $player2 = 'N/A'
+        string $player2,
+        string $match = self::DEFAULT_MATCH_LABEL
     ) {
         do {
             $this->hasSignedUpForTheGame($player1);
@@ -141,10 +144,10 @@ final class MatchUnitContext implements Context
             $this->proposesAMatch($player1, $player2);
             $this->acceptsTheProposal($player2);
             $this->theMatchStarts();
-            $match = $this->matchFor($player1);
-        } while (!$match->itIsTheTurnOf($this->playerNumberOf($player1)));
-        $this->matches[$matchLabel] = $match;
-        $this->currentMatch = $match;
+            $ongoingMatch = $this->matchFor($player1);
+        } while (!$ongoingMatch->itIsTheTurnOf($this->playerNumberOf($player1)));
+        $this->matches[$match] = $ongoingMatch;
+        $this->currentMatch = $ongoingMatch;
     }
 
     /**

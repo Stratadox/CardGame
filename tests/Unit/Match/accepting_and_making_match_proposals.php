@@ -97,6 +97,30 @@ class accepting_and_making_match_proposals extends CardGameTest
         $this->assertNotEmpty(
             $this->acceptedProposals->since($this->allBegan)
         );
+        $this->assertEmpty(
+            $this->acceptedProposals->acceptedBy(
+                $this->accountOne,
+                $this->allBegan
+            )
+        );
+        $this->assertNotEmpty(
+            $this->acceptedProposals->acceptedBy(
+                $this->accountTwo,
+                $this->allBegan
+            )
+        );
+        $this->assertNotEmpty(
+            $this->acceptedProposals->proposedBy(
+                $this->accountOne,
+                $this->allBegan
+            )
+        );
+        $this->assertEmpty(
+            $this->acceptedProposals->proposedBy(
+                $this->accountTwo,
+                $this->allBegan
+            )
+        );
     }
 
     /** @test */
@@ -137,6 +161,18 @@ class accepting_and_making_match_proposals extends CardGameTest
         $this->assertEmpty(
             $this->acceptedProposals->since($this->allBegan)
         );
+        $this->assertEmpty(
+            $this->acceptedProposals->proposedBy(
+                $this->accountOne,
+                $this->allBegan
+            )
+        );
+        $this->assertEmpty(
+            $this->acceptedProposals->acceptedBy(
+                $this->accountTwo,
+                $this->allBegan
+            )
+        );
         $this->assertEquals(
             ['The proposal has already expired!'],
             $this->refusals->for($this->id)
@@ -152,7 +188,6 @@ class accepting_and_making_match_proposals extends CardGameTest
             $this->id
         ));
         $proposalId = $this->matchProposals->for($this->accountTwo)[0]->id();
-
 
         $this->clock->fastForward($this->almostTooLong);
         $this->handle(AcceptTheProposal::withId(

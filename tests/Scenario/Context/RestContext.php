@@ -5,9 +5,41 @@ namespace Stratadox\CardGame\Context;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
+use DateInterval;
+use Stratadox\CardGame\Infrastructure\Test\TestClient;
+use Stratadox\CardGame\Infrastructure\Test\TestClock;
+use function assert;
+use function count;
+use function in_array;
+use function ucfirst;
 
 final class RestContext implements Context
 {
+    private const DEFAULT_MATCH_LABEL = 'A';
+
+    /** @var TestClock */
+    private $clock;
+    /** @var TestClient */
+    private $go;
+    /** @var TestClient[] */
+    private $let = [];
+    /** @var string[] */
+    private $playersIn = [];
+
+    /**
+     * @BeforeScenario
+     */
+    public function setUp(): void
+    {
+        $this->clock = TestClock::make();
+        $this->go = $this->newClient();
+    }
+
+    private function newClient(): TestClient
+    {
+        return new TestClient($this->clock);
+    }
+
     /**
      * @Given mana can run out
      * @Given the :specific card in the deck is a spell
@@ -26,7 +58,13 @@ final class RestContext implements Context
      */
     public function thatIsNotPossibleBecause(string $reason)
     {
-        throw new PendingException();
+        $found = in_array(ucfirst($reason), $this->go->flashMessages());
+        foreach ($this->let as $client) {
+            if (!$found) {
+                $found = in_array(ucfirst($reason), $client->flashMessages());
+            }
+        }
+        assert($found);
     }
 
     /**
@@ -35,7 +73,7 @@ final class RestContext implements Context
      */
     public function iVisitedThePage(string $which)
     {
-        throw new PendingException();
+        $this->go->visit($which);
     }
 
     /**
@@ -43,7 +81,7 @@ final class RestContext implements Context
      */
     public function iOpenAnAccount()
     {
-        throw new PendingException();
+        $this->go->do('open account');
     }
 
     /**
@@ -51,7 +89,11 @@ final class RestContext implements Context
      */
     public function hasSignedUpForTheGame(string $player)
     {
-        throw new PendingException();
+        if (!isset($this->let[$player])) {
+            $this->let[$player] = $this->newClient();
+        }
+        $this->let[$player]->visit('home');
+        $this->let[$player]->do('open account');
     }
 
     /**
@@ -59,15 +101,8 @@ final class RestContext implements Context
      */
     public function myAccountWillBeAGuestAccount()
     {
-        throw new PendingException();
-    }
-
-    /**
-     * @Then I will not have an account
-     */
-    public function iWillNotHaveAnAccount()
-    {
-        throw new PendingException();
+        $this->go->visit('account');
+        assert($this->go->see('type') === 'guest');
     }
 
     /**
@@ -75,7 +110,8 @@ final class RestContext implements Context
      */
     public function thePlayerListWillBeEmpty()
     {
-        throw new PendingException();
+        $this->go->visit('player list');
+        assert(empty($this->go->see('players')));
     }
 
     /**
@@ -83,26 +119,34 @@ final class RestContext implements Context
      */
     public function thePlayerListWillNotBeEmpty()
     {
-        throw new PendingException();
+        $this->go->visit('player list');
+        assert(!empty($this->go->see('players')));
     }
 
     /**
      * @Then :player will have :amount open match proposal
      * @Then :player will have :amount open match proposals
      */
-    public function willHaveNoOpenMatchProposals(string $player, int $amount = 0)
+    public function willHaveThisManyOpenMatchProposals(string $player, int $amount)
     {
-        throw new PendingException();
+        assert($amount === count($this->let[$player]->see('open proposals')));
     }
 
     /**
-     * @Then there will not be any accepted proposals
-     * @Then there will not be any accepted proposals yet
-     * @Then there will be :amount accepted proposal
+     * @Then :player will have :amount of their proposals accepted
      */
-    public function thereWillBeAnAcceptedProposal(int $amount = 0)
+    public function willHaveProposalsAccepted(string $player, int $amount)
     {
-        throw new PendingException();
+        assert($amount === count($this->let[$player]->see('proposals accepted')));
+    }
+
+    /**
+     * @Then :player will have accepted :amount proposals
+     * @Then :player will have accepted :amount proposal
+     */
+    public function willHaveAcceptedProposals(string $player, int $amount)
+    {
+        assert($amount === count($this->let[$player]->see('accepted proposals')));
     }
 
     /**
@@ -111,7 +155,7 @@ final class RestContext implements Context
      */
     public function theProposalExpires()
     {
-        throw new PendingException();
+        $this->clock->fastForward(new DateInterval('PT1H'));
     }
 
     /**
@@ -119,7 +163,7 @@ final class RestContext implements Context
      */
     public function theProposalHasAlmostExpired()
     {
-        throw new PendingException();
+        $this->clock->fastForward(new DateInterval('PT30S'));
     }
 
     /**
@@ -128,7 +172,9 @@ final class RestContext implements Context
      */
     public function proposesAMatch(string $proposer, string $receiver)
     {
-        throw new PendingException();
+        $this->let[$proposer]->do('propose', [
+            'to' => $this->let[$receiver]->see('account id')
+        ]);
     }
 
     /**
@@ -137,7 +183,9 @@ final class RestContext implements Context
      */
     public function acceptsTheProposal(string $player)
     {
-        throw new PendingException();
+        $this->let[$player]->do('accept', [
+            'proposal' => $this->let[$player]->see('open proposals')[0]
+        ]);
     }
 
     /**
@@ -154,10 +202,17 @@ final class RestContext implements Context
      */
     public function beginsInTheirMatchAgainst(
         string $player1,
-        string $matchLabel = '',
-        string $player2 = 'N/A'
+        string $player2,
+        string $match = self::DEFAULT_MATCH_LABEL
     ) {
-        throw new PendingException();
+        do {
+            $this->hasSignedUpForTheGame($player1);
+            $this->hasSignedUpForTheGame($player2);
+            $this->proposesAMatch($player1, $player2);
+            $this->acceptsTheProposal($player2);
+            $this->theMatchStarts();
+        } while (!$this->let[$player1]->see('my turn'));
+        $this->playersIn[$match] = [$player1, $player2];
     }
 
     /**
@@ -179,7 +234,7 @@ final class RestContext implements Context
      */
     public function thereWillBeThisManyUnitsOnTheBattlefield(
         int $amount = 0,
-        string $match = ''
+        string $match = self::DEFAULT_MATCH_LABEL
     ) {
         throw new PendingException();
     }

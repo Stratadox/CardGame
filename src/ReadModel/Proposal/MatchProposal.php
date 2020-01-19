@@ -34,4 +34,14 @@ final class MatchProposal
     {
         return $this->to->is($player) && $when <= $this->validUntil;
     }
+
+    public function wasProposedBy(AccountId $account): bool
+    {
+        return $this->from->is($account);
+    }
+
+    public function wasProposedTo(AccountId $account): bool
+    {
+        return $this->to->is($account);
+    }
 }

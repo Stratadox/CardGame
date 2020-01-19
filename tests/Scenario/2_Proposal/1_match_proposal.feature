@@ -18,17 +18,19 @@ Feature: Match proposals
 
   Scenario: No accepted proposals until a match is accepted
     When "player 1" proposes a match to "player 2"
-    Then there will not be any accepted proposals yet
+    Then "player 1" will have 0 of their proposals accepted
+    And "player 2" will have accepted 0 proposals
 
   Scenario: Accepting a proposal
     Given "player 1" proposed a match to "player 2"
     When "player 2" accepts the proposal
-    Then there will be 1 accepted proposal
+    Then "player 1" will have 1 of their proposals accepted
+    And "player 2" will have accepted 1 proposal
 
   Scenario: Not accepting non existing proposals
     When "player 2" accepts the proposal
     Then that is not possible, because "proposal not found"
-    And there will not be any accepted proposals
+    And "player 2" will have accepted 0 proposals
 
   Scenario: Expired proposals are not open proposals anymore
     Given "player 1" proposed a match to "player 2"
@@ -40,16 +42,20 @@ Feature: Match proposals
     But the proposal has expired
     When "player 2" accepts the proposal
     Then that is not possible, because "the proposal has already expired!"
-    And there will not be any accepted proposals
+    And "player 1" will have 0 of their proposals accepted
+    And "player 2" will have accepted 0 proposals
 
   Scenario: Accepting a proposal just in time
     Given "player 1" proposed a match to "player 2"
     And the proposal has almost expired
     When "player 2" accepts the proposal
-    Then there will be 1 accepted proposal
+    Then "player 1" will have 1 of their proposals accepted
+    And "player 2" will have accepted 1 proposal
 
+  @unreachable
   Scenario: Not accepting proposals on behalf of others
     Given "player 1" proposed a match to "player 2"
     When "player 1" accepts the proposal
     Then that is not possible, because "proposal not found"
-    And there will not be any accepted proposals yet
+    And  "player 1" will have 0 of their proposals accepted
+    And "player 2" will have accepted 0 proposals

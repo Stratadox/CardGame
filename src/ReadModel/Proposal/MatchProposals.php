@@ -4,6 +4,7 @@ namespace Stratadox\CardGame\ReadModel\Proposal;
 
 use DateTimeInterface;
 use Stratadox\CardGame\Account\AccountId;
+use Stratadox\CardGame\Proposal\ProposalId;
 use Stratadox\Clock\Clock;
 
 class MatchProposals
@@ -33,5 +34,10 @@ class MatchProposals
             }
         }
         return $proposals;
+    }
+
+    public function byId(ProposalId $id): MatchProposal
+    {
+        return $this->proposals[(string) $id];
     }
 }

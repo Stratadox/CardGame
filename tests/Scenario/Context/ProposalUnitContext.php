@@ -64,7 +64,10 @@ final class ProposalUnitContext implements Context
                 new BringerOfBadNews($this->refusals),
                 new AccountOverviewCreator($this->accountOverviews),
                 new ProposalSender($this->matchProposals),
-                new ProposalAcceptanceNotifier($this->acceptedProposals)
+                new ProposalAcceptanceNotifier(
+                    $this->acceptedProposals,
+                    $this->matchProposals
+                )
             )
         );
     }
@@ -80,11 +83,9 @@ final class ProposalUnitContext implements Context
      * @Then :player will have :amount open match proposal
      * @Then :player will have :amount open match proposals
      */
-    public function willHaveNoOpenMatchProposals(string $player, int $amount = 0)
+    public function willHaveThisManyOpenMatchProposals(string $player, int $amount)
     {
-        $proposals = count($this->matchProposals->for(
-            $this->accountFor($this->visitorIdFor[$player])
-        ));
+        $proposals = count($this->matchProposals->for($this->account($player)));
         assert(
             $proposals === $amount,
             "$player should have $amount open proposals, $proposals found."
@@ -92,13 +93,34 @@ final class ProposalUnitContext implements Context
     }
 
     /**
-     * @Then there will not be any accepted proposals
-     * @Then there will not be any accepted proposals yet
-     * @Then there will be :amount accepted proposal
+     * @Then :player will have :amount of their proposals accepted
      */
-    public function thereWillBeAnAcceptedProposal(int $amount = 0)
+    public function willHaveProposalsAccepted(string $player, int $amount)
     {
-        assert(count($this->acceptedProposals->since($this->beginning)) === $amount);
+        $accepted = count($this->acceptedProposals->proposedBy(
+            $this->account($player),
+            $this->beginning
+        ));
+        assert(
+            $accepted === $amount,
+            "$player should see $amount of their proposals accepted, $accepted found."
+        );
+    }
+
+    /**
+     * @Then :player will have accepted :amount proposals
+     * @Then :player will have accepted :amount proposal
+     */
+    public function willHaveAcceptedProposals(string $player, int $amount)
+    {
+        $accepted = count($this->acceptedProposals->acceptedBy(
+            $this->account($player),
+            $this->beginning
+        ));
+        assert(
+            $accepted === $amount,
+            "$player should see they accepted $amount proposals, $accepted found."
+        );
     }
 
     /**

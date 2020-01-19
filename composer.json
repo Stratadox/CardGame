@@ -31,6 +31,7 @@
     "phpunit/phpunit": "^8.2",
     "phpstan/phpstan": "^0.11.12",
     "php-coveralls/php-coveralls": "^2.1",
-    "behat/behat": "^3.5"
+    "behat/behat": "^3.5",
+    "ext-json": "*"
   }
 }

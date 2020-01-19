@@ -8,14 +8,20 @@ Feature: Starting the match
     And "player 2" has signed up for the game
     And "player 1" proposed a match to "player 2"
 
+  @unreachable @todo @make-reachable
   Scenario: No matches until proposals are accepted
     When "player 2" does not accept the proposal
     Then there will be 0 ongoing matches
+    # Then "player 1" will not have any ongoing matches
+    # And "player 2" will not have any ongoing matches either
 
+  @unreachable @todo @make-reachable
   Scenario: Accepting the proposal
     Given "player 2" accepted the proposal
     When the match starts
     Then there will be 1 ongoing match
+    # Then "player 1" will have 1 ongoing match
+    # And "player 2" will also have 1 ongoing match
 
   Scenario Outline: Drawing the opening hands when the match starts
     Given we're not actually shuffling any decks

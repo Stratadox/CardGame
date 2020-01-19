@@ -26,3 +26,5 @@ default:
         - tests/Scenario/3_Match
       contexts:
         - Stratadox\CardGame\Context\RestContext
+      filters:
+        tags: "~@unreachable"
