@@ -1,0 +1,49 @@
+default:
+  suites:
+
+    Account:
+      paths:
+        - tests/Scenario/1_Account
+      contexts:
+        - Stratadox\CardGame\Context\AccountUnitContext
+
+    Proposal:
+      paths:
+        - tests/Scenario/2_Proposal
+      contexts:
+        - Stratadox\CardGame\Context\ProposalUnitContext
+
+    Match:
+      paths:
+        - tests/Scenario/3_Match
+      contexts:
+        - Stratadox\CardGame\Context\MatchUnitContext
+
+    ReST:
+      paths:
+        - tests/Scenario/1_Account
+        - tests/Scenario/2_Proposal
+        - tests/Scenario/3_Match
+      contexts:
+        - Stratadox\CardGame\Context\RestContext
+      filters:
+        tags: "~@unreachable"
+
+
+  extensions:
+
+    DVDoug\Behat\CodeCoverage\Extension:
+      drivers:
+        - local
+      filter:
+        whitelist:
+          include:
+            directories:
+              'src': ~
+      reports:
+        clover:
+          target: build/coverage-behat/clover.xml
+        php:
+          target: build/coverage-behat/coverage.cov
+      report:
+        options:

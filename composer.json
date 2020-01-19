@@ -32,6 +32,8 @@
     "phpstan/phpstan": "^0.11.12",
     "php-coveralls/php-coveralls": "^2.1",
     "behat/behat": "^3.5",
+    "dvdoug/behat-code-coverage": "^4.1",
+    "phpunit/phpcov": "^6.0",
     "ext-json": "*"
   }
 }

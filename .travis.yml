@@ -18,7 +18,9 @@ before_script:
 script:
   - mkdir -p build/logs
   - vendor/bin/phpunit -c phpunit.xml --testdox
-#  - vendor/bin/phpstan analyse -c phpstan.neon
+  - vendor/bin/behat -c behat-coverage.yml
+  - vendor/bin/phpcov merge build --clover build/logs/clover.xml
+  - vendor/bin/phpstan analyse -c phpstan.neon
   - ./infection.phar
 
 after_success:

@@ -6,6 +6,7 @@ use function array_filter;
 use function array_reduce;
 use function array_search;
 use Closure;
+use function assert;
 use function count;
 use Stratadox\ImmutableCollection\ImmutableCollection;
 
@@ -63,7 +64,7 @@ final class Cards extends ImmutableCollection
 
     private function topMostCardInDeck(): Card
     {
-        return array_reduce(
+        $card = array_reduce(
             array_filter($this->items(), static function (Card $card): bool {
                 return $card->isInDeck();
             }),
@@ -74,6 +75,8 @@ final class Cards extends ImmutableCollection
                 return $topmost;
             }
         );
+        assert($card !== null);
+        return $card;
     }
 
     private function draw(Card $card, MatchId $match, int $player): void
