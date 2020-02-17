@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "self": { "href": "test://match/proposals/(PROPOSAL)/status/" },
+    "curies": [
+      {
+        "name": "match",
+        "href": "https://github.com/Stratadox/CardGame/tree/master/docs/resource/match/{rel}",
+        "templated": true
+      }
+    ],
+    "match:play": { "href": "test://match/(MATCH)/(ACCOUNT)/" }
+  },
+  "status": "completed",
+  "time": "2020-02-12T15:19:21+00:00"
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<proposals:resource
+    rel="self"
+    href="test://match/proposals/open/(ACCOUNT)/"
+    xmlns:account="https://github.com/Stratadox/CardGame/tree/master/docs/relation/account/"
+    xmlns:proposals="https://github.com/Stratadox/CardGame/tree/master/docs/resource/proposals/collection/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://github.com/Stratadox/CardGame/tree/master/docs/resource/proposals/collection/  /schema/proposals/v1/collection.xsd"
+>
+    <link rel="account:overview" href="test://account/(ACCOUNT)/" />
+</proposals:resource>

@@ -73,7 +73,7 @@ final class RestContext implements Context
      */
     public function iVisitedThePage(string $which)
     {
-        $this->go->visit($which);
+        $this->go->to($which);
     }
 
     /**
@@ -81,7 +81,7 @@ final class RestContext implements Context
      */
     public function iOpenAnAccount()
     {
-        $this->go->do('open account');
+        $this->go->do('account:open');
     }
 
     /**
@@ -92,8 +92,8 @@ final class RestContext implements Context
         if (!isset($this->let[$player])) {
             $this->let[$player] = $this->newClient();
         }
-        $this->let[$player]->visit('home');
-        $this->let[$player]->do('open account');
+        $this->let[$player]->to('home');
+        $this->let[$player]->do('account:open');
     }
 
     /**
@@ -101,7 +101,7 @@ final class RestContext implements Context
      */
     public function myAccountWillBeAGuestAccount()
     {
-        $this->go->visit('account');
+        $this->go->to('account:overview');
         assert($this->go->see('type') === 'guest');
     }
 
@@ -110,8 +110,9 @@ final class RestContext implements Context
      */
     public function thePlayerListWillBeEmpty()
     {
-        $this->go->visit('player list');
+        $this->go->to('account:list');
         assert(empty($this->go->see('players')));
+        $this->go->to('account:overview');
     }
 
     /**
@@ -119,8 +120,9 @@ final class RestContext implements Context
      */
     public function thePlayerListWillNotBeEmpty()
     {
-        $this->go->visit('player list');
+        $this->go->to('account:list');
         assert(!empty($this->go->see('players')));
+        $this->go->to('account:overview');
     }
 
     /**
@@ -129,7 +131,9 @@ final class RestContext implements Context
      */
     public function willHaveThisManyOpenMatchProposals(string $player, int $amount)
     {
-        assert($amount === count($this->let[$player]->see('open proposals')));
+        $this->go->to('proposals:open');
+        assert($amount === count($this->let[$player]->see('proposal:overview')));
+        $this->go->to('account:overview');
     }
 
     /**
@@ -137,7 +141,9 @@ final class RestContext implements Context
      */
     public function willHaveProposalsAccepted(string $player, int $amount)
     {
-        assert($amount === count($this->let[$player]->see('proposals accepted')));
+        $this->go->to('proposals:successful');
+        assert($amount === count($this->let[$player]->see('proposal:overview')));
+        $this->go->to('account:overview');
     }
 
     /**
@@ -146,7 +152,9 @@ final class RestContext implements Context
      */
     public function willHaveAcceptedProposals(string $player, int $amount)
     {
-        assert($amount === count($this->let[$player]->see('accepted proposals')));
+        $this->go->to('proposals:successful');
+        assert($amount === count($this->let[$player]->see('proposal:overview')));
+        $this->go->to('account:overview');
     }
 
     /**
@@ -172,8 +180,8 @@ final class RestContext implements Context
      */
     public function proposesAMatch(string $proposer, string $receiver)
     {
-        $this->let[$proposer]->do('propose', [
-            'to' => $this->let[$receiver]->see('account id')
+        $this->let[$proposer]->do('proposals:propose', [
+            'to' => $this->let[$receiver]->see('id')
         ]);
     }
 
@@ -183,9 +191,10 @@ final class RestContext implements Context
      */
     public function acceptsTheProposal(string $player)
     {
-        $this->let[$player]->do('accept', [
-            'proposal' => $this->let[$player]->see('open proposals')[0]
-        ]);
+        $this->let[$player]->to('proposals:open');
+        $this->let[$player]->to('proposals:overview', 0);
+        $this->let[$player]->do('proposals:accept');
+        $this->let[$player]->to('proposals:to');
     }
 
     /**
@@ -211,7 +220,7 @@ final class RestContext implements Context
             $this->proposesAMatch($player1, $player2);
             $this->acceptsTheProposal($player2);
             $this->theMatchStarts();
-        } while (!$this->let[$player1]->see('my turn'));
+        } while (!$this->let[$player1]->see('my-turn'));
         $this->playersIn[$match] = [$player1, $player2];
     }
 

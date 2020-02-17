@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<status:resource
+    rel="self"
+    href="test://status/(CORRELATION)/"
+    xmlns:status="https://github.com/Stratadox/CardGame/tree/master/docs/resource/status/monitor"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://github.com/Stratadox/CardGame/tree/master/docs/resource/status/monitor /schema/status/v1/monitor.xsd"
+>
+    <status>pending</status>
+    <time>2020-02-12T15:19:21+00:00</time>
+</status:resource>

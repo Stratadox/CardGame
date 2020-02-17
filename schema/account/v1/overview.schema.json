@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "https://github.com/Stratadox/CardGame/tree/master/schema/account/v1/overview.schema.json",
+  "allOf": [ { "$ref": "../../hal.schema.json"} ],
+  "properties": {
+    "_links": {},
+    "_embedded": {},
+    "id": {
+      "title": "The account identifier, uuid",
+      "type": "string"
+    },
+    "type": {
+      "title": "The type of account, such as \"Guest\", \"Member\", \"Mod\" or \"Admin\"",
+      "type": "string"
+    }
+  },
+  "required": [ "id", "type" ],
+  "additionalProperties": false
+}

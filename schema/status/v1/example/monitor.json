@@ -1,0 +1,7 @@
+{
+  "_links": {
+    "self": { "href": "test://status/(CORRELATION)/" }
+  },
+  "status": "pending",
+  "time": "2020-02-12T15:19:21+00:00"
+}

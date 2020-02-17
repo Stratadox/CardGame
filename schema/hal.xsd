@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:hal="http://stateless.co/hal_specification.html"
+    targetNamespace="http://stateless.co/hal_specification.html"
+>
+    <xs:complexType name="resource">
+        <xs:annotation><xs:documentation>
+            Represents a hal+xml type rest resource
+        </xs:documentation></xs:annotation>
+        <xs:sequence>
+            <xs:element name="link" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation><xs:documentation>
+                    Hyperlink from the containing resource to a URI
+                </xs:documentation></xs:annotation>
+                <xs:complexType>
+                    <xs:attributeGroup ref="hal:linkAttributes" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="hal:linkAttributes" />
+    </xs:complexType>
+
+    <xs:attributeGroup name="linkAttributes">
+        <xs:attribute name="rel" type="xs:string" use="required">
+            <xs:annotation><xs:documentation>
+                Link relation type <a href="https://tools.ietf.org/html/rfc5988">[RFC5988]</a>
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="href" type="xs:anyURI" use="required">
+            <xs:annotation><xs:documentation>
+                Either a URI <a href="https://tools.ietf.org/html/rfc3986">[RFC3986]</a>
+                or a URI Template <a href="https://tools.ietf.org/html/rfc6570">[RFC6570]</a>
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="templated" type="xs:boolean" default="false">
+            <xs:annotation><xs:documentation>
+                Whether the "href" property is a URI Template
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" type="xs:string">
+            <xs:annotation><xs:documentation>
+                Hint to indicate the expected media type
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="deprecation" type="xs:anyURI">
+            <xs:annotation><xs:documentation>
+                Further information about the deprecation
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" type="xs:string">
+            <xs:annotation><xs:documentation>
+                Secondary key for selecting links with the same relation type
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="profile" type="xs:anyURI">
+            <xs:annotation><xs:documentation>
+                URI that hints about the profile of the target resource
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="title" type="xs:string">
+            <xs:annotation><xs:documentation>
+                Intended for labelling the link with a human-readable identifier
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hreflang" type="xs:language">
+            <xs:annotation><xs:documentation>
+                Intended for indicating the language of the target resource
+            </xs:documentation></xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+</xs:schema>

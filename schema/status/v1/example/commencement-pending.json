@@ -1,0 +1,7 @@
+{
+  "_links": {
+    "self": { "href": "test://match/proposals/(PROPOSAL)/status/" }
+  },
+  "status": "pending",
+  "time": "2020-02-12T15:19:21+00:00"
+}

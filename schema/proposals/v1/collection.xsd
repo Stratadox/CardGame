@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:hal="http://stateless.co/hal_specification.html"
+    xmlns:child="https://github.com/Stratadox/CardGame/tree/master/docs/resource/proposals/overview/"
+    targetNamespace="https://github.com/Stratadox/CardGame/tree/master/docs/resource/proposals/collection/"
+>
+    <xs:import schemaLocation="../../hal.xsd" namespace="http://stateless.co/hal_specification.html" />
+    <xs:import schemaLocation="overview.xsd" namespace="https://github.com/Stratadox/CardGame/tree/master/docs/resource/proposals/" />
+
+    <xs:element name="resource" type="resource" />
+
+    <xs:complexType name="resource">
+        <xs:complexContent>
+            <xs:extension base="hal:resource">
+                <xs:sequence>
+                    <!-- Open proposals properties: -->
+                    <xs:element name="resource" type="child:resource" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

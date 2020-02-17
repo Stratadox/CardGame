@@ -62,7 +62,7 @@ final class MatchStartingProcess implements CommandHandler
                 $this->newMatchId->generate(),
                 new Decks(
                     $this->decks->deckFor($proposal->proposedBy()),
-                    $this->decks->deckFor($proposal->proposedBy())
+                    $this->decks->deckFor($proposal->proposedTo())
                 ),
                 $this->clock->now()
             );

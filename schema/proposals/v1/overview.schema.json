@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "https://github.com/Stratadox/CardGame/tree/master/schema/proposals/v1/overview.schema.json",
+  "allOf": [
+    {
+      "$ref": "../../hal.schema.json"
+    }
+  ],
+  "properties": {
+    "_links": {},
+    "_embedded": {},
+    "id": {
+      "title": "The proposal identifier, uuid",
+      "type": "string"
+    },
+    "from": {
+      "title": "The player that proposed the match",
+      "type": "string"
+    },
+    "to": {
+      "title": "The player that received the proposal",
+      "type": "string"
+    },
+    "valid-until": {
+      "title": "The point in time when the proposal expires",
+      "type": "string",
+      "format": "date-time"
+    },
+    "accepted": {
+      "title": "Whether the proposal has been accepted",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "id",
+    "from",
+    "to",
+    "valid-until"
+  ],
+  "additionalProperties": false
+}

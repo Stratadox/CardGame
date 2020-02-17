@@ -13,7 +13,7 @@ final class TestClient
         $this->clock = $clock;
     }
 
-    public function visit(string $page): void
+    public function to(string $page, ?int $element = null): void
     {
 
     }

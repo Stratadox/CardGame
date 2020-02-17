@@ -6,18 +6,13 @@ use Stratadox\CardGame\ReadModel\Proposal\MatchProposals;
 use function assert;
 use Stratadox\CardGame\DomainEvent;
 use Stratadox\CardGame\Proposal\ProposalWasAccepted;
-use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 
 final class ProposalAcceptanceNotifier implements EventHandler
 {
-    private $acceptedProposals;
     private $matchProposals;
 
-    public function __construct(
-        AcceptedProposals $acceptedProposals,
-        MatchProposals $matchProposals
-    ) {
-        $this->acceptedProposals = $acceptedProposals;
+    public function __construct(MatchProposals $matchProposals)
+    {
         $this->matchProposals = $matchProposals;
     }
 
@@ -30,8 +25,6 @@ final class ProposalAcceptanceNotifier implements EventHandler
     {
         assert($event instanceof ProposalWasAccepted);
 
-        $this->acceptedProposals->add(
-            $this->matchProposals->byId($event->aggregateId())
-        );
+        $this->matchProposals->byId($event->aggregateId())->accept();
     }
 }

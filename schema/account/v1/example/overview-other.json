@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "self": { "href": "test://account/(ID)/" },
+    "curies": [
+      {
+        "name": "proposals",
+        "href": "https://github.com/Stratadox/CardGame/tree/master/docs/relation/proposals/{rel}",
+        "templated": true
+      }
+    ],
+    "proposals:propose": { "href": "test://match/propose/(ME)/vs/(ID)/" }
+  },
+  "id": "(ID)",
+  "type": "Guest"
+}

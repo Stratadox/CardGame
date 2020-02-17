@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:hal="http://stateless.co/hal_specification.html"
+    targetNamespace="https://github.com/Stratadox/CardGame/tree/master/docs/resource/status/monitor"
+>
+    <xs:import schemaLocation="../../hal.xsd" namespace="http://stateless.co/hal_specification.html" />
+
+    <xs:element name="resource">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="hal:resource">
+                    <xs:sequence>
+                        <!-- Status monitor properties: -->
+                        <xs:element name="status" type="statusType">
+                            <xs:annotation><xs:documentation>
+                                The current status, either `pending`, `rejected` or `completed`
+                            </xs:documentation></xs:annotation>
+                        </xs:element>
+                        <xs:element name="time" type="xs:dateTime">
+                            <xs:annotation><xs:documentation>
+                                The time at which the status was retrieved
+                            </xs:documentation></xs:annotation>
+                        </xs:element>
+                        <xs:element name="reasons" type="rejectionReasons" minOccurs="0">
+                            <xs:annotation><xs:documentation>
+                                List of rejection reasons
+                            </xs:documentation></xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="rejectionReasons">
+        <xs:sequence>
+            <xs:element name="reason" type="xs:string" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="statusType" final="restriction" >
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pending" />
+            <xs:enumeration value="rejected" />
+            <xs:enumeration value="completed" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

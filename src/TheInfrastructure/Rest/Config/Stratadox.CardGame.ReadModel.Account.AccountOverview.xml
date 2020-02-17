@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<serializer
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://github.com/willdurand/Hateoas /vendor/willdurand/hateoas/hateoas.xsd"
+>
+    <!-- @todo decide if this really beats an AccountResource class -->
+    <class
+        name="Stratadox\CardGame\ReadModel\Account\AccountOverview"
+        xml-root-name="account:resource"
+        xmlns:h="https://github.com/willdurand/Hateoas"
+    >
+        <xml-namespace prefix="account" uri="https://github.com/Stratadox/CardGame/tree/master/docs/resource/account/"/>
+        <xml-namespace prefix="proposals" uri="https://github.com/Stratadox/CardGame/tree/master/docs/relation/proposals/"/>
+        <xml-namespace prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        <virtual-property
+            name="rel"
+            xml-attribute="true"
+            expression="'self'"
+            exclude-if="context.getFormat() !== 'xml'"
+        />
+        <virtual-property
+            name="schemaLocation"
+            serialized-name="xsi:schemaLocation"
+            xml-attribute="true"
+            expression="'https://github.com/Stratadox/CardGame/tree/master/docs/resource/account/ /schema/account/v1/overview.xsd'"
+            exclude-if="context.getFormat() !== 'xml'"
+        />
+        <h:relation rel="self">
+            <h:href route="account:overview" absolute="true">
+                <h:parameter name="account" value="expr(object.id())" />
+            </h:href>
+        </h:relation>
+        <h:relation rel="curies">
+            <h:href uri="https://github.com/Stratadox/CardGame/tree/master/docs/relation/proposals/{rel}" />
+            <h:attribute name="templated" value="expr(true)" />
+            <h:attribute name="name" value="proposals" />
+            <h:exclusion exclude-if="expr(context.getFormat() !== 'json')" />
+        </h:relation>
+        <h:relation rel="proposals:open">
+            <h:href route="proposals:open" absolute="true">
+                <h:parameter name="account" value="expr(object.id())" />
+            </h:href>
+            <h:exclusion exclude-if="!object.id().is(greeter.announce())" />
+        </h:relation>
+        <h:relation rel="proposals:accepted">
+            <h:href route="proposals:accepted" absolute="true">
+                <h:parameter name="account" value="expr(object.id())" />
+            </h:href>
+            <h:exclusion exclude-if="!object.id().is(greeter.announce())" />
+            <h:attribute name="templated" value="expr(context.getFormat() === 'xml' ? 'true' : true)" />
+        </h:relation>
+        <h:relation rel="proposals:successful">
+            <h:href route="proposals:successful" absolute="true">
+                <h:parameter name="account" value="expr(object.id())" />
+            </h:href>
+            <h:exclusion exclude-if="!object.id().is(greeter.announce())" />
+            <h:attribute name="templated" value="expr(context.getFormat() === 'xml' ? 'true' : true)" />
+        </h:relation>
+        <h:relation rel="proposals:propose">
+            <h:href route="proposals:propose" absolute="true">
+                <h:parameter name="from" value="expr(greeter.announce())" />
+                <h:parameter name="to" value="expr(object.id())" />
+            </h:href>
+            <h:exclusion exclude-if="object.id().is(greeter.announce())" />
+        </h:relation>
+        <property name="visitorId" exclude="true" />
+        <property name="id" exclude="true" />
+        <virtual-property name="id" expression="object.id().id()" />
+        <virtual-property name="type" expression="'Guest'" />
+    </class>
+</serializer>

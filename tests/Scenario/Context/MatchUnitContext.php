@@ -32,13 +32,12 @@ use Stratadox\CardGame\Match\Command\EndTheTurn;
 use Stratadox\CardGame\Match\Command\PlayTheCard;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
-use Stratadox\CardGame\ReadModel\Match\Battlefield;
+use Stratadox\CardGame\ReadModel\Match\Battlefields;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 use Stratadox\CardGame\ReadModel\Match\CardTemplate;
 use Stratadox\CardGame\ReadModel\Match\CardTemplates;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
-use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 use Stratadox\CardGame\ReadModel\Proposal\MatchProposals;
 use Stratadox\CardGame\ReadModel\Refusals;
 use Stratadox\CardGame\Test\UnitTestConfiguration;
@@ -67,11 +66,9 @@ final class MatchUnitContext implements Context
     private $ongoingMatches;
     /** @var TestClock */
     private $clock;
-    /** @var AcceptedProposals */
-    private $acceptedProposals;
     /** @var CardsInHand */
     private $cardsInTheHand;
-    /** @var Battlefield */
+    /** @var Battlefields */
     private $battlefield;
     /** @var OngoingMatch[] */
     private $matches = [];
@@ -88,10 +85,9 @@ final class MatchUnitContext implements Context
         $this->refusals = new Refusals();
         $this->accountOverviews = AccountOverviews::startEmpty();
         $this->matchProposals = new MatchProposals($this->clock);
-        $this->acceptedProposals = new AcceptedProposals();
         $this->ongoingMatches = new OngoingMatches();
         $this->cardsInTheHand = new CardsInHand();
-        $this->battlefield = new Battlefield();
+        $this->battlefield = new Battlefields();
         $allCards = new CardTemplates(
             new CardTemplate('card-type-1'),
             new CardTemplate('card-type-2'),
@@ -108,11 +104,8 @@ final class MatchUnitContext implements Context
             new Dispatcher(
                 new AccountOverviewCreator($this->accountOverviews),
                 new ProposalSender($this->matchProposals),
-                new ProposalAcceptanceNotifier(
-                    $this->acceptedProposals,
-                    $this->matchProposals
-                ),
-                new MatchPublisher($this->ongoingMatches),
+                new ProposalAcceptanceNotifier($this->matchProposals),
+                new MatchPublisher($this->ongoingMatches, $this->matchProposals),
                 new HandAdjuster($this->cardsInTheHand, $allCards),
                 new BattlefieldUpdater($this->battlefield, $allCards),
                 new TurnSwitcher($this->ongoingMatches),

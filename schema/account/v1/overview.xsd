@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:hal="http://stateless.co/hal_specification.html"
+    xmlns:account="https://github.com/Stratadox/CardGame/tree/master/docs/resource/account/"
+    targetNamespace="https://github.com/Stratadox/CardGame/tree/master/docs/resource/account/"
+>
+    <xs:import schemaLocation="../../hal.xsd" namespace="http://stateless.co/hal_specification.html" />
+
+    <xs:element name="resource" type="account:resource" />
+
+    <xs:complexType name="resource">
+        <xs:complexContent>
+            <xs:extension base="hal:resource">
+                <xs:sequence>
+                    <!-- Account properties: -->
+                    <xs:element name="id" type="xs:string">
+                        <xs:annotation><xs:documentation>
+                            The account identifier, uuid
+                        </xs:documentation></xs:annotation>
+                    </xs:element>
+                    <xs:element name="type" type="xs:string">
+                        <xs:annotation><xs:documentation>
+                            The type of account, such as "Guest", "Member", "Mod" or "Admin"
+                        </xs:documentation></xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

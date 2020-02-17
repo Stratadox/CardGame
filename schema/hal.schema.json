@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "https://github.com/Stratadox/CardGame/tree/master/schema/hal.schema.json",
+  "title": "Represents a hal+json type rest resource",
+  "type": "object",
+  "definitions": {
+    "link": {
+      "title": "Hyperlink from the containing resource to a URI",
+      "type": "object",
+      "properties": {
+        "href": {
+          "title": "Either a URI [RFC3986] or a URI Template [RFC6570]",
+          "type": "string",
+          "format": "uri-template"
+        },
+        "templated": {
+          "title": "Whether the \"href\" property is a URI Template",
+          "type": "boolean",
+          "default": false
+        },
+        "type": {
+          "title": "Hint to indicate the expected media type",
+          "type": "string"
+        },
+        "deprecation": {
+          "title": "Further information about the deprecation",
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "name": {
+          "title": "Secondary key for selecting links with the same relation type, or prefix for CURIES",
+          "type": "string"
+        },
+        "profile": {
+          "title": "URI that hints about the profile of the target resource",
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "title": {
+          "title": "Intended for labelling the link with a human-readable identifier",
+          "type": "string"
+        },
+        "hreflang": {
+          "title": "Intended for indicating the language of the target resource",
+          "type": "string"
+        }
+      },
+      "required": [ "href" ],
+      "additionalProperties": false
+    },
+    "curies": {
+      "title": "Custom link relation types (Extension Relation Types in [RFC5988])",
+      "type": "array",
+      "items": {
+        "allOf": [
+          { "$ref": "#/definitions/link" },
+          {
+            "required": [ "href", "templated", "name" ],
+            "properties": {
+              "templated": { "enum": [ true ] }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "properties": {
+    "_links": {
+      "title": "Object whose property names are link relation types [RFC5988] and values are either a link or an array of links",
+      "type": "object",
+      "properties": {
+        "curies": { "$ref": "#/definitions/curies" }
+      },
+      "additionalProperties": {
+        "anyOf": [
+          { "$ref": "#/definitions/link" },
+          {
+            "type": "array",
+            "items": { "$ref": "#/definitions/link" }
+          }
+        ]
+      }
+    },
+    "_embedded": {
+      "title": "Object whose property names are link relation types [RFC5988] and values are either a resource or an array of resources",
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          { "$ref": "#" },
+          {
+            "type": "array",
+            "items": { "$ref": "#" }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -3,7 +3,14 @@
 namespace Stratadox\CardGame\Test;
 
 use DateInterval;
+use Hateoas\Hateoas;
+use Hateoas\HateoasBuilder;
+use Hateoas\Serializer\JsonHalSerializer;
+use Hateoas\Serializer\XmlHalSerializer;
+use JMS\Serializer\Expression\ExpressionEvaluator;
+use JMS\Serializer\SerializerBuilder;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Util\Xml;
 use Stratadox\CardGame\Account\AccountId;
 use Stratadox\CardGame\Account\OpenAnAccount;
 use Stratadox\CardGame\CorrelationId;
@@ -18,27 +25,34 @@ use Stratadox\CardGame\EventHandler\ProposalSender;
 use Stratadox\CardGame\EventHandler\StatisticsUpdater;
 use Stratadox\CardGame\EventHandler\TurnSwitcher;
 use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
+use Stratadox\CardGame\Infrastructure\Rest\Serializer\LinksFirstXmlHalSerializer;
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
+use Stratadox\CardGame\Infrastructure\Test\TestUrlGenerator;
 use Stratadox\CardGame\Match\Command\StartTheMatch;
 use Stratadox\CardGame\Proposal\AcceptTheProposal;
 use Stratadox\CardGame\Proposal\ProposeMatch;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
 use Stratadox\CardGame\ReadModel\Match\CardTemplates;
-use Stratadox\CardGame\ReadModel\Match\Battlefield;
+use Stratadox\CardGame\ReadModel\Match\Battlefields;
 use Stratadox\CardGame\ReadModel\Match\CardTemplate;
 use Stratadox\CardGame\ReadModel\Match\CardsInHand;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatch;
 use Stratadox\CardGame\ReadModel\Match\OngoingMatches;
 use Stratadox\CardGame\ReadModel\PageVisitsStatisticsReport;
 use Stratadox\CardGame\ReadModel\PlayerList;
-use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 use Stratadox\CardGame\ReadModel\Proposal\MatchProposals;
 use Stratadox\CardGame\ReadModel\Refusals;
+use Stratadox\CardGame\RestInterface\Access\Greeter;
 use Stratadox\CardGame\Visiting\Visit;
 use Stratadox\CardGame\Visiting\VisitorId;
 use Stratadox\Clock\RewindableClock;
 use Stratadox\CommandHandling\Handler;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use function array_keys;
+use function array_values;
+use function file_get_contents;
 use function sprintf;
+use function str_replace;
 
 abstract class CardGameTest extends TestCase
 {
@@ -50,6 +64,12 @@ abstract class CardGameTest extends TestCase
 
     /** @var Configuration */
     private $currentConfiguration;
+
+    /** @var Greeter */
+    private $greeter;
+
+    /** @var Hateoas */
+    private $serializer;
 
     /** @var RewindableClock */
     protected $clock;
@@ -66,7 +86,10 @@ abstract class CardGameTest extends TestCase
     /** @var MatchProposals */
     protected $matchProposals;
 
-    /** @var AcceptedProposals */
+    /**
+     * @var MatchProposals
+     * @deprecated
+     */
     protected $acceptedProposals;
 
     /** @var CardsInHand */
@@ -81,7 +104,7 @@ abstract class CardGameTest extends TestCase
     /** @var null|OngoingMatch */
     protected $match;
 
-    /** @var Battlefield */
+    /** @var Battlefields */
     protected $battlefield;
 
     /** @var Refusals */
@@ -107,12 +130,12 @@ abstract class CardGameTest extends TestCase
 
         $this->statistics = new PageVisitsStatisticsReport();
         $this->matchProposals = new MatchProposals($this->clock);
-        $this->acceptedProposals = new AcceptedProposals();
-        $this->accountOverviews = new AccountOverviews();
+        $this->acceptedProposals = $this->matchProposals;
+        $this->accountOverviews = AccountOverviews::startEmpty();
         $this->playerList = PlayerList::startEmpty();
         $this->cardsInTheHand = new CardsInHand();
         $this->ongoingMatches = new OngoingMatches();
-        $this->battlefield = new Battlefield();
+        $this->battlefield = new Battlefields();
         $this->refusals = new Refusals();
         $this->testCard = [
             new CardTemplate('card-type-1'),
@@ -137,7 +160,7 @@ abstract class CardGameTest extends TestCase
 
         $this->input = $this->currentConfiguration->handler(
             new Dispatcher(
-                new MatchPublisher($this->ongoingMatches),
+                new MatchPublisher($this->ongoingMatches, $this->matchProposals),
                 new HandAdjuster($this->cardsInTheHand, $allCards),
                 new BattlefieldUpdater($this->battlefield, $allCards),
                 new BringerOfBadNews($this->refusals),
@@ -145,13 +168,28 @@ abstract class CardGameTest extends TestCase
                 new PlayerListAppender($this->playerList),
                 new AccountOverviewCreator($this->accountOverviews),
                 new ProposalSender($this->matchProposals),
-                new ProposalAcceptanceNotifier(
-                    $this->acceptedProposals,
-                    $this->matchProposals
-                ),
+                new ProposalAcceptanceNotifier($this->matchProposals),
                 new TurnSwitcher($this->ongoingMatches)
             )
         );
+
+        $this->greeter = new Greeter();
+
+        $serializerBuilder = new SerializerBuilder();
+        $serializerBuilder
+            ->addMetadataDir(__DIR__ . '/../../src/TheInfrastructure/Rest/Config')
+            ->setExpressionEvaluator(new ExpressionEvaluator(
+                new ExpressionLanguage(),
+                ['greeter' => $this->greeter]
+            ));
+        $this->serializer = HateoasBuilder::create($serializerBuilder)
+            ->setXmlSerializer(new LinksFirstXmlHalSerializer(new XmlHalSerializer()))
+            ->setJsonSerializer(new JsonHalSerializer())
+            ->addMetadataDir(__DIR__ . '/../../src/TheInfrastructure/Rest/Config')
+            ->setExpressionContextVariable('greeter', $this->greeter)
+            ->setUrlGenerator(null, new TestUrlGenerator('test://'))
+            ->setDebug(true)
+            ->build();
     }
 
     protected function handle(object $command): void
@@ -216,5 +254,52 @@ abstract class CardGameTest extends TestCase
             'PT%dS',
             $seconds
         ));
+    }
+
+    protected function authenticateAs(AccountId $playerAccount): void
+    {
+        $this->greeter->welcome($playerAccount);
+    }
+
+    protected function replace(array $replacements, string $original): string
+    {
+        return str_replace(
+            array_keys($replacements),
+            array_values($replacements),
+            $original
+        );
+    }
+
+    protected function fileContentsWithTagsReplaced(array $replacements, string $filename): string
+    {
+        return str_replace(
+            array_keys($replacements),
+            array_values($replacements),
+            file_get_contents($filename)
+        );
+    }
+
+    protected function toJson($resource): string
+    {
+        return $this->serializer->serialize($resource, 'json');
+    }
+
+    protected function toXml($resource): string
+    {
+        return $this->serializer->serialize($resource, 'xml');
+    }
+
+    protected function assertXmlStringIsAcceptedByXsdFile(
+        string $xsd,
+        string $xml
+    ): void {
+        $this->assertThat(Xml::load($xml), IsAcceptedByXsd::file($xsd));
+    }
+
+    protected function assertJsonStringIsAcceptedByJsonSchemaFile(
+        string $schema,
+        string $json
+    ): void {
+        $this->assertThat($json, IsAcceptedByJsonSchema::file($schema));
     }
 }

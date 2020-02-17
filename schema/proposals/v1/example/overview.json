@@ -1,0 +1,19 @@
+{
+  "_links": {
+    "self": { "href": "test://match/proposals/(PROPOSAL)/" },
+    "curies": [
+      {
+        "name": "proposal",
+        "href": "https://github.com/Stratadox/CardGame/tree/master/docs/relation/proposals/{rel}",
+        "templated": true
+      }
+    ],
+    "proposal:from": { "href": "test://account/(OTHER-ACCOUNT)/" },
+    "proposal:to": { "href": "test://account/(ACCOUNT)/" },
+    "proposal:accept": { "href": "test://match/proposals/(PROPOSAL)/accept/" }
+  },
+  "id": "(PROPOSAL)",
+  "from": "(OTHER-ACCOUNT)",
+  "to": "(ACCOUNT)",
+  "valid-until": "(EXPIRE)"
+}

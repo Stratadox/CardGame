@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<proposals:resource
+    rel="self"
+    href="test://match/proposals/successful/(ACCOUNT)/"
+    xmlns:account="https://github.com/Stratadox/CardGame/tree/master/docs/relation/account/"
+    xmlns:proposals="https://github.com/Stratadox/CardGame/tree/master/docs/resource/proposals/collection/"
+    xmlns:proposal="https://github.com/Stratadox/CardGame/tree/master/docs/relation/proposals/"
+    xmlns:match="https://github.com/Stratadox/CardGame/tree/master/docs/relation/match/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://github.com/Stratadox/CardGame/tree/master/docs/resource/proposals/collection/  /schema/proposals/v1/collection.xsd"
+>
+    <link rel="account:overview" href="test://account/(ACCOUNT)/" />
+    <proposals:resource rel="proposal:overview" href="test://match/proposals/(PROPOSAL)/">
+        <link rel="proposal:from" href="test://account/(ACCOUNT)/" />
+        <link rel="proposal:to" href="test://account/(OTHER-ACCOUNT)/" />
+        <link rel="match:await" href="test://match/proposals/(PROPOSAL)/status/" />
+        <id>(PROPOSAL)</id>
+        <from>(ACCOUNT)</from>
+        <to>(OTHER-ACCOUNT)</to>
+        <valid-until>(EXPIRE)</valid-until>
+    </proposals:resource>
+</proposals:resource>

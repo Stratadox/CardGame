@@ -1,0 +1,46 @@
+{
+  "_links": {
+    "self": { "href": "test://match/proposals/accepted/(ACCOUNT)/" },
+    "curies": [
+      {
+        "name": "proposal",
+        "href": "https://github.com/Stratadox/CardGame/tree/master/docs/relation/proposals/{rel}",
+        "templated": true
+      },
+      {
+        "name": "account",
+        "href": "https://github.com/Stratadox/CardGame/tree/master/docs/resource/account/{rel}",
+        "templated": true
+      }
+    ],
+    "account:overview": { "href": "test://account/(ACCOUNT)/" }
+  },
+  "_embedded": {
+    "proposals": [
+      {
+        "_links": {
+          "self": { "href": "test://match/proposals/(PROPOSAL)/" },
+          "proposal:from": { "href": "test://account/(OTHER-ACCOUNT)/" },
+          "proposal:to": { "href": "test://account/(ACCOUNT)/" },
+          "proposal:accept": { "href": "test://match/proposals/(PROPOSAL)/accept/" }
+        },
+        "id": "(PROPOSAL)",
+        "from": "(OTHER-ACCOUNT)",
+        "to": "(ACCOUNT)",
+        "valid-until": "(EXPIRE)"
+      },
+      {
+        "_links": {
+          "self": { "href": "test://match/proposals/(PROPOSAL2)/" },
+          "proposal:from": { "href": "test://account/(THIRD-ACCOUNT)/" },
+          "proposal:to": { "href": "test://account/(ACCOUNT)/" },
+          "proposal:accept": { "href": "test://match/proposals/(PROPOSAL2)/accept/" }
+        },
+        "id": "(PROPOSAL2)",
+        "from": "(THIRD-ACCOUNT)",
+        "to": "(ACCOUNT)",
+        "valid-until": "(EXPIRE)"
+      }
+    ]
+  }
+}

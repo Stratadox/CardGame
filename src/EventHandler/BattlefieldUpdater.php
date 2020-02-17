@@ -8,9 +8,12 @@ use Stratadox\CardGame\Match\Event\UnitMovedIntoPlay;
 use Stratadox\CardGame\Match\Event\UnitMovedToAttack;
 use Stratadox\CardGame\Match\Event\UnitMovedToDefend;
 use Stratadox\CardGame\Match\Event\UnitRegrouped;
+use Stratadox\CardGame\Match\MatchEvent;
+use Stratadox\CardGame\ReadModel\Match\Battlefield;
 use Stratadox\CardGame\ReadModel\Match\Card;
 use Stratadox\CardGame\ReadModel\Match\CardTemplates;
-use Stratadox\CardGame\ReadModel\Match\Battlefield;
+use Stratadox\CardGame\ReadModel\Match\Battlefields;
+use function assert;
 
 final class BattlefieldUpdater implements EventHandler
 {
@@ -18,7 +21,7 @@ final class BattlefieldUpdater implements EventHandler
     private $cardTemplate;
 
     public function __construct(
-        Battlefield $battlefield,
+        Battlefields $battlefield,
         CardTemplates $templates
     ) {
         $this->battlefield = $battlefield;
@@ -38,43 +41,25 @@ final class BattlefieldUpdater implements EventHandler
 
     public function handle(DomainEvent $event): void
     {
+        assert($event instanceof MatchEvent);
+        $this->update($this->battlefield->for($event->aggregateId()), $event);
+    }
+
+    private function update(Battlefield $battlefield, MatchEvent $event): void
+    {
         if ($event instanceof UnitMovedIntoPlay) {
-            $this->battlefield->add(
-                new Card(
-                    $event->offset(),
-                    $this->cardTemplate->ofType($event->card())
-                ),
-                $event->match(),
-                $event->player()
-            );
-        }
-        if ($event instanceof UnitMovedToAttack) {
-            $this->battlefield->sendIntoBattle(
+            $battlefield->addFor($event->player(), new Card(
                 $event->offset(),
-                $event->match(),
-                $event->player()
-            );
-        }
-        if ($event instanceof UnitMovedToDefend) {
-            $this->battlefield->sendToDefend(
-                $event->offset(),
-                $event->match(),
-                $event->player()
-            );
-        }
-        if ($event instanceof UnitRegrouped) {
-            $this->battlefield->regroup(
-                $event->offset(),
-                $event->match(),
-                $event->player()
-            );
-        }
-        if ($event instanceof UnitDied) {
-            $this->battlefield->remove(
-                $event->offset(),
-                $event->match(),
-                $event->player()
-            );
+                $this->cardTemplate->ofType($event->card())
+            ));
+        } elseif ($event instanceof UnitMovedToAttack) {
+            $battlefield->getSentIntoBattleBy($event->player(), $event->offset());
+        } elseif ($event instanceof UnitMovedToDefend) {
+            $battlefield->getSentToDefendBy($event->player(), $event->offset());
+        } elseif ($event instanceof UnitRegrouped) {
+            $battlefield->getSentToRegroupBy($event->player(), $event->offset());
+        } elseif ($event instanceof UnitDied) {
+            $battlefield->removeFrom($event->player(), $event->offset());
         }
     }
 }

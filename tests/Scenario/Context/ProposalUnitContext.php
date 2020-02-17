@@ -21,7 +21,6 @@ use Stratadox\CardGame\EventHandler\ProposalSender;
 use Stratadox\CardGame\Infrastructure\DomainEvents\Dispatcher;
 use Stratadox\CardGame\Infrastructure\Test\TestClock;
 use Stratadox\CardGame\ReadModel\Account\AccountOverviews;
-use Stratadox\CardGame\ReadModel\Proposal\AcceptedProposals;
 use Stratadox\CardGame\ReadModel\Proposal\MatchProposals;
 use Stratadox\CardGame\ReadModel\Refusals;
 use Stratadox\CardGame\Test\UnitTestConfiguration;
@@ -44,7 +43,10 @@ final class ProposalUnitContext implements Context
     private $refusals;
     /** @var TestClock */
     private $clock;
-    /** @var AcceptedProposals */
+    /**
+     * @var MatchProposals
+     * @deprecated
+     */
     private $acceptedProposals;
 
     /**
@@ -57,7 +59,7 @@ final class ProposalUnitContext implements Context
         $this->correlation = CorrelationId::from('some-correlation-id');
         $this->refusals = new Refusals();
         $this->matchProposals = new MatchProposals($this->clock);
-        $this->acceptedProposals = new AcceptedProposals();
+        $this->acceptedProposals = $this->matchProposals;
         $this->accountOverviews = AccountOverviews::startEmpty();
         $this->input = UnitTestConfiguration::withClock($this->clock)->handler(
             new Dispatcher(
@@ -65,7 +67,6 @@ final class ProposalUnitContext implements Context
                 new AccountOverviewCreator($this->accountOverviews),
                 new ProposalSender($this->matchProposals),
                 new ProposalAcceptanceNotifier(
-                    $this->acceptedProposals,
                     $this->matchProposals
                 )
             )

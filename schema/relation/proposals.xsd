@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="https://github.com/Stratadox/CardGame/tree/master/docs/relation/proposals/"
+>
+    <!-- This document defines the namespace for proposal relationships -->
+</xs:schema>
