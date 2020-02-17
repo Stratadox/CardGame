@@ -52,7 +52,12 @@ class LinksFirstXmlHalSerializer implements SerializerInterface
             }
 
             $linkNode = $visitor->getDocument()->createElement('link');
-            $node->insertBefore($linkNode, $this->firstNonLinkChild($node->childNodes));
+            $child = $this->firstNonLinkChild($node->childNodes);
+            if ($child === null) {
+                $node->appendChild($linkNode);
+            } else {
+                $node->insertBefore($linkNode, $child);
+            }
 
             $linkNode->setAttribute('rel', $link->getRel());
             $linkNode->setAttribute('href', $link->getHref());
