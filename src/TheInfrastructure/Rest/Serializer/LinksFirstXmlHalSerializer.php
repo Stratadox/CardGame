@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Stratadox\CardGame\Infrastructure\Rest\Serializer;
 
+use DOMElement;
 use DOMNode;
 use DOMNodeList;
 use Hateoas\Model\Embedded;
@@ -34,9 +35,8 @@ class LinksFirstXmlHalSerializer implements SerializerInterface
                 'XML Serializers can be visited only by Xml Visitors'
             );
         }
-        /** @var DOMNode $node */
         $node = $visitor->getCurrentNode();
-        if (null === $node) {
+        if (!$node instanceof DOMElement) {
             throw new RuntimeException('Nothing to serialize!');
         }
 
