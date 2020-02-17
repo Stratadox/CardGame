@@ -19,15 +19,15 @@ default:
       contexts:
         - Stratadox\CardGame\Context\MatchUnitContext
 
-    ReST:
-      paths:
-        - tests/Scenario/1_Account
-        - tests/Scenario/2_Proposal
-        - tests/Scenario/3_Match
-      contexts:
-        - Stratadox\CardGame\Context\RestContext
-      filters:
-        tags: "~@unreachable"
+#    ReST:
+#      paths:
+#        - tests/Scenario/1_Account
+#        - tests/Scenario/2_Proposal
+#        - tests/Scenario/3_Match
+#      contexts:
+#        - Stratadox\CardGame\Context\RestContext
+#      filters:
+#        tags: "~@unreachable"
 
 
   extensions:
